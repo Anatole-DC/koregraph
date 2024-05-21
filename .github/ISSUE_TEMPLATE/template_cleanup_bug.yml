@@ -1,0 +1,74 @@
+name: Template cleanup bug report
+description: Issue regarding the repository cleanup when using this template.
+
+title: 'Bug: '
+labels: ['bug']
+assignees:
+  - Anatole-DC
+
+body:
+  # Introduction
+  - type: markdown
+    attributes:
+      value: |
+        Welcome to the python_template action cleanup bug report !
+        If you have created a python project by using this template and the cleanup action failed, then you are at the right place.
+
+  # The project description
+  - type: dropdown
+    id: project-status
+    attributes:
+      label: Your project visibility
+      description: What is the visibility of your project
+      options:
+        - Public
+        - Private
+    validations:
+      required: true
+
+  # Project link
+  - type: input
+    id: project-link
+    attributes:
+      label: Project url (if public repository)
+      description: Your project github url
+      placeholder: ex. https://github.com/user/project
+    validations:
+      required: false
+
+  # The ci-cd failed steps
+  - type: dropdown
+    id: ci-cd-steps
+    attributes:
+      label: At which step did the ci-cd failed ?
+      multiple: true
+      options:
+        - Make script executable
+        - Cleanup README
+        - Cleanup code
+        - Cleanup configs
+        - Update project description
+        - Remove cleanup files
+        - Commit to repository
+        - None of the above
+    validations:
+      required: true
+
+  # Description of what happened
+  - type: textarea
+    id: what-failed
+    attributes:
+      label: Failure description
+      description: Please describe in a few word what happened during the cleanup.
+    validations:
+      required: true
+
+  # CI/CD logs
+  - type: textarea
+    id: logs
+    attributes:
+      label: CI/CD logs
+      description: Please copy and paste the action relevant logs output.
+      render: shell
+    validations:
+      required: true

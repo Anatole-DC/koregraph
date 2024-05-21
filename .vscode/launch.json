@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "name": "python_template",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/examples/main.py",
+      "python": "${workspaceFolder}/.venv/bin/python3",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+  ],
+  "compounds": []
+}

@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "python_template"
+version = "0.0.0"
+description = "Base template repository for python projects."
+authors = ["Your Name <your-email@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-dotenv = "^1.0.0"
+dacite = "^1.8.1"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+flake8 = "^6.1.0"
+black = "^23.9.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
