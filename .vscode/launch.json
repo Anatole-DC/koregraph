@@ -1,7 +1,7 @@
 {
   "configurations": [
     {
-      "name": "python_template",
+      "name": "koregraph",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/examples/main.py",

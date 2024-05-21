@@ -7,7 +7,7 @@ RUN pip install poetry
 WORKDIR /app
 COPY README.md pyproject.toml poetry.lock /app/
 
-COPY python_template/ .
+COPY koregraph/ .
 
 RUN poetry config virtualenvs.create false \
     && poetry install --no-root --no-interaction --no-ansi

@@ -1,4 +1,4 @@
-from python_template import hello_world
+from koregraph import hello_world
 
 
 def main():
