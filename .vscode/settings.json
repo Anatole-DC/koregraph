@@ -1,7 +1,8 @@
 {
   "files.exclude": {
     "**/__pycache__": true,
-    "**/.pytest_cache": true
+    "**/.pytest_cache": true,
+    "**/.ipynb_checkpoints": true,
   },
   "python.testing.unittestArgs": [
     "-v",
