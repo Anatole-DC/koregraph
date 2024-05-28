@@ -30,6 +30,7 @@ ___
 - [Install the project](#install-the-project)
   - [Clone the repository](#clone-the-repository)
   - [Install the dependencies](#install-the-dependencies)
+- [Scripts](#scripts)
 - [Ideas](#ideas)
 - [License](#license)
 
@@ -80,6 +81,14 @@ poetry install
 
 ```bash
 poetry install --with dev
+```
+
+## Scripts
+
+**Export presentation (github pages)**
+
+```bash
+poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to slides --stdout >> documentation/pages/index.html
 ```
 
 ## Ideas
