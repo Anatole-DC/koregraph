@@ -42,6 +42,7 @@ moviepy = "^1.0.3"
 
 [tool.poetry.scripts]
 viewer = "koregraph.cli.viewer:main"
+chunk = "koregraph.cli.chunk:main"
 
 
 [build-system]

@@ -1,5 +1,5 @@
 from datetime import timedelta
-from pickle import load
+import pickle
 from pathlib import Path
 from os import environ
 from typing import Dict
@@ -26,7 +26,7 @@ def load_choregraphy(name: str) -> Choregraphy:
     """
 
     with open(KEYPOINTS_DIRECTORY / f"{name}.pkl", "rb") as keypoints_file:
-        choregraphy_raw: Dict = load(keypoints_file)
+        choregraphy_raw: Dict = pickle.load(keypoints_file)
     loaded_choregraphy = Choregraphy(
         name,
         choregraphy_raw["keypoints2d"][
@@ -40,6 +40,25 @@ def load_choregraphy(name: str) -> Choregraphy:
     ), f"In loaded choregraphy {name}, not the same number of postures and timestamps"
 
     return loaded_choregraphy
+
+def save_choregaphy_chunk(chore: Choregraphy, path: Path) -> None:
+    """Saves a choregraphy chunk to a pickle file.
+
+    Args:
+        data (Choregraphy): The choregraphy chunk
+        path (Path): The path to where we'll save the choregraphy chunk.
+
+    Returns:
+        Nothing
+    """
+    with open(path / f"{chore.name}.pkl", "wb") as handle:
+        pickle.dump(
+            {
+            'keypoints2d': chore.keypoints2d,
+            'timestamps': chore.timestamps
+            },
+            handle, pickle.HIGHEST_PROTOCOL
+        )
 
 
 if __name__ == "__main__":
