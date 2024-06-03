@@ -5,5 +5,4 @@ from enum import Enum
 Point = Tuple[int, int]
 
 
-class MusicGenre(Enum):
-    ...
+class MusicGenre(Enum): ...
