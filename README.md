@@ -57,6 +57,23 @@ poetry run --version
 # Poetry (version 1.6.1)
 ```
 
+<details>
+  <summary>If you are using pyenv</summary>
+
+**Activate koregraph**
+
+```bash
+pyenv local koregraph
+```
+
+**Install poetry**
+
+```bash
+pip intall poetry
+```
+
+</details>
+
 ### [VSCode (Optional)](https://code.visualstudio.com/)
 
 This template is configured to work with the VSCode editor, but it does not required it to be used.
@@ -80,7 +97,7 @@ poetry install
 **In dev mode :**
 
 ```bash
-poetry install --with dev
+poetry install --with dev,viewer
 ```
 
 ## Scripts
@@ -88,7 +105,13 @@ poetry install --with dev
 **Export presentation (github pages)**
 
 ```bash
-poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to slides --stdout >> documentation/pages/index.html
+poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to slides --stdout > documentation/pages/index.html
+```
+
+**Build viewer video from choregraphy**
+
+```bash
+poetry run viewer -c data/keypoints2d/gBR_sBM_cAll_d04_mBR0_ch01.pkl  # Path to your video
 ```
 
 ## Ideas
