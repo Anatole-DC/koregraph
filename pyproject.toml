@@ -4,6 +4,8 @@ version = "0.0.0"
 description = "An AI for music driven choregraphy generation."
 authors = ["Anatole-DC <adechauveron@gmail.com>"]
 readme = "README.md"
+homepage = "https://anatole-dc.github.io/koregraph/#/"
+
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -11,6 +13,7 @@ python-dotenv = "^1.0.0"
 urllib3 = "^2.2.1"
 requests = "^2.32.2"
 librosa = "^0.10.2.post1"
+
 
 [tool.poetry.group.dev]
 optional = true
@@ -21,9 +24,22 @@ flake8 = "^6.1.0"
 black = "^24.4.2"
 
 
+[tool.poetry.group.notebook]
+optional = true
+
 [tool.poetry.group.notebook.dependencies]
 jupyterlab = "^4.2.1"
 black = {extras = ["jupyter"], version = "^24.4.2"}
+
+
+[tool.poetry.group.viewer]
+optional = true
+
+[tool.poetry.group.viewer.dependencies]
+mutagen = "^1.47.0"
+pillow = "^10.3.0"
+moviepy = "^1.0.3"
+
 
 [build-system]
 requires = ["poetry-core"]
