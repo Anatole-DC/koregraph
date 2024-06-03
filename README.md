@@ -88,7 +88,7 @@ poetry install --with dev
 **Export presentation (github pages)**
 
 ```bash
-poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to slides --stdout >> documentation/pages/index.html
+poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to slides --stdout > documentation/pages/index.html
 ```
 
 ## Ideas
