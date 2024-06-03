@@ -1,3 +1,4 @@
+from fileinput import filename
 from imageio import mimsave
 from pathlib import Path
 from os import environ
@@ -62,7 +63,7 @@ def draw_keypoints(keypoints: np.ndarray, frame_format=(1920, 1080), radius=5) -
 
 
 def export_choregraphy_keypoints(
-    choregraphy_name: str, export_name: str = None
+    choregraphy: Choregraphy, export_name: str = None
 ) -> Path:
     """Builds the choregraphy video without sound.
 
@@ -75,17 +76,15 @@ def export_choregraphy_keypoints(
     """
 
     if export_name is None:
-        export_name = choregraphy_name
-    export_path = Path(f"temp/{export_name}.mp4")
-
-    choregraphy: Choregraphy = load_choregraphy(choregraphy_name)
+        export_name = choregraphy.name
+    export_path = Path(f"temp/{export_name}_soundless.mp4")
 
     frame_buffer = []
     for keypoints in choregraphy.keypoints2d:
         new_frame = draw_keypoints(keypoints)
         frame_buffer.append(new_frame)
 
-    mimsave(export_path, frame_buffer, fps=30)
+    mimsave(export_path, frame_buffer, fps=60)
 
     return export_path
 
@@ -99,17 +98,23 @@ def keypoints_video_audio_builder(choregraphy_name: str):
 
     aist_file = AISTFile(choregraphy_name)
 
-    video_path = export_choregraphy_keypoints(choregraphy_name)
+    choregraphy: Choregraphy = load_choregraphy(choregraphy_name)
 
-    print(video_path)
+    print(f"Choregraphy '{choregraphy.name}' : {len(choregraphy.keypoints2d)} postures")
+
+    video_path = export_choregraphy_keypoints(choregraphy)
 
     video = VideoFileClip(str(video_path.absolute()))
     audio = AudioFileClip(str(aist_file.music.absolute()))
 
+    final_filename = Path(f"temp/{choregraphy_name}.mp4")
+    final_filename.unlink(missing_ok=True)
+
     final_video: VideoClip = video.set_audio(audio)
     final_video.write_videofile(
-        fps=60, codec="libx264", filename=f"temp/{choregraphy_name}.mp4"
+        fps=60, codec="libx264", filename=str(final_filename.absolute())
     )
+    video_path.unlink()
 
 
 if __name__ == "__main__":
