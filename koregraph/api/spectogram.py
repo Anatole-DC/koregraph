@@ -2,21 +2,24 @@ import os
 import librosa
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-def save_images_log_power_spectogram(file_path):
+
+def save_images_log_power_spectogram(file_path: Path):
     '''Save log power spectogram image of the audio file
+
     Args:
-        file_path (str): path to the audio file
+        file_path (Path) : path to the audio file
 
     Returns:
-        str: path to the saved image
+        Path: path to the saved image
     '''
 
-    image_folder = '../data/images'
-    os.makedirs(image_folder, exist_ok=True)
+    image_folder = os.environ.get("IMAGE_FOLDER")
+    if not os.path.exists(image_folder):
+        os.makedirs(image_folder)
 
-    y, sr = librosa.load(file_path, duration=10)
-    S = np.abs(librosa.stft(y))
+    y, sr = librosa.load(file_path, duration=10) # load the first 10 seconds of the audio file
 
     fig, ax = plt.subplots(figsize=(50, 10))
     melspectrogram = librosa.feature.melspectrogram(y=y, sr=sr,n_fft=512, n_mels=128, hop_length=128)
@@ -26,6 +29,6 @@ def save_images_log_power_spectogram(file_path):
     plt.savefig(f"{image_folder}/{os.path.basename(file_path)}_log_power_spectrogram.png")
     plt.close()
 
-    return f"{image_folder}/{os.path.basename(file_path)}_log_power_spectrogram.png"
+    return Path(f"{image_folder}/{os.path.basename(file_path)}_log_power_spectrogram.png")
 
 # save_images_log_power_spectogram("../data/music/mp3/mBR0.mp3")
