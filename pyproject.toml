@@ -40,6 +40,9 @@ mutagen = "^1.47.0"
 pillow = "^10.3.0"
 moviepy = "^1.0.3"
 
+[tool.poetry.scripts]
+viewer = "koregraph.cli.viewer:main"
+
 
 [build-system]
 requires = ["poetry-core"]
