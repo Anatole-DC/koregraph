@@ -76,6 +76,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
 
 # IPython
 profile_default/
@@ -160,3 +161,6 @@ cython_debug/
 
 # Project related files
 data/
+
+# Mac related files
+.DS_Store
