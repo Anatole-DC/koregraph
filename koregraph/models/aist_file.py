@@ -8,7 +8,7 @@ from koregraph.models.types import MusicGenre
 MUSIC_DIRECTORY = Path(
     environ.get(
         "MUSIC_DIRECTORY",
-        "/home/adechauveron/code/koregraph-project/koregraph/data/music/mp3",
+        "data/music/mp3",
     )
 )
 if not MUSIC_DIRECTORY.exists():
