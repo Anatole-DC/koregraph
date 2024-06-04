@@ -1,7 +1,10 @@
 from numpy import expand_dims, float32
 
 from koregraph.api.machine_learning.neural_network import initialize_model
-from koregraph.api.machine_learning.load_dataset import load_preprocess_dataset, check_dataset_format
+from koregraph.api.machine_learning.load_dataset import (
+    load_preprocess_dataset,
+    check_dataset_format,
+)
 from koregraph.api.machine_learning.callbacks import BackupCallback
 from koregraph.utils.pickle import save_object_pickle
 

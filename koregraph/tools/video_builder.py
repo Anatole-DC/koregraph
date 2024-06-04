@@ -1,9 +1,8 @@
-from fileinput import filename
-from imageio import mimsave
+from imageio import get_writer
 from pathlib import Path
 from os import environ
 
-import numpy as np
+from numpy import asarray, isnan
 from PIL.Image import Image, new as new_pillow_image
 from PIL.ImageDraw import Draw
 from moviepy.editor import AudioFileClip, VideoFileClip, VideoClip
@@ -11,6 +10,7 @@ from moviepy.editor import AudioFileClip, VideoFileClip, VideoClip
 from koregraph.managers.choregraphy import load_choregraphy
 from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
+from koregraph.models.posture import Posture
 
 
 KEYPOINTS_BUILDER_TEMP_DIRECTORY = Path(
@@ -40,11 +40,11 @@ COLORS = [
 ]
 
 
-def draw_keypoints(keypoints: np.ndarray, frame_format=(1920, 1080), radius=5) -> Image:
-    """Draw the 2D keypoints onto a new image and return the image.
+def draw_keypoints(posture: Posture, frame_format=(1920, 1080), radius=5) -> Image:
+    """Draw the 2D posture onto a new image and return the image.
 
     Args:
-        keypoints (ndarray): The keypoints to draw.
+        posture (Posture): The posture to draw.
         frame_format (tuple, optional): The frame dimension. Defaults to (720, 720).
 
     Returns:
@@ -53,12 +53,15 @@ def draw_keypoints(keypoints: np.ndarray, frame_format=(1920, 1080), radius=5) -
 
     new_frame = new_pillow_image("RGB", frame_format)
     draw = Draw(new_frame)
-    for index, (x, y) in enumerate(keypoints):
-        if np.isnan(x) or np.isnan(y) or x < 0 or y < 0:
+    for index, ((x, y), ((x1, y1), (x2, y2))) in enumerate(
+        zip(posture.keypoints, posture.bones())
+    ):
+        if isnan(x) or isnan(y) or x < 0 or y < 0:
             continue
         draw.ellipse(
             (x - radius, y - radius, x + radius, y + radius), fill=tuple(COLORS[index])
         )
+        draw.line((x1, y1, x2, y2), fill=tuple(COLORS[index]))
     return new_frame
 
 
@@ -79,12 +82,11 @@ def export_choregraphy_keypoints(
         export_name = choregraphy.name
     export_path = Path(f"temp/{export_name}_soundless.mp4")
 
-    frame_buffer = []
-    for keypoints in choregraphy.keypoints2d:
-        new_frame = draw_keypoints(keypoints)
-        frame_buffer.append(new_frame)
-
-    mimsave(export_path, frame_buffer, fps=60)
+    with get_writer(export_path, mode="I", fps=60) as video_writer:
+        [
+            video_writer.append_data(asarray(draw_keypoints(Posture(keypoints))))
+            for keypoints in choregraphy.keypoints2d
+        ]
 
     return export_path
 

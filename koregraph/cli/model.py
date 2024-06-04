@@ -8,6 +8,7 @@ from koregraph.utils.pickle import load_pickle_object, save_object_pickle
 from koregraph.api.music_to_numpy import music_to_numpy
 from koregraph.params import MODEL_OUTPUT_DIRECTORY, AUDIO_DIRECTORY
 
+
 def main():
     model: Model = load_pickle_object(MODEL_OUTPUT_DIRECTORY / "model.pkl")
 
@@ -20,6 +21,7 @@ def main():
     print(predictions_reshaped.shape)
 
     # save_object_pickle({"keypoints2d": predictions_reshaped, "timestamps": np.ones(predictions_reshaped.shape)}, "predictions")
+
 
 if __name__ == "__main__":
     main()
