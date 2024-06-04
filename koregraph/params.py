@@ -1,4 +1,4 @@
-from os import environ
+from os import environ, listdir
 from pathlib import Path
 
 AUDIO_DIRECTORY: Path = Path(
@@ -27,3 +27,9 @@ GENERATED_AUDIO_DIRECTORY: Path = Path(
         "generated/chunks/music",
     )
 )
+
+ALL_ADVANCED_MOVE_NAMES = [
+    name for name in listdir(KEYPOINTS_DIRECTORY) if "sFM" in name
+]
+
+ALL_BASIC_MOVE_NAMES = [name for name in listdir(KEYPOINTS_DIRECTORY) if "sBM" in name]
