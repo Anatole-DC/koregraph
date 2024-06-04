@@ -1,18 +1,11 @@
 from datetime import timedelta
-from pickle import load
+from pickle import load as load_pickle, dump as dump_pickle, HIGHEST_PROTOCOL
 from pathlib import Path
 from os import environ
 from typing import Dict
 
 from koregraph.models.choregraphy import Choregraphy
-
-
-KEYPOINTS_DIRECTORY: Path = Path(
-    environ.get(
-        "KEYPOINTS_DIRECTORY",
-        "data/keypoints2d",
-    )
-)
+from koregraph.params import KEYPOINTS_DIRECTORY
 
 
 def load_choregraphy(name: str) -> Choregraphy:
@@ -26,7 +19,7 @@ def load_choregraphy(name: str) -> Choregraphy:
     """
 
     with open(KEYPOINTS_DIRECTORY / f"{name}.pkl", "rb") as keypoints_file:
-        choregraphy_raw: Dict = load(keypoints_file)
+        choregraphy_raw: Dict = load_pickle(keypoints_file)
     loaded_choregraphy = Choregraphy(
         name,
         choregraphy_raw["keypoints2d"][
@@ -40,6 +33,24 @@ def load_choregraphy(name: str) -> Choregraphy:
     ), f"In loaded choregraphy {name}, not the same number of postures and timestamps"
 
     return loaded_choregraphy
+
+
+def save_choregaphy_chunk(chore: Choregraphy, path: Path) -> None:
+    """Saves a choregraphy chunk to a pickle file.
+
+    Args:
+        data (Choregraphy): The choregraphy chunk
+        path (Path): The path to where we'll save the choregraphy chunk.
+
+    Returns:
+        Nothing
+    """
+    with open(path / f"{chore.name}.pkl", "wb") as handle:
+        dump_pickle(
+            {"keypoints2d": chore.keypoints2d, "timestamps": chore.timestamps},
+            handle,
+            HIGHEST_PROTOCOL,
+        )
 
 
 if __name__ == "__main__":
