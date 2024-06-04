@@ -1,11 +1,14 @@
-from .neural_network import initialize_model
-from .load_dataset import load_preprocess_dataset, check_dataset_format
-from .callbacks import BackupCallback
+from koregraph.api.machine_learning.neural_network import initialize_model
+from koregraph.api.machine_learning.load_dataset import load_preprocess_dataset, check_dataset_format
+from koregraph.api.machine_learning.callbacks import BackupCallback
 from koregraph.utils.pickle import save_object_pickle
 
 
 def train_workflow():
     X, y = load_preprocess_dataset()
+    print(X.shape, y.shape)
+
+    return
 
     check_dataset_format(X, y)
 
