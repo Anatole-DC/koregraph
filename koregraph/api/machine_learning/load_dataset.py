@@ -12,7 +12,7 @@ def load_preprocess_dataset():
     Returns:
         Tuple[np.ndarray, np.ndarray]: The dataset.
     """
-    y, X = load_pickle_object(GENERATED_PICKLE_DIRECTORY)
+    y, X = load_pickle_object(GENERATED_PICKLE_DIRECTORY / "generated_gBR_sFM_cAll_d04_mBR0_ch01.pkl")
 
     return X, y
 

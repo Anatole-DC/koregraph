@@ -1,3 +1,5 @@
+from numpy import expand_dims, float32
+
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import load_preprocess_dataset, check_dataset_format
 from koregraph.api.machine_learning.callbacks import BackupCallback
@@ -6,21 +8,21 @@ from koregraph.utils.pickle import save_object_pickle
 
 def train_workflow():
     X, y = load_preprocess_dataset()
-    print(X.shape, y.shape)
 
-    return
+    X = X.reshape((-1, 1, 128))
 
-    check_dataset_format(X, y)
+    y = y.astype(float32)
 
-    model = initialize_model()
+    print(X.shape)
+    model = initialize_model(X, y)
 
     history = model.fit(
         x=X,
         y=y,
-        validation_data=0.2,
+        validation_split=0.2,
         batch_size=16,
         epochs=20,
-        callbacks=[BackupCallback],
+        # callbacks=[BackupCallback],
     )
 
     save_object_pickle(model, "model")
