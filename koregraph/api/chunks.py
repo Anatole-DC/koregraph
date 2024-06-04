@@ -33,11 +33,3 @@ def generate_chunk(choregraphy_name: str, chunk_size: int = CHUNK_SIZE, reload_m
         for music, chunk_id in musics:
             path = music_path / (music_name + f"_{chunk_id}.mp3")
             save_audio_chunk(music, sr, path)
-
-
-def generate_all_simple_move_chunks():
-    pass
-
-
-def generate_all_advanced_move_chunks():
-    pass

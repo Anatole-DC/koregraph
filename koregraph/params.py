@@ -1,6 +1,11 @@
-from os import environ, path
+from os import environ, path, listdir
 from pathlib import Path
 from dotenv import load_dotenv
+
+
+load_dotenv()
+print('dotenv loaded')
+
 
 PROJECT_ROOT = Path(path.dirname(path.dirname(__file__)))
 
@@ -26,14 +31,6 @@ GENERATED_AUDIO_DIRECTORY: Path = PROJECT_ROOT.joinpath(
 
 CHUNK_SIZE: int = int(environ.get("CHUNK_SIZE", '10'))
 
-
-load_dotenv()
-print('dotenv loaded')
-
-
-
-
-
 if not AUDIO_DIRECTORY.exists():
     raise FileNotFoundError(
         f"Could not find audio directory at '{AUDIO_DIRECTORY.absolute()}'"
@@ -55,3 +52,9 @@ if not GENERATED_AUDIO_DIRECTORY.exists():
 if not IMAGE_DIRECTORY.exists():
     IMAGE_DIRECTORY.mkdir(parents=True, exist_ok=True)
     print(f"Created directory'{IMAGE_DIRECTORY}'")
+
+ALL_ADVANCED_MOVE_NAMES = [
+    name for name in listdir(KEYPOINTS_DIRECTORY) if "sFM" in name
+]
+
+ALL_BASIC_MOVE_NAMES = [name for name in listdir(KEYPOINTS_DIRECTORY) if "sBM" in name]
