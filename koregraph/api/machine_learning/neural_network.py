@@ -4,8 +4,8 @@
 
 from typing import List
 
-from tensorflow.python.keras.layers import Dense, LSTM
-from tensorflow.python.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, LSTM
+from tensorflow.keras.models import Sequential, Model
 
 
 def prepare_model(input_shape: List[int], nb_features_out: int) -> Model:
