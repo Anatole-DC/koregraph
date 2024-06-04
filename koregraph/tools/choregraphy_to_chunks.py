@@ -63,7 +63,7 @@ def split_audio(
         output.append((y[music_index : music_index + chunk_length], chunk_id))
 
     output[-1] = (
-        pad(output[-1][0], (0, chunk_length - len(output[-1])), constant_values=0),
+        pad(output[-1][0], (0, chunk_length - len(output[-1][0])), constant_values=0),
         output[-1][1],
     )
     return output, sr
