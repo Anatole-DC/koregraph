@@ -2,7 +2,12 @@
 name = "koregraph"
 version = "0.0.0"
 description = "An AI for music driven choregraphy generation."
-authors = ["Anatole-DC <adechauveron@gmail.com>"]
+authors = [
+    "Anatole-DC <adechauveron@gmail.com>",
+    "Kelly-an <kdanne206@gmail.com>",
+    "Robin Le Floch <robin.le.floch@gmail.com>",
+    "maudbenichou <maudb.benichou@gmail.com>"
+]
 readme = "README.md"
 homepage = "https://anatole-dc.github.io/koregraph/#/"
 
@@ -13,6 +18,7 @@ python-dotenv = "^1.0.0"
 urllib3 = "^2.2.1"
 requests = "^2.32.2"
 librosa = "^0.10.2.post1"
+tensorflow = {extras = ["and-cuda"], version = "^2.16.1"}
 
 
 [tool.poetry.group.dev]
@@ -47,8 +53,12 @@ optional = true
 soundfile = "^0.12.1"
 
 
+[tool.poetry.group.training]
+optional = true
+
 [tool.poetry.group.training.dependencies]
 mlflow = "^2.13.1"
+
 
 [tool.poetry.scripts]
 viewer = "koregraph.cli.viewer:main"
