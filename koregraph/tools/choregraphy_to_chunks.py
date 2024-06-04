@@ -3,10 +3,11 @@ from typing import List, Tuple
 from pathlib import Path
 import pickle
 import librosa
-from numpy import ndarray, pad
+from numpy import ndarray, pad, array, concatenate, tile
 
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.params import KEYPOINTS_DIRECTORY, AUDIO_DIRECTORY
+from koregraph.models.constants import default_2d
 
 
 def split_sequence(sequence_file: str, chunk_size_sec: int) -> List[Choregraphy]:
@@ -30,12 +31,33 @@ def split_sequence(sequence_file: str, chunk_size_sec: int) -> List[Choregraphy]
             output.append(
                 Choregraphy(
                     name=sequence_file + f"_{j}",
-                    keypoints2d=postures[:, i : i + 60 * chunk_size_sec, :, :],
+                    keypoints2d=postures[0, i : i + 60 * chunk_size_sec, :, :2],
                     timestamps=timestamps[i : i + 60 * chunk_size_sec],
                 )
             )
 
-        #TODO pad last sequence
+        # TODO pad last sequence
+        last_chore = output[-1]
+        chunk_final_size = 60 * chunk_size_sec
+
+        last_chore.keypoints2d = concatenate(
+            (
+                last_chore.keypoints2d,
+                tile(default_2d, (chunk_final_size - len(last_chore.timestamps), 1, 1)),
+            )
+        )
+
+        # Timestamp
+        last_tp = last_chore.timestamps[-1]
+        padding_ts = array(
+            [
+                last_tp + (i * round(5000 / 3))
+                for i in range(1, chunk_final_size - len(last_chore.timestamps) + 1)
+            ]
+        )
+        last_chore.timestamps = concatenate((last_chore.timestamps, padding_ts))
+
+        output[-1] = last_chore
 
     return output
 
