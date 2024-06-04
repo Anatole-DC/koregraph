@@ -1,6 +1,6 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
-from koregraph.api import save_images_log_power_spectogram
+from koregraph.api.spectogram import save_images_log_power_spectogram
 
 
 class LogPowerSpectrogramTransformer(BaseEstimator, TransformerMixin):
