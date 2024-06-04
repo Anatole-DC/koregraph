@@ -3,18 +3,7 @@ from pathlib import Path
 from os import environ
 
 from koregraph.models.types import MusicGenre
-
-
-MUSIC_DIRECTORY = Path(
-    environ.get(
-        "MUSIC_DIRECTORY",
-        "data/music/mp3",
-    )
-)
-if not MUSIC_DIRECTORY.exists():
-    raise FileNotFoundError(
-        f"Could not find music directory at '{MUSIC_DIRECTORY.absolute()}'"
-    )
+from koregraph.params import AUDIO_DIRECTORY
 
 
 @dataclass
@@ -35,7 +24,7 @@ class AISTFile:
 
     def __post_init__(self):
         genre, _, _, _, music, _ = self.name.split("_")
-        self.music = MUSIC_DIRECTORY / f"{music}.mp3"
+        self.music = AUDIO_DIRECTORY / f"{music}.mp3"
         self.genre = genre[1:]
 
 
