@@ -21,6 +21,7 @@ def save_object_pickle(obj: Any, obj_name: str):
         pickle_dump(obj, pickle_file, protocol=HIGHEST_PROTOCOL)
     return saved_object_path
 
+
 def load_pickle_object(obj_path: Path):
     """Load a python object from a pickle object.
 

@@ -1,4 +1,3 @@
-from fileinput import filename
 from imageio import mimsave
 from pathlib import Path
 from os import environ

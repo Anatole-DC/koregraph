@@ -4,8 +4,8 @@
 
 from typing import List
 
-from tensorflow.keras.layers import Dense, LSTM, Normalization, Dropout
-from tensorflow.keras.models import Sequential, Model
+from keras.layers import Dense, LSTM, Normalization, Dropout
+from keras.models import Sequential, Model
 
 
 def prepare_model(X, y) -> Model:
@@ -53,8 +53,6 @@ def compile_model(model: Model) -> Model:
 
 def initialize_model(X, y) -> Model:
     """Initialize a compiled model.
-
-        @TODO: Add the input parameters to initialize the model.
 
     Returns:
         Model: The compiled model.
