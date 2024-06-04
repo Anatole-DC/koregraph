@@ -1,8 +1,8 @@
 from argparse import ArgumentParser, BooleanOptionalAction
 from pathlib import Path
+from koregraph.params import CHUNK_SIZE
 
 from koregraph.api.chunks import generate_chunk
-
 
 parser = ArgumentParser(
     "Koregraph chunk",
@@ -12,8 +12,14 @@ parser = ArgumentParser(
 parser.add_argument(
     "-c", "--choregraphy", dest="choregraphy", required=True, help="Choregraphy name"
 )
+
 parser.add_argument(
-    "-s", "--size", dest="chunk_size", required=True, help="Size of chunks in seconds"
+    "-s",
+    "--size",
+    dest="chunk_size",
+    required=True,
+    help="Size of chunks in seconds",
+    default=CHUNK_SIZE,
 )
 
 parser.add_argument(
