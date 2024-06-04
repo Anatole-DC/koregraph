@@ -1,8 +1,8 @@
-from imageio import mimsave
+from imageio import mimsave, get_writer
 from pathlib import Path
 from os import environ
 
-import numpy as np
+from numpy import asarray, ndarray, isnan
 from PIL.Image import Image, new as new_pillow_image
 from PIL.ImageDraw import Draw
 from moviepy.editor import AudioFileClip, VideoFileClip, VideoClip
@@ -39,7 +39,7 @@ COLORS = [
 ]
 
 
-def draw_keypoints(keypoints: np.ndarray, frame_format=(1920, 1080), radius=5) -> Image:
+def draw_keypoints(keypoints: ndarray, frame_format=(1920, 1080), radius=5) -> Image:
     """Draw the 2D keypoints onto a new image and return the image.
 
     Args:
@@ -53,7 +53,7 @@ def draw_keypoints(keypoints: np.ndarray, frame_format=(1920, 1080), radius=5) -
     new_frame = new_pillow_image("RGB", frame_format)
     draw = Draw(new_frame)
     for index, (x, y) in enumerate(keypoints):
-        if np.isnan(x) or np.isnan(y) or x < 0 or y < 0:
+        if isnan(x) or isnan(y) or x < 0 or y < 0:
             continue
         draw.ellipse(
             (x - radius, y - radius, x + radius, y + radius), fill=tuple(COLORS[index])
@@ -78,12 +78,11 @@ def export_choregraphy_keypoints(
         export_name = choregraphy.name
     export_path = Path(f"temp/{export_name}_soundless.mp4")
 
-    frame_buffer = []
-    for keypoints in choregraphy.keypoints2d:
-        new_frame = draw_keypoints(keypoints)
-        frame_buffer.append(new_frame)
-
-    mimsave(export_path, frame_buffer, fps=60)
+    with get_writer(export_path, mode="I", fps=60) as video_writer:
+        [
+            video_writer.append_data(asarray(draw_keypoints(keypoints)))
+            for keypoints in choregraphy.keypoints2d
+        ]
 
     return export_path
 
