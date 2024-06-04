@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-print('dotenv loaded')
+print("dotenv loaded")
 
 
 PROJECT_ROOT = Path(path.dirname(path.dirname(__file__)))
@@ -14,7 +14,7 @@ AUDIO_DIRECTORY: Path = PROJECT_ROOT.joinpath(
 )
 
 IMAGE_DIRECTORY: Path = PROJECT_ROOT.joinpath(
-        environ.get("IMAGE_DIRECTORY", "data/images")
+    environ.get("IMAGE_DIRECTORY", "data/images")
 )
 
 KEYPOINTS_DIRECTORY: Path = PROJECT_ROOT.joinpath(
@@ -29,7 +29,7 @@ GENERATED_AUDIO_DIRECTORY: Path = PROJECT_ROOT.joinpath(
     environ.get("GENERATED_AUDIO_DIRECTORY", "generated/chunks/music")
 )
 
-CHUNK_SIZE: int = int(environ.get("CHUNK_SIZE", '10'))
+CHUNK_SIZE: int = int(environ.get("CHUNK_SIZE", "10"))
 
 if not AUDIO_DIRECTORY.exists():
     raise FileNotFoundError(

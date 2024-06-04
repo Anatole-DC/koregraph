@@ -11,7 +11,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
 def save_images_log_power_spectogram(file_path: Path):
     """Save log power spectogram image of the audio file
 
@@ -42,4 +41,6 @@ def save_images_log_power_spectogram(file_path: Path):
     plt.savefig(image_path)
     plt.close()
 
-    return Path(f"{IMAGE_DIRECTORY}/{path.basename(file_path)}_log_power_spectrogram.png")
+    return Path(
+        f"{IMAGE_DIRECTORY}/{path.basename(file_path)}_log_power_spectrogram.png"
+    )

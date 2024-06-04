@@ -10,11 +10,7 @@ parser = ArgumentParser(
 )
 
 parser.add_argument(
-    "-c",
-    "--choregraphy",
-    dest="choregraphy",
-    required=True,
-    help="Choregraphy name"
+    "-c", "--choregraphy", dest="choregraphy", required=True, help="Choregraphy name"
 )
 
 parser.add_argument(
@@ -23,7 +19,7 @@ parser.add_argument(
     dest="chunk_size",
     required=True,
     help="Size of chunks in seconds",
-    default=CHUNK_SIZE
+    default=CHUNK_SIZE,
 )
 
 parser.add_argument(

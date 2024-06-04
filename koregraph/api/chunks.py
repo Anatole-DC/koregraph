@@ -4,7 +4,12 @@ import shutil
 from koregraph.tools.choregraphy_to_chunks import split_sequence, split_audio
 from koregraph.managers.choregraphy import save_choregaphy_chunk
 from koregraph.managers.audio import save_audio_chunk
-from koregraph.params import GENERATED_AUDIO_DIRECTORY, GENERATED_KEYPOINTS_DIRECTORY, CHUNK_SIZE
+from koregraph.params import (
+    GENERATED_AUDIO_DIRECTORY,
+    GENERATED_KEYPOINTS_DIRECTORY,
+    CHUNK_SIZE,
+)
+
 
 def reset_chunks(path, reload=True):
     if os.path.exists(path) and not os.path.isfile(path) and reload:
@@ -15,7 +20,9 @@ def reset_chunks(path, reload=True):
     path.mkdir(parents=True, exist_ok=True)
 
 
-def generate_chunk(choregraphy_name: str, chunk_size: int = CHUNK_SIZE, reload_music: bool = False):
+def generate_chunk(
+    choregraphy_name: str, chunk_size: int = CHUNK_SIZE, reload_music: bool = False
+):
     # Clean previous chunks out if needed
     chore_path = GENERATED_KEYPOINTS_DIRECTORY / choregraphy_name / chunk_size
     reset_chunks(chore_path)
