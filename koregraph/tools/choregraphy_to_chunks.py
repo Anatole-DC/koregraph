@@ -35,6 +35,8 @@ def split_sequence(sequence_file: str, chunk_size_sec: int) -> List[Choregraphy]
                 )
             )
 
+        #TODO pad last sequence
+
     return output
 
 
