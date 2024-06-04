@@ -40,6 +40,12 @@ mutagen = "^1.47.0"
 pillow = "^10.3.0"
 moviepy = "^1.0.3"
 
+[tool.poetry.group.chunk]
+optional = true
+
+[tool.poetry.group.chunk.dependencies]
+soundfile = "^0.12.1"
+
 [tool.poetry.scripts]
 viewer = "koregraph.cli.viewer:main"
 chunk = "koregraph.cli.chunk:main"

@@ -114,6 +114,13 @@ poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to 
 poetry run viewer -c data/keypoints2d/gBR_sBM_cAll_d04_mBR0_ch01.pkl  # Path to your video
 ```
 
+**Create 5 sec chunks for a choreography**
+
+```bash
+poetry run chunk -c data/keypoints2d/gBR_sBM_cAll_d04_mBR0_ch02.pkl -s 5
+```
+If the music already exists, but you want to split it again for some reason, add the following parameter `--reload-music`
+
 ## Ideas
 
 Pitch en ligne

@@ -5,14 +5,7 @@ from os import environ
 from typing import Dict
 
 from koregraph.models.choregraphy import Choregraphy
-
-
-KEYPOINTS_DIRECTORY: Path = Path(
-    environ.get(
-        "KEYPOINTS_DIRECTORY",
-        "data/keypoints2d",
-    )
-)
+from koregraph.params import KEYPOINTS_DIRECTORY
 
 
 def load_choregraphy(name: str) -> Choregraphy:
@@ -41,6 +34,7 @@ def load_choregraphy(name: str) -> Choregraphy:
 
     return loaded_choregraphy
 
+
 def save_choregaphy_chunk(chore: Choregraphy, path: Path) -> None:
     """Saves a choregraphy chunk to a pickle file.
 
@@ -53,11 +47,9 @@ def save_choregaphy_chunk(chore: Choregraphy, path: Path) -> None:
     """
     with open(path / f"{chore.name}.pkl", "wb") as handle:
         pickle.dump(
-            {
-            'keypoints2d': chore.keypoints2d,
-            'timestamps': chore.timestamps
-            },
-            handle, pickle.HIGHEST_PROTOCOL
+            {"keypoints2d": chore.keypoints2d, "timestamps": chore.timestamps},
+            handle,
+            pickle.HIGHEST_PROTOCOL,
         )
 
 
