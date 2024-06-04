@@ -42,5 +42,6 @@ def generate_chunk(choregraphy_name: str, chunk_size: int, reload_music: bool = 
 def generate_all_simple_move_chunks():
     pass
 
+
 def generate_all_advanced_move_chunks():
     pass
