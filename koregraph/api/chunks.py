@@ -1,13 +1,12 @@
-from koregraph.tools.choregraphy_to_chunks import split_sequence, split_audio
-from koregraph.managers.choregraphy import save_choregaphy_chunk
-from koregraph.managers.audio import save_audio_chunk
-from koregraph.params import GENERATED_AUDIO_DIRECTORY, GENERATED_KEYPOINTS_DIRECTORY
-
 import os
 import shutil
 
+from koregraph.tools.choregraphy_to_chunks import split_sequence, split_audio
+from koregraph.managers.choregraphy import save_choregaphy_chunk
+from koregraph.managers.audio import save_audio_chunk
+from koregraph.params import GENERATED_AUDIO_DIRECTORY, GENERATED_KEYPOINTS_DIRECTORY, CHUNK_SIZE
 
-def clean_path(path, reload=True):
+def reset_chunks(path, reload=True):
     if os.path.exists(path) and not os.path.isfile(path) and reload:
         try:
             shutil.rmtree(path)
@@ -16,16 +15,13 @@ def clean_path(path, reload=True):
     path.mkdir(parents=True, exist_ok=True)
 
 
-def generate_chunk(choregraphy_name: str, chunk_size: int, reload_music: bool = False):
-    GENERATED_KEYPOINTS_DIRECTORY.mkdir(parents=True, exist_ok=True)
-    GENERATED_AUDIO_DIRECTORY.mkdir(parents=True, exist_ok=True)
-
+def generate_chunk(choregraphy_name: str, chunk_size: int = CHUNK_SIZE, reload_music: bool = False):
     # Clean previous chunks out if needed
     chore_path = GENERATED_KEYPOINTS_DIRECTORY / choregraphy_name / chunk_size
-    clean_path(chore_path)
+    reset_chunks(chore_path)
     _, _, _, _, music_name, _ = choregraphy_name.split("_")
     music_path = GENERATED_AUDIO_DIRECTORY / music_name / chunk_size
-    clean_path(music_path, reload_music)
+    reset_chunks(music_path, reload_music)
 
     # Get and save chunks
     chores = split_sequence(choregraphy_name, int(chunk_size))
