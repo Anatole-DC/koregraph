@@ -46,6 +46,10 @@ optional = true
 [tool.poetry.group.chunk.dependencies]
 soundfile = "^0.12.1"
 
+
+[tool.poetry.group.training.dependencies]
+mlflow = "^2.13.1"
+
 [tool.poetry.scripts]
 viewer = "koregraph.cli.viewer:main"
 chunk = "koregraph.cli.chunk:main"
