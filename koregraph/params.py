@@ -1,6 +1,8 @@
 from os import environ, listdir
 from pathlib import Path
 
+from koregraph.models.constants import LAST_CHUNK_TYPE
+
 AUDIO_DIRECTORY: Path = Path(
     environ.get(
         "AUDIO_DIRECTORY",
@@ -33,3 +35,5 @@ ALL_ADVANCED_MOVE_NAMES = [
 ]
 
 ALL_BASIC_MOVE_NAMES = [name for name in listdir(KEYPOINTS_DIRECTORY) if "sBM" in name]
+
+LAST_CHUNK_TYPE_STRATEGY = LAST_CHUNK_TYPE.ROLLING

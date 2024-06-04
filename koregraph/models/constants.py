@@ -1,4 +1,6 @@
 from numpy import array
+from enum import Enum
+
 from koregraph.models.posture import Posture
 
 EmptyPosture: Posture = Posture(
@@ -42,3 +44,5 @@ default_2d: array = array(
         EmptyPosture.right_ankle,
     ]
 )
+
+LAST_CHUNK_TYPE = Enum("LastChunkType", ["PADDING", "ROLLING"])
