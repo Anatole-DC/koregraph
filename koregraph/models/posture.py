@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from .types import Point
+from koregraph.models.types import Point
 
 
 @dataclass

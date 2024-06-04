@@ -5,11 +5,10 @@ from librosa import load
 from librosa import display
 from librosa import power_to_db
 from librosa import feature
+from koregraph.params import IMAGE_DIRECTORY
 
 import numpy as np
 import matplotlib.pyplot as plt
-
-environ["IMAGE_FOLDER"] = Path(environ.get("IMAGE_FOLDER", "images"))
 
 
 def save_images_log_power_spectogram(file_path: Path):
@@ -21,9 +20,6 @@ def save_images_log_power_spectogram(file_path: Path):
     Returns:
         Path: path to the saved image
     """
-
-    image_folder = Path(environ.get("IMAGE_FOLDER"))
-    Path(image_folder).mkdir(parents=True, exist_ok=True)
 
     y, sr = load(file_path, duration=10)  # load the first 10 seconds of the audio file
 
@@ -41,10 +37,10 @@ def save_images_log_power_spectogram(file_path: Path):
     )
     ax.set(title="Log-Power spectrogram")
     fig.colorbar(imgdb, ax=ax, format="%+2.0f dB")
-    image_path = (
-        Path(image_folder) / f"{path.basename(file_path)}_log_power_spectrogram.png"
-    )
+    image_path = IMAGE_DIRECTORY / f"{file_path.stem}_log_power_spectrogram.png"
     plt.savefig(image_path)
     plt.close()
 
-    return Path(f"{image_folder}/{path.basename(file_path)}_log_power_spectrogram.png")
+    return Path(
+        f"{IMAGE_DIRECTORY}/{path.basename(file_path)}_log_power_spectrogram.png"
+    )

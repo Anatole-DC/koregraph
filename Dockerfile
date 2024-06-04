@@ -9,5 +9,7 @@ COPY README.md pyproject.toml poetry.lock /app/
 
 COPY koregraph/ .
 
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-root --no-interaction --no-ansi
+RUN poetry config virtualenvs.create false
+RUN poetry install --with training --no-root --no-interaction --no-ansi
+
+CMD ["poetry", "run", "mlflow", "server"]

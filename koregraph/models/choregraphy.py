@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from numpy import ndarray
 
-from .posture import Posture
+from koregraph.models.posture import Posture
 
 
 @dataclass
