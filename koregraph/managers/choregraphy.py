@@ -1,5 +1,5 @@
 from datetime import timedelta
-import pickle
+from pickle import load as load_pickle, dump as dump_pickle, HIGHEST_PROTOCOL
 from pathlib import Path
 from os import environ
 from typing import Dict
@@ -19,7 +19,7 @@ def load_choregraphy(name: str) -> Choregraphy:
     """
 
     with open(KEYPOINTS_DIRECTORY / f"{name}.pkl", "rb") as keypoints_file:
-        choregraphy_raw: Dict = pickle.load(keypoints_file)
+        choregraphy_raw: Dict = load_pickle(keypoints_file)
     loaded_choregraphy = Choregraphy(
         name,
         choregraphy_raw["keypoints2d"][
@@ -46,10 +46,10 @@ def save_choregaphy_chunk(chore: Choregraphy, path: Path) -> None:
         Nothing
     """
     with open(path / f"{chore.name}.pkl", "wb") as handle:
-        pickle.dump(
+        dump_pickle(
             {"keypoints2d": chore.keypoints2d, "timestamps": chore.timestamps},
             handle,
-            pickle.HIGHEST_PROTOCOL,
+            HIGHEST_PROTOCOL,
         )
 
 
