@@ -61,8 +61,17 @@ WEIGHTS_BACKUP_DIRECTORY.mkdir(parents=True, exist_ok=True)
 MODEL_OUTPUT_DIRECTORY: Path = Path(environ.get("OUT_DIRECTORY", "out"))
 MODEL_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
+GENERATED_PICKLE_DIRECTORY: Path = Path(
+    environ.get(
+        "GENERATED_PICKLE_DIRECTORY",
+        "generated/data/pickles",
+    )
+)
+
 ALL_ADVANCED_MOVE_NAMES = [
     name for name in listdir(KEYPOINTS_DIRECTORY) if "sFM" in name
 ]
 
 ALL_BASIC_MOVE_NAMES = [name for name in listdir(KEYPOINTS_DIRECTORY) if "sBM" in name]
+
+ALL_MUSIC_NAMES = [name for name in listdir(AUDIO_DIRECTORY) if name.endswith(".mp3")]

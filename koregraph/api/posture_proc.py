@@ -14,7 +14,7 @@ def generate_posture_array(choregraphy_name: str) -> array:
     Returns:
         Array of positions: The postures 34 columns N rows.
     """
-    with open(KEYPOINTS_DIRECTORY / (choregraphy_name + ".pkl"), "rb") as f:
+    with open(KEYPOINTS_DIRECTORY / (choregraphy_name), "rb") as f:
         data = load_pickle(f)
         postures = data["keypoints2d"][0, :, :, :2]
 
