@@ -3,6 +3,7 @@ from librosa.feature import melspectrogram
 from librosa import power_to_db
 import numpy as np
 
+
 def music_to_numpy(audio_file_path, fps=60, sr=44100, n_mels=128, n_fft=2048):
     """
     Compute the mel spectrogram of the audio for each frame of a video.
