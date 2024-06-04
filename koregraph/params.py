@@ -53,6 +53,14 @@ if not IMAGE_DIRECTORY.exists():
     IMAGE_DIRECTORY.mkdir(parents=True, exist_ok=True)
     print(f"Created directory'{IMAGE_DIRECTORY}'")
 
+WEIGHTS_BACKUP_DIRECTORY: Path = Path(
+    environ.get("WEIGHTS_BACKUP_DIRECTORY", "temp/backup")
+)
+WEIGHTS_BACKUP_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
+MODEL_OUTPUT_DIRECTORY: Path = Path(environ.get("OUT_DIRECTORY", "out"))
+MODEL_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
 ALL_ADVANCED_MOVE_NAMES = [
     name for name in listdir(KEYPOINTS_DIRECTORY) if "sFM" in name
 ]
