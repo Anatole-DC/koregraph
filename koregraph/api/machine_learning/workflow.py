@@ -7,13 +7,16 @@ from koregraph.api.machine_learning.load_dataset import (
 )
 from koregraph.api.machine_learning.callbacks import BackupCallback
 from koregraph.utils.pickle import save_object_pickle
-
+from sklearn.preprocessing import MinMaxScaler
 
 def train_workflow():
+
     X, y = load_preprocess_dataset()
 
-    # TODO include this in preprocessing workflow (music to numpy)
-    X = X.reshape((-1, 1, 128))
+    scaler = MinMaxScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    X = X_scaled.reshape((-1, 1, 128))
 
     y = y.astype(float32)
 
