@@ -111,7 +111,7 @@ poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to 
 **Train a model**
 
 ```bash
-poetry run train -m model_kelly
+poetry run train -m modelkelly
 ```
 
 **Predict a choregraphy from an audio**
