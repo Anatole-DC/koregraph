@@ -1,7 +1,6 @@
 from numpy import array, ndarray, nan_to_num
 from koregraph.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT
 from pickle import load as load_pickle
-from numpy import isnan
 from typing import Tuple
 
 
