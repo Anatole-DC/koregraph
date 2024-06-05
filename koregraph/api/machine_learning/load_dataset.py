@@ -2,12 +2,15 @@
     All utilities functions to load the train dataset.
 """
 
-from koregraph.utils.pickle import load_pickle_object
+from typing import Any
 
+from numpy import ndarray
+
+from koregraph.utils.pickle import load_pickle_object
 from koregraph.params import GENERATED_PICKLE_DIRECTORY
 
 
-def load_preprocess_dataset():
+def load_preprocess_dataset() -> tuple[ndarray, ndarray]:
     """
     Load and preprocess the dataset.
 

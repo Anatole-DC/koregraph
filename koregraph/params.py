@@ -62,6 +62,11 @@ WEIGHTS_BACKUP_DIRECTORY.mkdir(parents=True, exist_ok=True)
 MODEL_OUTPUT_DIRECTORY: Path = Path(environ.get("OUT_DIRECTORY", "out"))
 MODEL_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
+PREDICTION_OUTPUT_DIRECTORY: Path = Path(
+    environ.get("PREDICTION_OUTPUT_DIRECTORY", "generated/predictions/")
+)
+PREDICTION_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
 GENERATED_PICKLE_DIRECTORY: Path = Path(
     environ.get(
         "GENERATED_PICKLE_DIRECTORY",
@@ -78,3 +83,6 @@ ALL_BASIC_MOVE_NAMES = [name for name in listdir(KEYPOINTS_DIRECTORY) if "sBM" i
 LAST_CHUNK_TYPE_STRATEGY = LAST_CHUNK_TYPE.ROLLING
 
 ALL_MUSIC_NAMES = [name for name in listdir(AUDIO_DIRECTORY) if name.endswith(".mp3")]
+
+
+FRAME_FORMAT = (1920, 1080)

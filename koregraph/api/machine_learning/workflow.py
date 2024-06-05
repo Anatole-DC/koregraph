@@ -1,4 +1,4 @@
-from numpy import expand_dims, float32
+from numpy import expand_dims, float32, ndarray
 
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import (
@@ -7,10 +7,15 @@ from koregraph.api.machine_learning.load_dataset import (
 )
 from koregraph.api.machine_learning.callbacks import BackupCallback
 from koregraph.utils.pickle import save_object_pickle
+from sklearn.preprocessing import MinMaxScaler
 
 
 def train_workflow():
+
     X, y = load_preprocess_dataset()
+
+    # scaler = MinMaxScaler()
+    # X_scaled = scaler.fit_transform(X)
 
     X = X.reshape((-1, 1, 128))
 
