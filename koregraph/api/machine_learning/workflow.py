@@ -12,6 +12,7 @@ from koregraph.utils.pickle import save_object_pickle
 def train_workflow():
     X, y = load_preprocess_dataset()
 
+    # TODO include this in preprocessing workflow (music to numpy)
     X = X.reshape((-1, 1, 128))
 
     y = y.astype(float32)
