@@ -1,26 +1,34 @@
 from pathlib import Path
+from argparse import ArgumentParser
 
 import numpy as np
 
 from tensorflow.python.keras.models import Model
 
-from koregraph.utils.pickle import load_pickle_object, save_object_pickle
-from koregraph.api.music_to_numpy import music_to_numpy
+from koregraph.api.machine_learning.workflow import train_workflow
 from koregraph.params import MODEL_OUTPUT_DIRECTORY, AUDIO_DIRECTORY
 
 
+parser = ArgumentParser(
+    "Koregraph prediction",
+    description="Use this to predict a chore from audio",
+)
+
+parser.add_argument(
+    "-m",
+    "--model",
+    dest="model_name",
+    required=False,
+    help="Model name",
+    default="model",
+)
+
+
 def main():
-    model: Model = load_pickle_object(MODEL_OUTPUT_DIRECTORY / "model.pkl")
+    arguments = parser.parse_args()
+    model_name = arguments.model_name
 
-    music_array = music_to_numpy(AUDIO_DIRECTORY / "mBR0.mp3")
-
-    predictions = model.predict(music_array.reshape(-1, 1, 128))
-
-    predictions_reshaped = predictions.reshape(-1, 17, 2)
-
-    print(predictions_reshaped.shape)
-
-    # save_object_pickle({"keypoints2d": predictions_reshaped, "timestamps": np.ones(predictions_reshaped.shape)}, "predictions")
+    train_workflow(model_name=model_name)
 
 
 if __name__ == "__main__":

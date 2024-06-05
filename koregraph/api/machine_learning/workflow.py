@@ -10,7 +10,7 @@ from koregraph.utils.pickle import save_object_pickle
 from sklearn.preprocessing import MinMaxScaler
 
 
-def train_workflow():
+def train_workflow(model_name: str = "model"):
 
     X, y = load_preprocess_dataset()
 
@@ -33,8 +33,8 @@ def train_workflow():
         # callbacks=[BackupCallback],
     )
 
-    save_object_pickle(model, "model")
-    save_object_pickle(history, "model_history")
+    save_object_pickle(model, model_name)
+    save_object_pickle(history, model_name + "_history")
 
 
 if __name__ == "__main__":

@@ -108,6 +108,12 @@ poetry install --with dev,viewer
 poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to slides --stdout > documentation/pages/index.html
 ```
 
+**Train a model**
+
+```bash
+poetry run train -m model_kelly
+```
+
 **Predict a choregraphy from an audio**
 
 ```bash

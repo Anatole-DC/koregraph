@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from pathlib import Path
 
 from koregraph.api.machine_learning.prediction_workflow import predict as predict_api
 
