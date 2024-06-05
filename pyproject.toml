@@ -60,8 +60,9 @@ tensorflow = "^2.16.1"
 
 
 [tool.poetry.scripts]
+generate = "koregraph.cli.generate_features:main"
 viewer = "koregraph.cli.viewer:main"
-chunk = "koregraph.cli.chunk:main"
+chunk = "koregraph.cli.chunk_command:main"
 train = "koregraph.cli.model:main"
 predict = "koregraph.cli.predict:main"
 

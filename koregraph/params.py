@@ -54,23 +54,31 @@ if not IMAGE_DIRECTORY.exists():
     IMAGE_DIRECTORY.mkdir(parents=True, exist_ok=True)
     print(f"Created directory'{IMAGE_DIRECTORY}'")
 
-WEIGHTS_BACKUP_DIRECTORY: Path = Path(
+KEYPOINTS_BUILDER_TEMP_DIRECTORY = PROJECT_ROOT.joinpath(
+    environ.get("KEYPOINTS_BUILDER_TEMP_DIRECTORY", "generated/videos")
+)
+KEYPOINTS_BUILDER_TEMP_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
+
+WEIGHTS_BACKUP_DIRECTORY: Path = PROJECT_ROOT.joinpath(
     environ.get("WEIGHTS_BACKUP_DIRECTORY", "temp/backup")
 )
 WEIGHTS_BACKUP_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
-MODEL_OUTPUT_DIRECTORY: Path = Path(environ.get("OUT_DIRECTORY", "generated/models"))
+MODEL_OUTPUT_DIRECTORY: Path = PROJECT_ROOT.joinpath(
+    environ.get("OUT_DIRECTORY", "generated/models")
+)
 MODEL_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
-PREDICTION_OUTPUT_DIRECTORY: Path = Path(
+PREDICTION_OUTPUT_DIRECTORY: Path = PROJECT_ROOT.joinpath(
     environ.get("PREDICTION_OUTPUT_DIRECTORY", "generated/predictions/")
 )
 PREDICTION_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
-GENERATED_PICKLE_DIRECTORY: Path = Path(
+GENERATED_PICKLE_DIRECTORY: Path = PROJECT_ROOT.joinpath(
     environ.get(
         "GENERATED_PICKLE_DIRECTORY",
-        "generated/data/pickles",
+        "generated/inputs",
     )
 )
 
