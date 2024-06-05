@@ -26,7 +26,9 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str =
 
     print(prediction.shape)
 
-    prediction_name = model_name + "_sBM_cAll_d00_" + audio_name + f"_ch{chore_id}"
+    prediction_name = (
+        model_name.replace("_", "") + "_sBM_cAll_d00_" + audio_name + f"_ch{chore_id}"
+    )
 
     chore = Choregraphy(
         prediction_name, prediction.reshape(-1, 17, 2), np_ones(prediction.shape[0])
