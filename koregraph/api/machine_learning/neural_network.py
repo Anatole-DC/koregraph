@@ -26,13 +26,14 @@ def prepare_model(X, y) -> Model:
         [
             normalization_layer,
             LSTM(256),
-            Dense(256, activation="relu"),
-            Dense(128, activation="relu"),
-            Dense(64, activation="relu"),
-            Dropout(rate=0.5),
-            Dense(64, activation="relu"),
-            Dropout(rate=0.5),
-            Dense(y.shape[1], activation="linear"),
+            Dense(256, activation="tanh"),
+            Dense(128, activation="tanh"),
+            Dropout(rate=0.2),
+            Dense(64, activation="tanh"),
+            Dropout(rate=0.2),
+            Dense(64, activation="tanh"),
+            Dropout(rate=0.2),
+            Dense(y.shape[1], activation="tanh"),
         ]
     )
 
