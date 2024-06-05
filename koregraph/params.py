@@ -75,3 +75,6 @@ ALL_ADVANCED_MOVE_NAMES = [
 ALL_BASIC_MOVE_NAMES = [name for name in listdir(KEYPOINTS_DIRECTORY) if "sBM" in name]
 
 ALL_MUSIC_NAMES = [name for name in listdir(AUDIO_DIRECTORY) if name.endswith(".mp3")]
+
+
+FRAME_FORMAT = (1920, 1080)
