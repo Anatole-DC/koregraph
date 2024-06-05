@@ -108,6 +108,12 @@ poetry install --with dev,viewer
 poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to slides --stdout > documentation/pages/index.html
 ```
 
+**Predict a choregraphy from an audio**
+
+```bash
+poetry run predict -a mBR1 -m model -i 01
+```
+
 **Build viewer video from choregraphy**
 
 ```bash

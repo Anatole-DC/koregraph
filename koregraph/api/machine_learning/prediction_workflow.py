@@ -13,9 +13,7 @@ from koregraph.params import (
 )
 
 
-def predict_workflow(
-    audio_name: str = "mBR0", model_name: str = "model", chore_id: str = "01"
-):
+def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str = "01"):
     model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
     model = load_pickle_object(model_path)
 
@@ -43,4 +41,4 @@ def predict_workflow(
 
 
 if __name__ == "__main__":
-    predict_workflow(audio_name="mBR2", chore_id="02")
+    predict(audio_name="mBR2", chore_id="02")
