@@ -36,9 +36,12 @@ def load_preprocess_dataset() -> tuple[ndarray, ndarray]:
     ]
 
     for file in files:
-        y_tmp, X_tmp = load_pickle_object(GENERATED_PICKLE_DIRECTORY / file)
-        X = append(X, X_tmp, axis=0)
-        y = append(y, y_tmp, axis=0)
+        try:
+            y_tmp, X_tmp = load_pickle_object(GENERATED_PICKLE_DIRECTORY / file)
+            X = append(X, X_tmp, axis=0)
+            y = append(y, y_tmp, axis=0)
+        except:
+            print('File does not exist')
 
     return X, y
 
