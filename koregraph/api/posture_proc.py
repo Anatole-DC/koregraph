@@ -1,7 +1,7 @@
-from numpy import array, ndarray
+from numpy import array, ndarray, nan_to_num
 from koregraph.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT
 from pickle import load as load_pickle
-
+from numpy import isnan
 from typing import Tuple
 
 
@@ -19,6 +19,7 @@ def generate_posture_array(
     with open(KEYPOINTS_DIRECTORY / (choregraphy_name), "rb") as f:
         data = load_pickle(f)
         postures = data["keypoints2d"][0, :, :, :2]
+        postures = nan_to_num(postures, 0)
         postures[:, :, 0] = postures[:, :, 0] / frame_format[0]
         postures[:, :, 1] = postures[:, :, 1] / frame_format[1]
 
