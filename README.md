@@ -100,6 +100,20 @@ poetry install
 poetry install --with dev,viewer
 ```
 
+## Get a prediction
+**Generate features and output pkl files**
+```bash
+poetry run generate
+```
+**Train a model**
+```bash
+poetry run train -m model_kelly
+```
+**Get a video**
+```bash
+poetry run predict -m model_kelly -a mBR0
+```
+
 ## Scripts
 
 **Export presentation (github pages)**

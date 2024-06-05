@@ -4,7 +4,7 @@
 
 from typing import List
 
-from keras.layers import Dense, LSTM, Normalization, Dropout
+from keras.layers import Dense, LSTM, Normalization, Dropout, Bidirectional
 from keras.models import Sequential, Model
 
 
@@ -25,16 +25,15 @@ def prepare_model(X, y) -> Model:
     return Sequential(
         [
             normalization_layer,
-            LSTM(256, return_sequences=True),
-            LSTM(128, return_sequences=True),
-            LSTM(64),
-            Dense(128, activation="linear"),
-            Dense(256), activation="linear"),
-            Dense(128, activation="linear"),
+            Bidirectional(LSTM(256, activation="relu", return_sequences=True)),
+            Bidirectional(LSTM(128, activation='relu')),
+            Dense(256, activation="relu"),
+            Dense(128, activation="relu"),
+            Dense(64, activation="relu"),
             Dropout(rate=0.2),
-            Dense(32, activation="linear"),
+            Dense(64, activation="relu"),
             Dropout(rate=0.2),
-            Dense(y.shape[1], activation="linear"),
+            Dense(y.shape[1], activation="sigmoid"),
         ]
     )
 

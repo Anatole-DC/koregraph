@@ -11,12 +11,8 @@ from koregraph.managers.choregraphy import load_choregraphy
 from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.models.posture import Posture
+from koregraph.params import KEYPOINTS_BUILDER_TEMP_DIRECTORY
 
-
-KEYPOINTS_BUILDER_TEMP_DIRECTORY = Path(
-    environ.get("KEYPOINTS_BUILDER_TEMP_DIRECTORY", "temp")
-)
-KEYPOINTS_BUILDER_TEMP_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 COLORS = [
     [255, 0, 0],
@@ -80,7 +76,7 @@ def export_choregraphy_keypoints(
 
     if export_name is None:
         export_name = choregraphy.name
-    export_path = Path(f"temp/{export_name}_soundless.mp4")
+    export_path = KEYPOINTS_BUILDER_TEMP_DIRECTORY / f"{export_name}_soundless.mp4"
 
     with get_writer(export_path, mode="I", fps=60) as video_writer:
         [
@@ -119,7 +115,7 @@ def keypoints_video_audio_builder_from_choreography(choregraphy: Choregraphy):
     video = VideoFileClip(str(video_path.absolute()))
     audio = AudioFileClip(str(aist_file.music.absolute()))
 
-    final_filename = Path(f"temp/{choregraphy.name}.mp4")
+    final_filename = KEYPOINTS_BUILDER_TEMP_DIRECTORY / f"{choregraphy.name}.mp4"
     final_filename.unlink(missing_ok=True)
 
     final_video: VideoClip = video.set_audio(audio)
