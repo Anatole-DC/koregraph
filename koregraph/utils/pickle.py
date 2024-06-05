@@ -5,7 +5,7 @@ from typing import Any
 from koregraph.params import MODEL_OUTPUT_DIRECTORY
 
 
-def save_object_pickle(obj: Any, obj_name: str):
+def save_object_pickle(obj: Any, obj_name: str = None, obj_path: Path = None):
     """Save a python object inside a pickle object.
 
     Args:
@@ -15,8 +15,11 @@ def save_object_pickle(obj: Any, obj_name: str):
     Returns:
         Path: The path where the object was saved.
     """
+    assert obj_name is not None or obj_path is not None
 
     saved_object_path = MODEL_OUTPUT_DIRECTORY / f"{obj_name}.pkl"
+    if obj_path is not None:
+        saved_object_path = obj_path
     with open(saved_object_path, "wb") as pickle_file:
         pickle_dump(obj, pickle_file, protocol=HIGHEST_PROTOCOL)
     return saved_object_path

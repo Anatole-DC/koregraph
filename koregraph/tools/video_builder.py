@@ -98,9 +98,19 @@ def keypoints_video_audio_builder(choregraphy_name: str):
         choregraphy_name (str): The choregraphy to build the video from.
     """
 
-    aist_file = AISTFile(choregraphy_name)
+    return keypoints_video_audio_builder_from_choreography(
+        load_choregraphy(choregraphy_name)
+    )
 
-    choregraphy: Choregraphy = load_choregraphy(choregraphy_name)
+
+def keypoints_video_audio_builder_from_choreography(choregraphy: Choregraphy):
+    """Export a video with audio and drawn keypoints.
+
+    Args:
+        choregraphy (Choregraphy): The choregraphy to build the video from.
+    """
+
+    aist_file = AISTFile(choregraphy.name)
 
     print(f"Choregraphy '{choregraphy.name}' : {len(choregraphy.keypoints2d)} postures")
 
@@ -109,7 +119,7 @@ def keypoints_video_audio_builder(choregraphy_name: str):
     video = VideoFileClip(str(video_path.absolute()))
     audio = AudioFileClip(str(aist_file.music.absolute()))
 
-    final_filename = Path(f"temp/{choregraphy_name}.mp4")
+    final_filename = Path(f"temp/{choregraphy.name}.mp4")
     final_filename.unlink(missing_ok=True)
 
     final_video: VideoClip = video.set_audio(audio)
