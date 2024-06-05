@@ -25,14 +25,16 @@ def prepare_model(X, y) -> Model:
     return Sequential(
         [
             normalization_layer,
-            LSTM(256),
-            Dense(256, activation="linear"),
+            LSTM(256, return_sequences=True),
+            LSTM(128, return_sequences=True),
+            LSTM(64),
             Dense(128, activation="linear"),
-            Dense(64, activation="linear"),
+            Dense(256), activation="linear"),
+            Dense(128, activation="linear"),
             Dropout(rate=0.2),
             Dense(32, activation="linear"),
             Dropout(rate=0.2),
-            Dense(y.shape[1], activation="tanh"),
+            Dense(y.shape[1], activation="linear"),
         ]
     )
 
