@@ -9,6 +9,7 @@ from koregraph.api.machine_learning.callbacks import BackupCallback
 from koregraph.utils.pickle import save_object_pickle
 from sklearn.preprocessing import MinMaxScaler
 
+
 def train_workflow():
 
     X, y = load_preprocess_dataset()
