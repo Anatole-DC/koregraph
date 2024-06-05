@@ -2,6 +2,7 @@ from os import environ, path, listdir
 from pathlib import Path
 from dotenv import load_dotenv
 
+from koregraph.models.constants import LAST_CHUNK_TYPE
 
 load_dotenv()
 print("dotenv loaded")
@@ -78,5 +79,7 @@ ALL_ADVANCED_MOVE_NAMES = [
 ]
 
 ALL_BASIC_MOVE_NAMES = [name for name in listdir(KEYPOINTS_DIRECTORY) if "sBM" in name]
+
+LAST_CHUNK_TYPE_STRATEGY = LAST_CHUNK_TYPE.ROLLING
 
 ALL_MUSIC_NAMES = [name for name in listdir(AUDIO_DIRECTORY) if name.endswith(".mp3")]
