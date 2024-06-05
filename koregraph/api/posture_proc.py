@@ -38,6 +38,7 @@ def upscale_posture_pred(
         Array of positions: The postures 34 columns N rows.
     """
 
+    prediction = prediction.reshape(-1, 17, 2)
     prediction[:, :, 0] = prediction[:, :, 0] * frame_format[0]
     prediction[:, :, 1] = prediction[:, :, 1] * frame_format[1]
 

@@ -3,6 +3,7 @@ from koregraph.models.choregraphy import Choregraphy
 from koregraph.managers.choregraphy import save_choregaphy_chunk
 from koregraph.utils.pickle import load_pickle_object
 from koregraph.api.music_to_numpy import music_to_numpy
+from koregraph.api.posture_proc import upscale_posture_pred
 from koregraph.tools.video_builder import (
     keypoints_video_audio_builder_from_choreography,
 )
@@ -23,6 +24,7 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str =
     # TODO remove this step when reshape is done in preprocessing workflow
     input = input.reshape(-1, 1, input.shape[1])
     prediction = model.predict(input)
+    prediction = upscale_posture_pred(prediction)
 
     print(prediction.shape)
 
