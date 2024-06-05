@@ -54,6 +54,12 @@ if not IMAGE_DIRECTORY.exists():
     IMAGE_DIRECTORY.mkdir(parents=True, exist_ok=True)
     print(f"Created directory'{IMAGE_DIRECTORY}'")
 
+KEYPOINTS_BUILDER_TEMP_DIRECTORY = Path(
+    environ.get("KEYPOINTS_BUILDER_TEMP_DIRECTORY", "generated/videos")
+)
+KEYPOINTS_BUILDER_TEMP_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
+
 WEIGHTS_BACKUP_DIRECTORY: Path = Path(
     environ.get("WEIGHTS_BACKUP_DIRECTORY", "temp/backup")
 )

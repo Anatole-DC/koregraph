@@ -11,12 +11,8 @@ from koregraph.managers.choregraphy import load_choregraphy
 from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.models.posture import Posture
+from koregraph.params import KEYPOINTS_BUILDER_TEMP_DIRECTORY
 
-
-KEYPOINTS_BUILDER_TEMP_DIRECTORY = Path(
-    environ.get("KEYPOINTS_BUILDER_TEMP_DIRECTORY", "temp")
-)
-KEYPOINTS_BUILDER_TEMP_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 COLORS = [
     [255, 0, 0],
