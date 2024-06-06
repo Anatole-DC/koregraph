@@ -1,18 +1,15 @@
 from numpy import float32
-
 from mlflow import (
     create_experiment,
     get_experiment,
     get_experiment_by_name,
     start_run,
-    set_experiment,
     tensorflow as mlflow_tensorflow,
-    log_metric,
 )
 
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import load_preprocess_dataset
-from koregraph.config.mlflow_config import MLFLOW_CLIENT
+from koregraph.config.params import MODEL_OUTPUT_DIRECTORY
 
 
 def load_experiment(name: str):
@@ -59,8 +56,13 @@ def run_mlflow_pipeline(workflow_name: str):
             epochs=20,
             # callbacks=[BackupCallback],
         )
+        print("Exporting model...")
+
+        mlflow_tensorflow.log_model(
+            model, artifact_path="test", registered_model_name=workflow_name
+        )
         mlflow_tensorflow.save_model(
-            model, path=f"save_model/{mlflow_run.info.run_name}"
+            model, path=MODEL_OUTPUT_DIRECTORY / f"{mlflow_run.info.run_name}"
         )
 
 
