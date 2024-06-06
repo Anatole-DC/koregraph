@@ -21,9 +21,7 @@ def load_preprocess_dataset() -> tuple[ndarray, ndarray]:
         GENERATED_PICKLE_DIRECTORY / "generated_gBR_sFM_cAll_d04_mBR0_ch01.pkl"
     )
 
-    files = [
-        "generated_gBR_sFM_cAll_d04_mBR1_ch02.pkl"
-    ]
+    files = ["generated_gBR_sFM_cAll_d04_mBR1_ch02.pkl"]
 
     for file in files:
         y_tmp, X_tmp = load_pickle_object(GENERATED_PICKLE_DIRECTORY / file)
