@@ -38,6 +38,7 @@ def generate_posture_array(
         data = load_pickle(f)
         postures = data["keypoints2d"][0, :, :, :2]
         postures = fill_forward(postures)
+        postures = nan_to_num(postures, 0)
         postures[:, :, 0] = postures[:, :, 0] / frame_format[0]
         postures[:, :, 1] = postures[:, :, 1] / frame_format[1]
 

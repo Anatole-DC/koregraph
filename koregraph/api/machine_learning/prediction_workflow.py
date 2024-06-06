@@ -12,6 +12,7 @@ from koregraph.params import (
     MODEL_OUTPUT_DIRECTORY,
     PREDICTION_OUTPUT_DIRECTORY,
 )
+from koregraph.api.audio_proc import scale_audio
 
 
 def predict(audio_name: str = "mBR0", model_name: str = "model", chunk: bool = False):
@@ -25,7 +26,10 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chunk: bool = F
         print("input shape", input.shape)
         input = input.reshape(1, input.shape[0], input.shape[1])
     else:
+        # TODO remove this step when reshape is done in preprocessing workflow
+        input = scale_audio(input)
         input = input.reshape(-1, 1, input.shape[1])
+
     print(input.shape)
     prediction = model.predict(input)
     prediction = upscale_posture_pred(prediction)
