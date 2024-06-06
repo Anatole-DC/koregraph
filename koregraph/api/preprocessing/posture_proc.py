@@ -32,13 +32,19 @@ def generate_posture_array(
 def upscale_posture_pred(
     prediction: ndarray, frame_format: Tuple = FRAME_FORMAT
 ) -> ndarray:
-    """Create a numpy array with 34 columns
+    """Upscale postures according to the frame format wanted.
+
+    The model outputs downscaled predictions between 0 and 1 to reduce the value range.
+    This function takes the outputs and upscale them in order to draw them in the final viewer.
+
+    @TODO: Implement smaller formats for faster video building time
 
     Args:
-        name (str): The choregraphy file's name.
+        prediction (ndarray): The downscaled predictions (between 0 and 1)
+        frame_format (Tuple, optional): The scaling image dimensions. Defaults to FRAME_FORMAT.
 
     Returns:
-        Array of positions: The postures 34 columns N rows.
+        ndarray: The upscaled postures
     """
 
     prediction = prediction.reshape(-1, 17, 2)
