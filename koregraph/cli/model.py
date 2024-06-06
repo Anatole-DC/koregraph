@@ -5,9 +5,9 @@ import numpy as np
 
 from tensorflow.python.keras.models import Model
 
-from koregraph.api.machine_learning.workflow import train_workflow
+from koregraph.api.training.train_workflow import train_workflow
 from koregraph.api.environment.training_cloud import run_mlflow_pipeline
-from koregraph.params import MODEL_OUTPUT_DIRECTORY, AUDIO_DIRECTORY
+from koregraph.config.params import MODEL_OUTPUT_DIRECTORY, AUDIO_DIRECTORY
 
 
 parser = ArgumentParser(

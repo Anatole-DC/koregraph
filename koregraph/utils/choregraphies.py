@@ -5,7 +5,7 @@ from os import environ
 from typing import Dict
 
 from koregraph.models.choregraphy import Choregraphy
-from koregraph.params import KEYPOINTS_DIRECTORY
+from koregraph.config.params import KEYPOINTS_DIRECTORY
 
 
 def load_choregraphy(name: str) -> Choregraphy:

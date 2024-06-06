@@ -5,7 +5,7 @@ from librosa import load
 from librosa import display
 from librosa import power_to_db
 from librosa import feature
-from koregraph.params import IMAGE_DIRECTORY
+from koregraph.config.params import IMAGE_DIRECTORY
 
 import numpy as np
 import matplotlib.pyplot as plt

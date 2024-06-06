@@ -3,7 +3,7 @@ from os import environ
 import numpy as np
 import soundfile as sf
 from mutagen.mp3 import MP3
-from koregraph.params import AUDIO_DIRECTORY
+from koregraph.config.params import AUDIO_DIRECTORY
 
 
 if not AUDIO_DIRECTORY.exists():
