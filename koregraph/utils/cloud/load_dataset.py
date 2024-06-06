@@ -1,5 +1,4 @@
 from google.cloud.storage import Client, transfer_manager
-from koregraph.utils.controllers.choregraphies import load_choregraphy
 
 
 def download_dataset_from_bucket():
