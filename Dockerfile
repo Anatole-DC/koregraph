@@ -1,15 +1,30 @@
+# FROM python:3.10-slim
+
+# # Install poetry
+# RUN pip install poetry
+
+# # Setup dependencies
+
+# COPY koregraph/ .
+
+# RUN poetry config virtualenvs.create false
+# RUN poetry install --with training --no-root --no-interaction --no-ansi
+
+# EXPOSE 5000
+
+# CMD ["poetry", "run", "mlflow", "server", "--host", "0.0.0.0"]
+
 FROM python:3.10-slim
 
-# Install poetry
-RUN pip install poetry
+RUN pip install mlflow
+# RUN poetry config virtualenvs.create false
 
-# Setup dependencies
-WORKDIR /app
-COPY README.md pyproject.toml poetry.lock /app/
+# WORKDIR /app
+# COPY README.md pyproject.toml poetry.lock /app/
 
-COPY koregraph/ .
+# RUN poetry add mlflow
+# RUN poetry install
 
-RUN poetry config virtualenvs.create false
-RUN poetry install --with training --no-root --no-interaction --no-ansi
+EXPOSE 8000
 
-CMD ["poetry", "run", "mlflow", "server"]
+CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "8000"]
