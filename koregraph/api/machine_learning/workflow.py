@@ -5,7 +5,7 @@ from koregraph.api.machine_learning.load_dataset import (
     load_preprocess_dataset,
     check_dataset_format,
 )
-from koregraph.api.machine_learning.callbacks import BackupCallback
+from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
 from koregraph.utils.pickle import save_object_pickle
 from sklearn.preprocessing import MinMaxScaler
 
@@ -30,7 +30,7 @@ def train_workflow(model_name: str = "model"):
         validation_split=0.2,
         batch_size=16,
         epochs=20,
-        # callbacks=[BackupCallback],
+        callbacks=[BackupCallback, StoppingCallback],
     )
 
     save_object_pickle(model, model_name)

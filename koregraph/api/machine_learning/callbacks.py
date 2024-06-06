@@ -1,4 +1,4 @@
-from tensorflow.python.keras.callbacks import ModelCheckpoint
+from tensorflow.python.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 from koregraph.params import WEIGHTS_BACKUP_DIRECTORY
 
@@ -11,4 +11,11 @@ BackupCallback = ModelCheckpoint(
     mode="auto",
     save_freq="epoch",
     initial_value_threshold=None,
+)
+
+StoppingCallback = EarlyStopping(
+    monitor="val_loss",
+    patience=7,
+    verbose=0,
+    restore_best_weights=True
 )
