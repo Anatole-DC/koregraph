@@ -30,6 +30,7 @@ ___
 - [Install the project](#install-the-project)
   - [Clone the repository](#clone-the-repository)
   - [Install the dependencies](#install-the-dependencies)
+- [Get a prediction](#get-a-prediction)
 - [Scripts](#scripts)
 - [Ideas](#ideas)
 - [License](#license)
@@ -126,6 +127,9 @@ poetry run jupyter nbconvert --no-input frontend/views/presentation.ipynb  --to 
 
 ```bash
 poetry run train -m modelkelly
+
+# Train on the cloud (ensure the environment variable are set)
+poetry run train -m modelkelly --with-cloud
 ```
 
 **Predict a choregraphy from an audio**

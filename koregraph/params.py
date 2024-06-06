@@ -82,6 +82,8 @@ GENERATED_PICKLE_DIRECTORY: Path = PROJECT_ROOT.joinpath(
     )
 )
 
+MLFLOW_TRACKING_URI = environ.get("MLFLOW_TRACKING_URI", "http://localhost:8080")
+
 ALL_ADVANCED_MOVE_NAMES = [
     name for name in listdir(KEYPOINTS_DIRECTORY) if "sFM" in name
 ]
