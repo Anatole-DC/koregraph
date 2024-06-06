@@ -15,7 +15,7 @@ def train_workflow(model_name: str = "model"):
 
     X, y = load_preprocess_dataset()
 
-    X_scaled = scale(X)
+    X_scaled = scale_audio(X)
     X_scaled = X_scaled.reshape((-1, 1, 128))
 
     y = y.astype(float32)
