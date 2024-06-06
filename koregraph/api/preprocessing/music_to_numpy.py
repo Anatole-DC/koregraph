@@ -1,38 +1,51 @@
+from pathlib import Path
+
 from librosa import load
 from librosa.feature import melspectrogram
 from librosa import power_to_db
-import numpy as np
+from numpy import max, ndarray
 
 
-def music_to_numpy(audio_file_path, fps=60, sr=44100, n_mels=128, n_fft=2048):
-    """
-    Compute the mel spectrogram of the audio for each frame of a video.
+def music_to_numpy(
+    audio_file_path: Path,
+    fps: int = 60,
+    sample_rate: int = 44100,
+    nb_mels: int = 128,
+    nb_fft: int = 2048,
+) -> ndarray:
+    """Compute the mel spectogram of the audio for each frame of an audio file.
 
-    Parameters:
-    - audio_file_path: Path, path to the audio file.
-    - fps: int, frames per second of the video.
-    - sr: int, sample rate for the audio.
-    - n_mels: int, number of mel bands to generate.
-    - n_fft: int, length of the FFT window.
+    Args:
+        audio_file_path (Path): Path to the audio file
+        fps (int, optional): Frame rate of the video. Defaults to 60 fps.
+        sample_rate (int, optional): Sample rate for the audio output. Defaults to 44100.
+        nb_mels (int, optional): Number of mel bands to generate. Defaults to 128.
+        nb_fft (int, optional): Length of the fft window. Defaults to 2048.
 
     Returns:
-    - Numpy array with shape (n_frames, n_mels), where n_frames = duration * fps.
+        ndarray: Array with shape (audio_duration * fps, nb_mels)
     """
 
     # Charger le fichier audio
-    y, sr = load(audio_file_path, sr=sr)
+    y, sample_rate = load(audio_file_path, sr=sample_rate)
 
     # Calculer la durée d'une frame
     duration_per_frame = 1 / fps
 
     # Calculer le hop_length
-    hop_length = int(sr * duration_per_frame)
+    hop_length = int(sample_rate * duration_per_frame)
 
     # Calculer le spectrogramme Mel
-    S = melspectrogram(y=y, sr=sr, n_fft=n_fft, hop_length=hop_length, n_mels=n_mels)
+    S = melspectrogram(
+        y=y,
+        sr=sample_rate,
+        n_fft=nb_fft,
+        hop_length=hop_length,
+        n_mels=nb_mels,
+    )
 
     # Convertir le spectrogramme en dB
-    S_db = power_to_db(S, ref=np.max)
+    S_db = power_to_db(S, ref=max)
 
     # Transposer pour obtenir le bon format
     S_db_T = S_db.T

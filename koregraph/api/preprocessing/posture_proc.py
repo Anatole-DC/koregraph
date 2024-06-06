@@ -1,12 +1,14 @@
-from numpy import array, ndarray, nan_to_num
-from koregraph.config.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT
 from pickle import load as load_pickle
 from typing import Tuple
 
+from numpy import ndarray, nan_to_num
+
+from koregraph.config.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT
+
 
 def generate_posture_array(
-    choregraphy_name: str, frame_format: tuple = FRAME_FORMAT
-) -> array:
+    choregraphy_name: str, frame_format: Tuple = FRAME_FORMAT
+) -> ndarray:
     """Create a numpy array with 34 columns
 
     Args:
@@ -15,6 +17,7 @@ def generate_posture_array(
     Returns:
         Array of positions: The postures 34 columns N rows.
     """
+
     with open(KEYPOINTS_DIRECTORY / (choregraphy_name), "rb") as f:
         data = load_pickle(f)
         postures = data["keypoints2d"][0, :, :, :2]
@@ -27,8 +30,8 @@ def generate_posture_array(
 
 # @TODO: verifier le format d'entree de prediction
 def upscale_posture_pred(
-    prediction: ndarray, frame_format: tuple = FRAME_FORMAT
-) -> array:
+    prediction: ndarray, frame_format: Tuple = FRAME_FORMAT
+) -> ndarray:
     """Create a numpy array with 34 columns
 
     Args:

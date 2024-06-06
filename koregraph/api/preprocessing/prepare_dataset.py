@@ -1,3 +1,6 @@
+# deprecated ?
+
+
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from koregraph.tools.spectogram import save_images_log_power_spectogram

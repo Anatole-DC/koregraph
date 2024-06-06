@@ -1,4 +1,4 @@
-from pickle import dump as pickle_dump, HIGHEST_PROTOCOL, load as pickle_load
+from pickle import dump as pickle_dump, load as pickle_load, HIGHEST_PROTOCOL
 from pathlib import Path
 from typing import Any
 

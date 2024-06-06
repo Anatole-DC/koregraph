@@ -1,6 +1,7 @@
 from numpy import ones as np_ones
+
 from koregraph.models.choregraphy import Choregraphy
-from koregraph.managers.choregraphy import save_choregaphy_chunk
+from koregraph.utils.choregraphies import save_choregaphy_chunk
 from koregraph.utils.pickles import load_pickle_object
 from koregraph.api.preprocessing.music_to_numpy import music_to_numpy
 from koregraph.api.preprocessing.posture_proc import upscale_posture_pred

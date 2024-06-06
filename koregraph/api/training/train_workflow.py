@@ -1,14 +1,13 @@
-from numpy import expand_dims, float32, ndarray
+from numpy import float32
 
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import (
     load_preprocess_dataset,
-    check_dataset_format,
 )
 from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
 from koregraph.utils.pickles import save_object_pickle
-from sklearn.preprocessing import MinMaxScaler
-from koregraph.api.preprocessing.audio_proc import scale_audio
+
+# from koregraph.api.preprocessing.audio_proc import scale_audio
 
 
 def train_workflow(model_name: str = "model"):
@@ -30,7 +29,7 @@ def train_workflow(model_name: str = "model"):
         validation_split=0.2,
         epochs=20,
         batch_size=16,
-        # callbacks=[BackupCallback, StoppingCallback],
+        callbacks=[BackupCallback, StoppingCallback],
     )
 
     save_object_pickle(model, model_name)
