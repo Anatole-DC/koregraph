@@ -15,7 +15,7 @@ BackupCallback = ModelCheckpoint(
 
 StoppingCallback = EarlyStopping(
     monitor="val_loss",
-    patience=2,
+    patience=7,
     verbose=0,
     restore_best_weights=True
 )
