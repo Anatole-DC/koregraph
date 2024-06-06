@@ -1,12 +1,14 @@
 from pickle import dump as dump_pickle
 from os import makedirs
 
+from koregraph.api.chunks_api import generate_chunk
 from koregraph.api.music_to_numpy import music_to_numpy
 from koregraph.api.posture_proc import generate_posture_array
 from koregraph.params import (
     AUDIO_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,
     ALL_ADVANCED_MOVE_NAMES,
+    CHUNK_SIZE,
 )
 
 
@@ -41,6 +43,15 @@ def generate_pickle_files():
 
         except Exception as e:
             print(f"Error in {move_name}: {e}")
+            continue
+
+
+def generate_all_chunks():
+    for chore_name in ALL_ADVANCED_MOVE_NAMES:
+        try:
+            generate_chunk(chore_name.replace(".pkl", ""), CHUNK_SIZE, False)
+        except Exception as e:
+            print(f"Error with {chore_name}: {e}")
             continue
 
 

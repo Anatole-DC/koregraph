@@ -24,10 +24,10 @@ def generate_chunk(
     choregraphy_name: str, chunk_size: int = CHUNK_SIZE, reload_music: bool = False
 ):
     # Clean previous chunks out if needed
-    chore_path = GENERATED_KEYPOINTS_DIRECTORY / choregraphy_name / chunk_size
+    chore_path = GENERATED_KEYPOINTS_DIRECTORY / choregraphy_name / str(chunk_size)
     reset_chunks(chore_path)
     _, _, _, _, music_name, _ = choregraphy_name.split("_")
-    music_path = GENERATED_AUDIO_DIRECTORY / music_name / chunk_size
+    music_path = GENERATED_AUDIO_DIRECTORY / music_name / str(chunk_size)
     reset_chunks(music_path, reload_music)
 
     # Get and save chunks

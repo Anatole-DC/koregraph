@@ -6,6 +6,7 @@ import numpy as np
 from tensorflow.python.keras.models import Model
 
 from koregraph.api.machine_learning.workflow import train_workflow
+from koregraph.api.machine_learning.chunks_workflow import train_chunks_workflow
 from koregraph.params import MODEL_OUTPUT_DIRECTORY, AUDIO_DIRECTORY
 
 
@@ -23,12 +24,17 @@ parser.add_argument(
     default="model",
 )
 
+parser.add_argument("--chunks", dest="chunks", action="store_true")
+
 
 def main():
     arguments = parser.parse_args()
     model_name = arguments.model_name
 
-    train_workflow(model_name=model_name)
+    if arguments.chunks:
+        train_chunks_workflow(model_name=model_name)
+    else:
+        train_workflow(model_name=model_name)
 
 
 if __name__ == "__main__":

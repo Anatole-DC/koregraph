@@ -4,8 +4,16 @@
 
 from typing import List
 
-from keras.layers import Dense, LSTM, Normalization, Dropout, Bidirectional
+from keras.layers import (
+    Dense,
+    LSTM,
+    Normalization,
+    Dropout,
+    Bidirectional,
+    BatchNormalization,
+)
 from keras.models import Sequential, Model
+from keras.optimizers import Adam
 
 
 def prepare_model(X, y) -> Model:
@@ -26,7 +34,7 @@ def prepare_model(X, y) -> Model:
         [
             normalization_layer,
             Bidirectional(LSTM(256, activation="relu", return_sequences=True)),
-            Bidirectional(LSTM(128, activation='relu')),
+            Bidirectional(LSTM(128, activation="relu")),
             Dense(256, activation="relu"),
             Dense(128, activation="relu"),
             Dense(64, activation="relu"),
@@ -61,6 +69,41 @@ def initialize_model(X, y) -> Model:
     new_model = prepare_model(X, y)
     compiled_model = compile_model(new_model)
     return compiled_model
+
+
+def initialize_model_chunks(X, y) -> Model:
+    """Initialize a compiled model.
+
+    Returns:
+        Model: The compiled model.
+    """
+
+    normalization_layer = Normalization()
+    normalization_layer.adapt(X)
+
+    new_model = Sequential(
+        [
+            normalization_layer,
+            Bidirectional(
+                LSTM(
+                    128, activation="tanh", return_sequences=True, recurrent_dropout=0.2
+                )
+            ),
+            BatchNormalization(),
+            Bidirectional(LSTM(64, activation="tanh", recurrent_dropout=0.2)),
+            Dense(256, activation="relu", activity_regularizer="l2"),
+            Dense(128, activation="relu", activity_regularizer="l2"),
+            Dense(64, activation="relu", activity_regularizer="l2"),
+            Dropout(rate=0.2),
+            Dense(64, activation="relu", activity_regularizer="l2"),
+            Dropout(rate=0.2),
+            Dense(y.shape[1], activation="sigmoid"),
+        ]
+    )
+
+    adam = Adam(learning_rate=0.00001, clipvalue=0.01)
+    new_model.compile(loss="mse", optimizer=adam, metrics=["mae"])
+    return new_model
 
 
 if __name__ == "__main__":

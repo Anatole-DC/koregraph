@@ -14,22 +14,25 @@ from koregraph.params import (
 )
 
 
-def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str = "01"):
+def predict(audio_name: str = "mBR0", model_name: str = "model", chunk: bool = False):
     model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
     model = load_pickle_object(model_path)
 
     audio_filepath = AUDIO_DIRECTORY / (audio_name + ".mp3")
     input = music_to_numpy(audio_filepath)
 
-    # TODO remove this step when reshape is done in preprocessing workflow
-    input = input.reshape(-1, 1, input.shape[1])
+    if chunk:
+        print("input shape", input.shape)
+        input = input.reshape(1, input.shape[0], input.shape[1])
+    else:
+        input = input.reshape(-1, 1, input.shape[1])
+    print(input.shape)
     prediction = model.predict(input)
     prediction = upscale_posture_pred(prediction)
 
-    print(prediction.shape)
-
+    print("Prediction shape:", prediction.shape)
     prediction_name = (
-        model_name.replace("_", "") + "_sBM_cAll_d00_" + audio_name + f"_ch{chore_id}"
+        model_name.replace("_", "-") + "_sBM_cAll_d00_" + audio_name + "_ch01"
     )
 
     chore = Choregraphy(

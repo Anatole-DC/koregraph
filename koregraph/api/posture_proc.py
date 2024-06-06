@@ -22,6 +22,7 @@ def fill_forward(arr):
 
     return arr
 
+
 def generate_posture_array(
     choregraphy_name: str, frame_format: tuple = FRAME_FORMAT
 ) -> array:
@@ -43,7 +44,6 @@ def generate_posture_array(
     return postures.reshape(-1, 34)
 
 
-# @TODO: verifier le format d'entree de prediction
 def upscale_posture_pred(
     prediction: ndarray, frame_format: tuple = FRAME_FORMAT
 ) -> array:

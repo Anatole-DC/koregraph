@@ -30,7 +30,7 @@ GENERATED_AUDIO_DIRECTORY: Path = PROJECT_ROOT.joinpath(
     environ.get("GENERATED_AUDIO_DIRECTORY", "generated/chunks/music")
 )
 
-CHUNK_SIZE: int = int(environ.get("CHUNK_SIZE", "10"))
+CHUNK_SIZE: int = int(environ.get("CHUNK_SIZE", "5"))
 
 if not AUDIO_DIRECTORY.exists():
     raise FileNotFoundError(
