@@ -12,7 +12,7 @@ from koregraph.params import (
     MODEL_OUTPUT_DIRECTORY,
     PREDICTION_OUTPUT_DIRECTORY,
 )
-
+from koregraph.api.audio_proc import scale
 
 def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str = "01"):
     model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
@@ -22,6 +22,7 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str =
     input = music_to_numpy(audio_filepath)
 
     # TODO remove this step when reshape is done in preprocessing workflow
+    input = scale(input)
     input = input.reshape(-1, 1, input.shape[1])
     prediction = model.predict(input)
     prediction = upscale_posture_pred(prediction)

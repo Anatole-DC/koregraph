@@ -8,28 +8,27 @@ from koregraph.api.machine_learning.load_dataset import (
 from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
 from koregraph.utils.pickle import save_object_pickle
 from sklearn.preprocessing import MinMaxScaler
+from koregraph.api.audio_proc import scale
 
 
 def train_workflow(model_name: str = "model"):
 
     X, y = load_preprocess_dataset()
 
-    # scaler = MinMaxScaler()
-    # X_scaled = scaler.fit_transform(X)
-
-    X = X.reshape((-1, 1, 128))
+    X_scaled = scale(X)
+    X_scaled = X_scaled.reshape((-1, 1, 128))
 
     y = y.astype(float32)
 
-    print(X.shape)
+    print(X_scaled.shape)
     model = initialize_model(X, y)
 
     history = model.fit(
-        x=X,
+        x=X_scaled,
         y=y,
         validation_split=0.2,
+        epochs=5,
         batch_size=16,
-        epochs=20,
         callbacks=[BackupCallback, StoppingCallback],
     )
 
