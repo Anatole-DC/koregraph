@@ -8,7 +8,7 @@ from koregraph.api.machine_learning.load_dataset import (
 from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
 from koregraph.utils.pickle import save_object_pickle
 from sklearn.preprocessing import MinMaxScaler
-from koregraph.api.audio_proc import scale
+from koregraph.api.audio_proc import scale_audio
 
 
 def train_workflow(model_name: str = "model"):
