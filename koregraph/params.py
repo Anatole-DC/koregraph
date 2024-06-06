@@ -94,6 +94,3 @@ ALL_MUSIC_NAMES = [name for name in listdir(AUDIO_DIRECTORY) if name.endswith(".
 
 
 FRAME_FORMAT = (1920, 1080)
-
-X_MIN = -80
-X_MAX = 0
