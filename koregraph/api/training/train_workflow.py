@@ -5,7 +5,7 @@ from koregraph.api.machine_learning.load_dataset import (
     load_preprocess_dataset,
 )
 from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
-from koregraph.utils.pickles import save_object_pickle
+from koregraph.utils.controllers.pickles import save_object_pickle
 
 # from koregraph.api.preprocessing.audio_proc import scale_audio
 

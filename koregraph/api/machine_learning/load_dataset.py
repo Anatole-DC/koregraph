@@ -6,7 +6,7 @@ from typing import Any
 
 from numpy import ndarray, append
 
-from koregraph.utils.pickles import load_pickle_object
+from koregraph.utils.controllers.pickles import load_pickle_object
 from koregraph.config.params import GENERATED_PICKLE_DIRECTORY
 
 

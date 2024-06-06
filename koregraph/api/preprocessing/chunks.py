@@ -2,8 +2,8 @@ import os
 import shutil
 
 from koregraph.tools.choregraphy_to_chunks import split_sequence, split_audio
-from koregraph.utils.choregraphies import save_choregaphy_chunk
-from koregraph.utils.musics import save_audio_chunk
+from koregraph.utils.controllers.choregraphies import save_choregaphy_chunk
+from koregraph.utils.controllers.musics import save_audio_chunk
 from koregraph.config.params import (
     GENERATED_AUDIO_DIRECTORY,
     GENERATED_KEYPOINTS_DIRECTORY,
