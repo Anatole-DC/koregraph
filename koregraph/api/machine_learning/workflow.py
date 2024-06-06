@@ -30,7 +30,7 @@ def train_workflow(model_name: str = "model"):
         validation_split=0.2,
         epochs=5,
         batch_size=16,
-        callbacks=[BackupCallback, StoppingCallback],
+        #callbacks=[BackupCallback, StoppingCallback],
     )
 
     save_object_pickle(model, model_name)
