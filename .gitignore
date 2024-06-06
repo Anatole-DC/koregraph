@@ -169,3 +169,4 @@ mlruns/
 *.mp4
 *.mp3
 generated/
+secrets/
