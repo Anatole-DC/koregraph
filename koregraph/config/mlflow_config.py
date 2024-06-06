@@ -1,6 +1,6 @@
 from mlflow import MlflowClient, get_artifact_uri
 
-from koregraph.params import MLFLOW_TRACKING_URI
+from koregraph.config.params import MLFLOW_TRACKING_URI
 
 
 print("Initializing mlflow client...")

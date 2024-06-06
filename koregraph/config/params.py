@@ -8,7 +8,8 @@ load_dotenv()
 print("dotenv loaded")
 
 
-PROJECT_ROOT = Path(path.dirname(path.dirname(__file__)))
+# @TODO: setup root environment
+PROJECT_ROOT = Path()
 
 AUDIO_DIRECTORY: Path = PROJECT_ROOT.joinpath(
     environ.get("AUDIO_DIRECTORY", "data/music/mp3")

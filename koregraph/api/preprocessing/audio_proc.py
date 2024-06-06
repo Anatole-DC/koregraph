@@ -1,4 +1,4 @@
-from koregraph.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT, X_MIN, X_MAX
+from koregraph.config.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT, X_MIN, X_MAX
 
 
 def scale_audio(X, X_min: float = X_MIN, X_max: float = X_MAX):

@@ -4,7 +4,7 @@ import shutil
 from koregraph.tools.choregraphy_to_chunks import split_sequence, split_audio
 from koregraph.managers.choregraphy import save_choregaphy_chunk
 from koregraph.managers.audio import save_audio_chunk
-from koregraph.params import (
+from koregraph.config.params import (
     GENERATED_AUDIO_DIRECTORY,
     GENERATED_KEYPOINTS_DIRECTORY,
     CHUNK_SIZE,

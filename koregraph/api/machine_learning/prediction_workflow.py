@@ -1,18 +1,18 @@
 from numpy import ones as np_ones
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.managers.choregraphy import save_choregaphy_chunk
-from koregraph.utils.pickle import load_pickle_object
-from koregraph.api.music_to_numpy import music_to_numpy
-from koregraph.api.posture_proc import upscale_posture_pred
+from koregraph.utils.pickles import load_pickle_object
+from koregraph.api.preprocessing.music_to_numpy import music_to_numpy
+from koregraph.api.preprocessing.posture_proc import upscale_posture_pred
 from koregraph.tools.video_builder import (
     keypoints_video_audio_builder_from_choreography,
 )
-from koregraph.params import (
+from koregraph.config.params import (
     AUDIO_DIRECTORY,
     MODEL_OUTPUT_DIRECTORY,
     PREDICTION_OUTPUT_DIRECTORY,
 )
-from koregraph.api.audio_proc import scale_audio
+from koregraph.api.preprocessing.audio_proc import scale_audio
 
 
 def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str = "01"):
