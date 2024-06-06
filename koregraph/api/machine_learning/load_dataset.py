@@ -37,7 +37,7 @@ def load_preprocess_dataset() -> tuple[ndarray, ndarray]:
     ]
 
     for file in GENERATED_PICKLE_DIRECTORY.glob("*.pkl"):
-        y_tmp, X_tmp = load_pickle_object(GENERATED_PICKLE_DIRECTORY / file)
+        y_tmp, X_tmp = load_pickle_object(file)
         X = append(X, X_tmp, axis=0)
         y = append(y, y_tmp, axis=0)
 
