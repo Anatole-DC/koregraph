@@ -34,9 +34,9 @@ def load_experiment(name: str):
     return experiment
 
 
-def run_mlflow_pipeline(model_name: str):
+def run_mlflow_pipeline(model_name: str, dataset_size: float = 1.0):
 
-    X, y = load_preprocess_dataset()
+    X, y = load_preprocess_dataset(dataset_size)
 
     # scaler = MinMaxScaler()
     # X_scaled = scaler.fit_transform(X)

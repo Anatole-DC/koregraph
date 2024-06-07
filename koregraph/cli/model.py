@@ -32,20 +32,28 @@ parser.add_argument(
     help="When passed, run the train workflow on google cloud.",
 )
 
+parser.add_argument(
+    "-d",
+    "--dataset-size",
+    dest="dataset_size",
+    default=1.0,
+    help="Size ratio of the dataset to be used (default to 1)",
+)
+
 
 def main():
     arguments = parser.parse_args()
-    model_name = arguments.model_name
-    with_cloud = arguments.with_cloud
+    model_name = str(arguments.model_name)
+    with_cloud = bool(arguments.with_cloud)
+    dataset_size = float(arguments.dataset_size)
 
     if with_cloud:
         print("Running training with google cloud")
-
-        run_mlflow_pipeline(model_name)
+        run_mlflow_pipeline(model_name, dataset_size)
         return
 
     print("Running training locally")
-    train_workflow(model_name=model_name)
+    train_workflow(model_name, dataset_size)
 
 
 if __name__ == "__main__":

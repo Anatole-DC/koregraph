@@ -13,9 +13,9 @@ from koregraph.utils.controllers.pickles import save_object_pickle
 # from koregraph.api.preprocessing.audio_proc import scale_audio
 
 
-def train_workflow(model_name: str = "model"):
+def train_workflow(model_name: str = "model", dataset_size=1.0):
 
-    X, y = load_preprocess_dataset()
+    X, y = load_preprocess_dataset(dataset_size)
 
     # X_scaled = scale_audio(X)
     X_scaled = X

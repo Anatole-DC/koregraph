@@ -2,7 +2,7 @@
     All utilities functions to load the train dataset.
 """
 
-from typing import Any
+from random import sample
 
 from numpy import ndarray, append
 
@@ -10,7 +10,7 @@ from koregraph.utils.controllers.pickles import load_pickle_object
 from koregraph.config.params import GENERATED_PICKLE_DIRECTORY
 
 
-def load_preprocess_dataset() -> tuple[ndarray, ndarray]:
+def load_preprocess_dataset(dataset_size: float = 1.0) -> tuple[ndarray, ndarray]:
     """
     Load and preprocess the dataset.
 
@@ -21,6 +21,11 @@ def load_preprocess_dataset() -> tuple[ndarray, ndarray]:
         GENERATED_PICKLE_DIRECTORY / "generated_gBR_sFM_cAll_d04_mBR0_ch01.pkl"
     )
     y, X = load_pickle_object(base_shape_file)
+
+    all_files = list(GENERATED_PICKLE_DIRECTORY.glob("*.pkl"))
+    sample_rate = int(len(all_files) * dataset_size)
+
+    files = sample(all_files, sample_rate)  # Sample size based on the dataset_size
 
     # files = [
     #     "generated_gBR_sFM_cAll_d04_mBR0_ch01.pkl",
@@ -37,14 +42,20 @@ def load_preprocess_dataset() -> tuple[ndarray, ndarray]:
     #     # "generated_gKR_sFM_cAll_d28_mKR0_ch01.pkl",
     # ]
 
-    for file in GENERATED_PICKLE_DIRECTORY.glob("*.pkl"):
+    for file in files:
         if file == base_shape_file:
             continue
         y_tmp, X_tmp = load_pickle_object(file)
         X = append(X, X_tmp, axis=0)
         y = append(y, y_tmp, axis=0)
 
+    print(f"Preprocess dataset used {len(files)} files")
+
     return X, y
 
 
 def check_dataset_format(): ...
+
+
+if __name__ == "__main__":
+    load_preprocess_dataset(0.5)
