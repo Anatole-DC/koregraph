@@ -99,7 +99,7 @@ def load_chunk_preprocess_dataset() -> Tuple[ndarray, ndarray]:
 
 
 def load_next_chunks_preprocess_dataset(perc_cut: float = PERCENTAGE_CUT):
-    chore_names = ALL_ADVANCED_MOVE_NAMES[:20]
+    chore_names = ALL_ADVANCED_MOVE_NAMES[:100]
     X = None
     y = None
     for chore_name in chore_names:

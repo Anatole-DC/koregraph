@@ -1,6 +1,7 @@
 from os import environ, path, listdir
 from pathlib import Path
 from dotenv import load_dotenv
+from pickle import load as load_pickle
 
 from koregraph.models.constants import LAST_CHUNK_TYPE
 
@@ -107,3 +108,10 @@ GENERATED_FEATURES_DIRECTORY: Path = PROJECT_ROOT.joinpath(
     )
 )
 GENERATED_FEATURES_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
+if len(ALL_ADVANCED_MOVE_NAMES) == 0:
+    try:
+        with open('data/all_advanced_move_names.pkl', 'rb') as f:
+            ALL_ADVANCED_MOVE_NAMES =  load_pickle.load(f)
+    except Exception as e:
+        print('Could not load all_advanced_move_names variable')

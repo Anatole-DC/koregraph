@@ -37,7 +37,7 @@ def train_workflow(model_name: str = "model"):
         y=y,
         validation_split=0.2,
         batch_size=16,
-        epochs=20,
+        epochs=100,
         # callbacks=[BackupCallback],
     )
 
