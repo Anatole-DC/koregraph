@@ -6,11 +6,14 @@ from mlflow import (
     start_run,
     tensorflow as mlflow_tensorflow,
 )
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
+from koregraph.config.params import WEIGHTS_BACKUP_DIRECTORY
 from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import load_preprocess_dataset
 from koregraph.config.params import MODEL_OUTPUT_DIRECTORY
+from koregraph.utils.controllers.pickles import save_object_pickle
 
 
 def load_experiment(name: str):
@@ -31,7 +34,7 @@ def load_experiment(name: str):
     return experiment
 
 
-def run_mlflow_pipeline(workflow_name: str):
+def run_mlflow_pipeline(model_name: str):
 
     X, y = load_preprocess_dataset()
 
@@ -46,7 +49,7 @@ def run_mlflow_pipeline(workflow_name: str):
     model = initialize_model(X, y)
 
     # experiment_id = create_experiment("test_cloud_run")
-    experiment = load_experiment(workflow_name)
+    experiment = load_experiment(model_name)
 
     with start_run(experiment_id=experiment.experiment_id) as mlflow_run:
         model.fit(
@@ -54,13 +57,30 @@ def run_mlflow_pipeline(workflow_name: str):
             y=y,
             validation_split=0.2,
             batch_size=16,
-            epochs=20,
-            callbacks=[BackupCallback, StoppingCallback],
+            epochs=1000,
+            callbacks=[
+                ModelCheckpoint(
+                    WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",
+                    monitor="val_loss",
+                    verbose=0,
+                    save_best_only=False,
+                    save_weights_only=False,
+                    mode="auto",
+                    save_freq="epoch",
+                    initial_value_threshold=None,
+                ),
+                # EarlyStopping(
+                #     monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
+                # ),
+            ],
         )
-        print("Exporting model...")
 
+        print("Exporting model to pickle...")
+        save_object_pickle(model, model_name)
+
+        print("Exporting model to mlflow...")
         mlflow_tensorflow.log_model(
-            model, artifact_path="test", registered_model_name=workflow_name
+            model, artifact_path="test", registered_model_name=model_name
         )
         mlflow_tensorflow.save_model(
             model, path=MODEL_OUTPUT_DIRECTORY / f"{mlflow_run.info.run_name}"

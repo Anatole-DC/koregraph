@@ -1,5 +1,8 @@
 from numpy import float32
 
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+
+from koregraph.config.params import WEIGHTS_BACKUP_DIRECTORY
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import (
     load_preprocess_dataset,
@@ -27,9 +30,23 @@ def train_workflow(model_name: str = "model"):
         x=X_scaled,
         y=y,
         validation_split=0.2,
-        epochs=20,
+        epochs=1,
         batch_size=16,
-        callbacks=[BackupCallback, StoppingCallback],
+        callbacks=[
+            ModelCheckpoint(
+                WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",
+                monitor="val_loss",
+                verbose=0,
+                save_best_only=False,
+                save_weights_only=False,
+                mode="auto",
+                save_freq="epoch",
+                initial_value_threshold=None,
+            ),
+            EarlyStopping(
+                monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
+            ),
+        ],
     )
 
     save_object_pickle(model, model_name)
