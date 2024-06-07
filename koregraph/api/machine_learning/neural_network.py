@@ -6,6 +6,7 @@ from typing import List
 
 from keras.layers import Dense, LSTM, Normalization, Dropout, Bidirectional
 from keras.models import Sequential, Model
+from koregraph.api.machine_learning.custom_loss import smooth_mse
 
 
 def prepare_model(X, y) -> Model:
@@ -37,7 +38,7 @@ def prepare_model(X, y) -> Model:
         ]
     )
 
-
+custom_loss = smooth_mse()
 def compile_model(model: Model) -> Model:
     """Takes a non-compiled model and return the model compiled.
 
@@ -48,7 +49,7 @@ def compile_model(model: Model) -> Model:
         Model: The compiled model.
     """
 
-    model.compile(loss="mse", optimizer="adam", metrics=["mae"])
+    model.compile(loss=custom_loss, optimizer="adam", metrics=["mae"])
     return model
 
 

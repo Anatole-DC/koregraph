@@ -25,15 +25,18 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str =
 
     # TODO remove this step when reshape is done in preprocessing workflow
     # input = scale_audio(input)
+    #print(input.shape)
     input = input.reshape(-1, 1, input.shape[1])
+    #print(input.shape)
     prediction = model.predict(input)
     prediction = upscale_posture_pred(prediction)
 
     print(prediction.shape)
 
     prediction_name = (
-        model_name.replace("_", "") + "_sBM_cAll_d00_" + audio_name + f"_ch{chore_id}"
+        model_name.replace("_", "") + "sFM_cAll_d04" + audio_name + f"_ch{chore_id}"
     )
+
 
     chore = Choregraphy(
         prediction_name, prediction.reshape(-1, 17, 2), np_ones(prediction.shape[0])
@@ -48,4 +51,4 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str =
 
 
 if __name__ == "__main__":
-    predict(audio_name="mBR2", chore_id="02")
+    predict(audio_name="mBR0", model_name="model",chore_id="01")

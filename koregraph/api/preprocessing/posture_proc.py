@@ -24,8 +24,9 @@ def generate_posture_array(
         postures = nan_to_num(postures, 0)
         postures[:, :, 0] = postures[:, :, 0] / frame_format[0]
         postures[:, :, 1] = postures[:, :, 1] / frame_format[1]
+        #print(postures.shape)
 
-    return postures.reshape(-1, 34)
+    return postures #, postures.reshape(-1, 34)
 
 
 # @TODO: verifier le format d'entree de prediction
@@ -52,3 +53,8 @@ def upscale_posture_pred(
     prediction[:, :, 1] = prediction[:, :, 1] * frame_format[1]
 
     return prediction
+
+
+A = generate_posture_array('gBR_sBM_cAll_d04_mBR0_ch01.pkl')
+print(A[0])
+print(A[0].shape)
