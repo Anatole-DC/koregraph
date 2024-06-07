@@ -1,5 +1,6 @@
 from numpy import float32
 
+from tensorflow.keras import Model
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 from koregraph.config.params import WEIGHTS_BACKUP_DIRECTORY
@@ -7,13 +8,18 @@ from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import (
     load_preprocess_dataset,
 )
-from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
+from koregraph.api.machine_learning.callbacks import HistorySaver
 from koregraph.utils.controllers.pickles import save_object_pickle
 
 # from koregraph.api.preprocessing.audio_proc import scale_audio
 
 
-def train_workflow(model_name: str = "model", dataset_size=1.0):
+def train_workflow(
+    model_name: str = "model",
+    dataset_size: float = 1.0,
+    backup_model: Model = None,
+    initial_epoch: int = 0,
+):
 
     X, y = load_preprocess_dataset(dataset_size)
 
@@ -24,14 +30,15 @@ def train_workflow(model_name: str = "model", dataset_size=1.0):
     y = y.astype(float32)
 
     print(X_scaled.shape)
-    model = initialize_model(X, y)
+    model = initialize_model(X, y) if backup_model is None else backup_model
 
     history = model.fit(
         x=X_scaled,
         y=y,
         validation_split=0.2,
-        epochs=1,
+        epochs=20,
         batch_size=16,
+        initial_epoch=initial_epoch,
         callbacks=[
             ModelCheckpoint(
                 WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",
@@ -46,6 +53,7 @@ def train_workflow(model_name: str = "model", dataset_size=1.0):
             EarlyStopping(
                 monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
             ),
+            HistorySaver(WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_history.pkl"),
         ],
     )
 

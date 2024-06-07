@@ -24,5 +24,5 @@ def load_keras_model(model_path: Path):
 
 
 if __name__ == "__main__":
-    model = load_keras_model(WEIGHTS_BACKUP_DIRECTORY / "backup.keras")
-    save_object_pickle(model, "test_full_train")
+    model = load_keras_model(WEIGHTS_BACKUP_DIRECTORY / "full_scale-1_backup.keras")
+    save_object_pickle(model, "full_scale-1")

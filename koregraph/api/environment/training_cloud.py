@@ -6,10 +6,11 @@ from mlflow import (
     start_run,
     tensorflow as mlflow_tensorflow,
 )
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+from tensorflow.keras import Model
+from tensorflow.keras.callbacks import ModelCheckpoint
 
 from koregraph.config.params import WEIGHTS_BACKUP_DIRECTORY
-from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
+from koregraph.api.machine_learning.callbacks import HistorySaver
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import load_preprocess_dataset
 from koregraph.config.params import MODEL_OUTPUT_DIRECTORY
@@ -34,7 +35,12 @@ def load_experiment(name: str):
     return experiment
 
 
-def run_mlflow_pipeline(model_name: str, dataset_size: float = 1.0):
+def run_mlflow_pipeline(
+    model_name: str = "model",
+    dataset_size: float = 1.0,
+    backup_model: Model = None,
+    initial_epoch: int = 0,
+):
 
     X, y = load_preprocess_dataset(dataset_size)
 
@@ -69,6 +75,7 @@ def run_mlflow_pipeline(model_name: str, dataset_size: float = 1.0):
                     save_freq="epoch",
                     initial_value_threshold=None,
                 ),
+                HistorySaver(WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_history.pkl"),
                 # EarlyStopping(
                 #     monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
                 # ),
