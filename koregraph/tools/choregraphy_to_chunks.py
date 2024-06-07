@@ -4,7 +4,7 @@ import librosa
 from numpy import ndarray, pad, array, concatenate, tile
 
 from koregraph.models.choregraphy import Choregraphy
-from koregraph.params import (
+from koregraph.config.params import (
     KEYPOINTS_DIRECTORY,
     AUDIO_DIRECTORY,
     LAST_CHUNK_TYPE_STRATEGY,

@@ -3,7 +3,7 @@ from pathlib import Path
 from os import environ
 
 from koregraph.models.types import MusicGenre
-from koregraph.params import AUDIO_DIRECTORY
+from koregraph.config.params import AUDIO_DIRECTORY
 
 
 @dataclass

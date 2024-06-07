@@ -1,6 +1,6 @@
 from tensorflow.python.keras.callbacks import ModelCheckpoint
 
-from koregraph.params import WEIGHTS_BACKUP_DIRECTORY
+from koregraph.config.params import WEIGHTS_BACKUP_DIRECTORY
 
 BackupCallback = ModelCheckpoint(
     WEIGHTS_BACKUP_DIRECTORY,

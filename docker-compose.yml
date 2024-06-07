@@ -2,11 +2,12 @@ name: koregraph
 
 services:
   mlflow:
+    image: europe-west1-docker.pkg.dev/le-wagon-420414/koregraph/koregraph-mlflow:latest
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "8000:8000"
     volumes:
       - "./data:/mlflow"
     environment:
