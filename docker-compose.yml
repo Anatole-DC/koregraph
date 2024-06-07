@@ -10,6 +10,7 @@ services:
       - "8000:8000"
     volumes:
       - "./data:/mlflow"
+      - "/mlruns:/mlruns"
     environment:
       BACKEND_URI: sqlite:////mlflow/mlflow.db
       ARTIFACT_ROOT: /mlflow/artifacts
