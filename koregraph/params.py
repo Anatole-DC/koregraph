@@ -97,3 +97,13 @@ FRAME_FORMAT = (1920, 1080)
 
 X_MIN = -80
 X_MAX = 0
+
+PERCENTAGE_CUT = 0.2
+
+GENERATED_FEATURES_DIRECTORY: Path = PROJECT_ROOT.joinpath(
+    environ.get(
+        "GENERATED_FEATURES_DIRECTORY",
+        "generated/features",
+    )
+)
+GENERATED_FEATURES_DIRECTORY.mkdir(parents=True, exist_ok=True)
