@@ -7,6 +7,7 @@ from mlflow import (
     tensorflow as mlflow_tensorflow,
 )
 
+from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCallback
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import load_preprocess_dataset
 from koregraph.config.params import MODEL_OUTPUT_DIRECTORY
@@ -54,7 +55,7 @@ def run_mlflow_pipeline(workflow_name: str):
             validation_split=0.2,
             batch_size=16,
             epochs=20,
-            # callbacks=[BackupCallback],
+            callbacks=[BackupCallback, StoppingCallback],
         )
         print("Exporting model...")
 
