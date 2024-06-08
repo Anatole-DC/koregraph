@@ -3,7 +3,7 @@ from numpy import float32
 from tensorflow.keras import Model
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
-from koregraph.config.params import WEIGHTS_BACKUP_DIRECTORY
+from koregraph.config.params import MODEL_OUTPUT_DIRECTORY, WEIGHTS_BACKUP_DIRECTORY
 from koregraph.api.machine_learning.neural_network import initialize_model
 from koregraph.api.machine_learning.load_dataset import (
     load_preprocess_dataset,
@@ -36,7 +36,7 @@ def train_workflow(
         x=X_scaled,
         y=y,
         validation_split=0.2,
-        epochs=20,
+        epochs=50,
         batch_size=16,
         initial_epoch=initial_epoch,
         callbacks=[
@@ -56,6 +56,8 @@ def train_workflow(
             HistorySaver(WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_history.pkl"),
         ],
     )
+
+    model.save(MODEL_OUTPUT_DIRECTORY / f"{model_name}.keras")
 
     save_object_pickle(model, model_name)
     save_object_pickle(history, model_name + "_history")

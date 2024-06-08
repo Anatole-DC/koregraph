@@ -1,5 +1,7 @@
 from numpy import ones as np_ones
+from tensorflow.keras.models import load_model
 
+from koregraph.api.machine_learning.losses import combined_loss
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.utils.controllers.choregraphies import save_choregaphy_chunk
 from koregraph.utils.controllers.pickles import load_pickle_object
@@ -17,8 +19,11 @@ from koregraph.api.preprocessing.audio_proc import scale_audio
 
 
 def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str = "01"):
-    model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
-    model = load_pickle_object(model_path)
+    # model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
+    # model = load_pickle_object(model_path)
+
+    model_path = MODEL_OUTPUT_DIRECTORY / f"{model_name}.keras"
+    model = load_model(model_path)
 
     audio_filepath = AUDIO_DIRECTORY / (audio_name + ".mp3")
     input = music_to_numpy(audio_filepath)
@@ -28,6 +33,8 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str =
     input = input.reshape(-1, 1, input.shape[1])
     prediction = model.predict(input)
     prediction = upscale_posture_pred(prediction)
+
+    print(prediction)
 
     print(prediction.shape)
 

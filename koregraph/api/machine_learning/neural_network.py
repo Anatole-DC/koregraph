@@ -6,6 +6,7 @@ from typing import List
 
 from keras.layers import Dense, LSTM, Normalization, Dropout, Bidirectional
 from keras.models import Sequential, Model
+from keras.optimizers import RMSprop
 
 
 def prepare_model(X, y) -> Model:
@@ -48,7 +49,13 @@ def compile_model(model: Model) -> Model:
         Model: The compiled model.
     """
 
-    model.compile(loss="mse", optimizer="adam", metrics=["mae"])
+    model.compile(
+        loss="mse",
+        optimizer=RMSprop(
+            learning_rate=0.01,
+        ),
+        metrics=["mae"],
+    )
     return model
 
 

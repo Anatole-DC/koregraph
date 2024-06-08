@@ -1,6 +1,5 @@
 from imageio import get_writer
 from pathlib import Path
-from os import environ
 
 from numpy import asarray, isnan
 from PIL.Image import Image, new as new_pillow_image
