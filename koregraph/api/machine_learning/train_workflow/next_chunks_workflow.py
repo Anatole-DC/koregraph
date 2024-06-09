@@ -8,13 +8,15 @@ from koregraph.api.machine_learning.callbacks import BackupCallback
 from koregraph.utils.pickle import save_object_pickle, load_pickle_object
 from sklearn.preprocessing import MinMaxScaler
 from koregraph.params import GENERATED_FEATURES_DIRECTORY, CHUNK_SIZE, PERCENTAGE_CUT
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+from koregraph.params import WEIGHTS_BACKUP_DIRECTORY
 
 
 def train_workflow(model_name: str = "model"):
 
-    X, y = load_preprocess_dataset()
-    # X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
-    # y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
+    # X, y = load_preprocess_dataset()
+    X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
+    y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
     y = y.astype(float32)
 
     print("y has nan", isnan(y).any())
@@ -38,7 +40,21 @@ def train_workflow(model_name: str = "model"):
         validation_split=0.2,
         batch_size=16,
         epochs=1000,
-        # callbacks=[BackupCallback],
+        callbacks=[
+            ModelCheckpoint(
+                WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",
+                monitor="val_loss",
+                verbose=0,
+                save_best_only=False,
+                save_weights_only=False,
+                mode="auto",
+                save_freq="epoch",
+                initial_value_threshold=None,
+            ),
+            EarlyStopping(
+                monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
+            ),
+            ],
     )
 
     save_object_pickle(model, model_name)
