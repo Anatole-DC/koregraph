@@ -70,6 +70,7 @@ viewer = "koregraph.cli.viewer:main"
 chunk = "koregraph.cli.chunk_command:main"
 train = "koregraph.cli.model:main"
 predict = "koregraph.cli.predict:main"
+data = "koregraph.cli.dataset:main"
 
 
 [build-system]
