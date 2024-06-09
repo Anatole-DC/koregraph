@@ -35,6 +35,14 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "-e",
+    "--epochs",
+    dest="epochs",
+    default=20,
+    help="Number of epochs to perform.",
+)
+
+parser.add_argument(
     "-d",
     "--dataset-size",
     dest="dataset_size",
@@ -50,6 +58,13 @@ parser.add_argument(
     help="If a model backup is found, load the backup and start training from it.",
 )
 
+parser.add_argument(
+    "--no-early-stopping",
+    dest="with_early_stopping",
+    action="store_false",
+    help="When passed, disable the early stopping callback.",
+)
+
 
 def main():
     arguments = parser.parse_args()
@@ -57,6 +72,7 @@ def main():
     with_cloud = bool(arguments.with_cloud)
     dataset_size = float(arguments.dataset_size)
     restore_backup = bool(arguments.restore_backup)
+    epochs = int(arguments.epochs)
 
     model = None
     initial_epoch = 0
@@ -91,7 +107,7 @@ def main():
         return
 
     print("Running training locally")
-    train_workflow(model_name, dataset_size, model, initial_epoch)
+    train_workflow(model_name, epochs, dataset_size, model, initial_epoch)
 
 
 if __name__ == "__main__":

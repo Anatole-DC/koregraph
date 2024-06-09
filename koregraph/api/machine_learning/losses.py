@@ -2,7 +2,7 @@ from numpy import ndarray, zeros, sqrt
 from tensorflow import reduce_mean, square, norm
 from sklearn.metrics import mean_squared_error
 
-from koregraph.api.preprocessing.music_to_numpy import music_to_numpy
+from koregraph.api.preprocessing.audio_preprocessing import music_to_numpy
 from koregraph.config.params import (
     AUDIO_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,

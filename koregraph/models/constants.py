@@ -25,6 +25,28 @@ EmptyPosture: Posture = Posture(
     ]
 )
 
+StandingPosture: Posture = Posture(
+    [
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+        (-1, -1),
+    ]
+)
+
 default_2d: array = EmptyPosture.keypoints
 
 LAST_CHUNK_TYPE = Enum("LastChunkType", ["PADDING", "ROLLING"])

@@ -10,7 +10,7 @@ from koregraph.utils.controllers.choregraphies import load_choregraphy
 from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.models.posture import Posture
-from koregraph.config.params import KEYPOINTS_BUILDER_TEMP_DIRECTORY
+from koregraph.config.params import AUDIO_DIRECTORY, KEYPOINTS_BUILDER_TEMP_DIRECTORY
 
 
 COLORS = [
@@ -98,21 +98,21 @@ def keypoints_video_audio_builder(choregraphy_name: str):
     )
 
 
-def keypoints_video_audio_builder_from_choreography(choregraphy: Choregraphy):
+def keypoints_video_audio_builder_from_choreography(
+    choregraphy: Choregraphy, music: str
+):
     """Export a video with audio and drawn keypoints.
 
     Args:
         choregraphy (Choregraphy): The choregraphy to build the video from.
     """
 
-    aist_file = AISTFile(choregraphy.name)
-
     print(f"Choregraphy '{choregraphy.name}' : {len(choregraphy.keypoints2d)} postures")
 
     video_path = export_choregraphy_keypoints(choregraphy)
 
     video = VideoFileClip(str(video_path.absolute()))
-    audio = AudioFileClip(str(aist_file.music.absolute()))
+    audio = AudioFileClip(str((AUDIO_DIRECTORY / f"{music}.mp3").absolute()))
 
     final_filename = KEYPOINTS_BUILDER_TEMP_DIRECTORY / f"{choregraphy.name}.mp4"
     final_filename.unlink(missing_ok=True)
@@ -122,7 +122,3 @@ def keypoints_video_audio_builder_from_choreography(choregraphy: Choregraphy):
         fps=60, codec="libx264", filename=str(final_filename.absolute())
     )
     video_path.unlink()
-
-
-if __name__ == "__main__":
-    keypoints_video_audio_builder("gWA_sBM_cAll_d26_mWA4_ch07")

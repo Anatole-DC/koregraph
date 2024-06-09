@@ -20,24 +20,14 @@ parser.add_argument(
     default="model",
 )
 
-parser.add_argument(
-    "-i",
-    "--chore-id",
-    dest="chore_id",
-    required=False,
-    default="01",
-    help="Id of the chore to be created. Ex: '01'",
-)
-
 
 def main():
     arguments = parser.parse_args()
 
     audio_name = arguments.audio_name
     model_name = arguments.model_name
-    chore_id = arguments.chore_id
 
-    predict_api(audio_name=audio_name, model_name=model_name, chore_id=chore_id)
+    predict_api(audio_name=audio_name, model_name=model_name)
 
 
 if __name__ == "__main__":

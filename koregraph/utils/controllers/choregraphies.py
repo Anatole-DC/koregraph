@@ -1,14 +1,14 @@
 from datetime import timedelta
 from pickle import load as load_pickle, dump as dump_pickle, HIGHEST_PROTOCOL
 from pathlib import Path
-from os import environ
 from typing import Dict
 
+from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.config.params import KEYPOINTS_DIRECTORY
 
 
-def load_choregraphy(name: str) -> Choregraphy:
+def load_choregraphy(aist_file: AISTFile) -> Choregraphy:
     """Load and return a choregraphy from a pickle file.
 
     Args:
@@ -18,10 +18,10 @@ def load_choregraphy(name: str) -> Choregraphy:
         Choregraphy: The loaded Choregraphy.
     """
 
-    with open(KEYPOINTS_DIRECTORY / f"{name}.pkl", "rb") as keypoints_file:
+    with open(aist_file.choregraphy_file, "rb") as keypoints_file:
         choregraphy_raw: Dict = load_pickle(keypoints_file)
     loaded_choregraphy = Choregraphy(
-        name,
+        aist_file.name,
         choregraphy_raw["keypoints2d"][
             0, :, :, :2
         ],  # Take the first view (among nine), all postures, all keypoints, only the x and y coordinates
@@ -30,7 +30,7 @@ def load_choregraphy(name: str) -> Choregraphy:
 
     assert len(loaded_choregraphy.keypoints2d) == len(
         loaded_choregraphy.timestamps
-    ), f"In loaded choregraphy {name}, not the same number of postures and timestamps"
+    ), f"In loaded choregraphy {aist_file.name}, not the same number of postures and timestamps"
 
     return loaded_choregraphy
 
