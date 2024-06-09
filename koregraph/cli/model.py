@@ -51,6 +51,14 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "-b",
+    "--batch-size",
+    dest="batch_size",
+    default=16,
+    help="Size ratio of the batch size (default to 16)",
+)
+
+parser.add_argument(
     "-r",
     "--restore-backup",
     dest="restore_backup",
@@ -71,6 +79,7 @@ def main():
     model_name = str(arguments.model_name)
     with_cloud = bool(arguments.with_cloud)
     dataset_size = float(arguments.dataset_size)
+    batch_size = int(arguments.batch_size)
     restore_backup = bool(arguments.restore_backup)
     epochs = int(arguments.epochs)
 
@@ -107,7 +116,7 @@ def main():
         return
 
     print("Running training locally")
-    train_workflow(model_name, epochs, dataset_size, model, initial_epoch)
+    train_workflow(model_name, epochs, batch_size, dataset_size, model, initial_epoch)
 
 
 if __name__ == "__main__":

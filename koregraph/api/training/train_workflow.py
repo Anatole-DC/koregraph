@@ -17,6 +17,7 @@ from koregraph.utils.controllers.pickles import save_object_pickle
 def train_workflow(
     model_name: str = "model",
     epochs: int = 16,
+    batch_size: int = 16,
     dataset_size: float = 1.0,
     backup_model: Model = None,
     initial_epoch: int = 0,
@@ -38,7 +39,7 @@ def train_workflow(
         y=y,
         validation_split=0.2,
         epochs=epochs,
-        batch_size=16,
+        batch_size=batch_size,
         initial_epoch=initial_epoch,
         callbacks=[
             ModelCheckpoint(
