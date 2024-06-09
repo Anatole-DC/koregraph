@@ -37,7 +37,7 @@ def generate_training_pickles(
     # Pickle generation
     for move_file in ALL_ADVANCED_MOVE_NAMES:
         # Load the music and the choregraphy
-        music = music_to_numpy(AUDIO_DIRECTORY / move_file.music)
+        music = music_to_numpy(AUDIO_DIRECTORY / f"{move_file.music}.mp3")
         choregraphy = load_choregraphy(move_file)
 
         # Preprocess the choregraphy
