@@ -53,8 +53,3 @@ def upscale_posture_pred(
     prediction[:, :, 1] = prediction[:, :, 1] * frame_format[1]
 
     return prediction
-
-
-A = generate_posture_array('gBR_sBM_cAll_d04_mBR0_ch01.pkl')
-print(A[0])
-print(A[0].shape)
