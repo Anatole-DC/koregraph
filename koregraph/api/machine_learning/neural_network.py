@@ -30,7 +30,9 @@ def prepare_model(X, y) -> Model:
             Bidirectional(LSTM(128, activation="relu")),
             # Bidirectional(LSTM(128, activation="relu")),
             Dense(128, activation="relu"),
+            Dropout(rate=0.1),
             Dense(128, activation="relu"),
+            Dropout(rate=0.1),
             Dense(128, activation="relu"),
             Dropout(rate=0.1),
             Dense(64, activation="relu"),
@@ -51,9 +53,9 @@ def compile_model(model: Model) -> Model:
     """
 
     model.compile(
-        loss="mse",
+        loss="mae",
         optimizer=RMSprop(
-            learning_rate=0.01,
+            learning_rate=0.005,
         ),
         metrics=["mae"],
     )

@@ -21,6 +21,7 @@ def train_workflow(
     dataset_size: float = 1.0,
     backup_model: Model = None,
     initial_epoch: int = 0,
+    patience: int = 20,
 ):
 
     X, y = load_preprocess_dataset(dataset_size)
@@ -53,7 +54,10 @@ def train_workflow(
                 initial_value_threshold=None,
             ),
             EarlyStopping(
-                monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
+                monitor="val_loss",
+                patience=patience,
+                verbose=0,
+                restore_best_weights=True,
             ),
             HistorySaver(WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_history.pkl"),
         ],

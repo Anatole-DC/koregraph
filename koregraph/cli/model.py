@@ -66,6 +66,16 @@ parser.add_argument(
     help="If a model backup is found, load the backup and start training from it.",
 )
 
+
+parser.add_argument(
+    "-p",
+    "--patience",
+    dest="patience",
+    default=10,
+    help="Patience parameter in early stopping (default to 10).",
+)
+
+
 parser.add_argument(
     "--no-early-stopping",
     dest="with_early_stopping",
@@ -82,6 +92,7 @@ def main():
     batch_size = int(arguments.batch_size)
     restore_backup = bool(arguments.restore_backup)
     epochs = int(arguments.epochs)
+    patience = int(arguments.patience)
 
     model = None
     initial_epoch = 0
@@ -116,7 +127,9 @@ def main():
         return
 
     print("Running training locally")
-    train_workflow(model_name, epochs, batch_size, dataset_size, model, initial_epoch)
+    train_workflow(
+        model_name, epochs, batch_size, dataset_size, model, initial_epoch, patience
+    )
 
 
 if __name__ == "__main__":
