@@ -24,7 +24,7 @@ parser.add_argument(
     "--from-cloud",
     dest="from_cloud",
     action="store_true",
-    help="When passed, will attempt to download the model from gcloud storage"
+    help="When passed, will attempt to download the model from gcloud storage",
 )
 
 
