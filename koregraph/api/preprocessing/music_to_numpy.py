@@ -45,7 +45,7 @@ def reduce_noise(y, sr, median_filter_size=(4, 16), threshold_multiplier=2.5, n_
     return y_filtered
 
 
-def music_to_numpy(audio_file_path, fps=60, sr=44100, n_mels=256, n_fft=2048, noise_duration=0.5):
+def music_to_numpy(audio_file_path, fps=60, sr=44100, n_mels=256, n_fft=2048):
     """
     Compute the mel spectrogram of the noise-reduced audio for each frame of a video.
 
@@ -65,7 +65,7 @@ def music_to_numpy(audio_file_path, fps=60, sr=44100, n_mels=256, n_fft=2048, no
     y, sr = librosa.load(audio_file_path, sr=sr)
 
     # Réduire le bruit du fichier audio
-    y_filtered = reduce_noise(y, sr, noise_duration=noise_duration, n_fft=n_fft, hop_length=int(sr * (1 / fps)))
+    y_filtered = reduce_noise(y, sr, n_fft=n_fft, hop_length=int(sr * (1 / fps)))
 
     # Calculer la durée d'une frame
     duration_per_frame = 1 / fps
