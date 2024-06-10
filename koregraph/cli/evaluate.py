@@ -17,12 +17,15 @@ parser.add_argument(
     help="Model name",
     default="model",
 )
+parser.add_argument("-b", "--backup", dest="is_backup", action="store_true")
 
 
 def main():
     arguments = parser.parse_args()
     model_name = str(arguments.model_name)
-    plot_loss(model_name)
+    backup = arguments.is_backup
+
+    plot_loss(model_name, backup=backup)
 
 
 if __name__ == "__main__":
