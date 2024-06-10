@@ -5,6 +5,8 @@ from librosa.feature import melspectrogram
 from librosa import power_to_db
 from numpy import max, ndarray
 
+from koregraph.config.params import X_MIN, X_MAX
+
 
 def music_to_numpy(
     audio_file_path: Path,
@@ -58,3 +60,19 @@ def music_to_numpy(
         S_db_T = S_db_T[:n_frames, :]
 
     return S_db_T
+
+
+def scale_audio(X: ndarray, X_min: float = X_MIN, X_max: float = X_MAX) -> ndarray:
+    """Apply a MinMax scaler to an audio.
+
+    Args:
+        X (ndarray): The audio to scale.
+        X_min (float, optional): The minimum value within x. Defaults to X_MIN.
+        X_max (float, optional): The maximum value within x. Defaults to X_MAX.
+
+    Returns:
+        ndarray: The scaled audio.
+    """
+
+    X_std = (X - X_min) / (X_max - X_min)
+    return X_std

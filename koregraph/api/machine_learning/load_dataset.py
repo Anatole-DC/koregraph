@@ -10,42 +10,35 @@ from koregraph.utils.controllers.pickles import load_pickle_object
 from koregraph.config.params import GENERATED_PICKLE_DIRECTORY
 
 
-def load_preprocess_dataset(dataset_size: float = 1.0) -> tuple[ndarray, ndarray]:
+def load_preprocess_dataset(
+    dataset_size: float = 1.0, mode: str = "barbarie"
+) -> tuple[ndarray, ndarray]:
     """
     Load and preprocess the dataset.
 
     Returns:
         Tuple[np.ndarray, np.ndarray]: The dataset.
     """
-    base_shape_file = (
-        GENERATED_PICKLE_DIRECTORY / "generated_gBR_sFM_cAll_d04_mBR0_ch01.pkl"
-    )
-    y, X = load_pickle_object(base_shape_file)
 
-    all_files = list(GENERATED_PICKLE_DIRECTORY.glob("*.pkl"))
+    # Retrieve the training files
+    train_file_path = GENERATED_PICKLE_DIRECTORY / mode
+    all_files = list(train_file_path.glob("*.pkl"))
+
+    # Compute the random sample size
     sample_rate = int(len(all_files) * dataset_size)
 
-    files = sample(all_files, sample_rate)  # Sample size based on the dataset_size
+    # Load the first file to determine the shape of the final dataset
+    base_shape_file = all_files[0]
+    X, y = load_pickle_object(base_shape_file)
 
-    # files = [
-    #     "generated_gBR_sFM_cAll_d04_mBR0_ch01.pkl",
-    #     # "generated_gBR_sFM_cAll_d04_mBR1_ch02.pkl",
-    #     # "generated_gBR_sFM_cAll_d04_mBR2_ch03.pkl",
-    #     # "generated_gBR_sFM_cAll_d04_mBR3_ch04.pkl",
-    #     # "generated_gBR_sFM_cAll_d04_mBR4_ch05.pkl",
-    #     # "generated_gBR_sFM_cAll_d04_mBR4_ch07.pkl",
-    #     # "generated_gBR_sFM_cAll_d04_mBR5_ch06.pkl",
-    #     # "generated_gBR_sFM_cAll_d05_mBR2_ch09.pkl",
-    #     # "generated_gBR_sFM_cAll_d05_mBR3_ch10.pkl",
-    #     # "generated_gBR_sFM_cAll_d05_mBR4_ch11.pkl",
-    #     # "generated_gBR_sFM_cAll_d05_mBR4_ch13.pkl",
-    #     # "generated_gKR_sFM_cAll_d28_mKR0_ch01.pkl",
-    # ]
+    # Sample size based on the dataset_size
+    files = sample(all_files, sample_rate)
 
+    # Load all files and concatenate them
     for file in files:
         if file == base_shape_file:
             continue
-        y_tmp, X_tmp = load_pickle_object(file)
+        X_tmp, y_tmp = load_pickle_object(file)
         X = append(X, X_tmp, axis=0)
         y = append(y, y_tmp, axis=0)
 
