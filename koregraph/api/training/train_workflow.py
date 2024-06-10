@@ -75,14 +75,18 @@ def train_workflow(
     )
 
     print("Exporting model locally")
+    (MODEL_OUTPUT_DIRECTORY / model_name).mkdir(exist_ok=True, parents=True)
     model.save(MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.keras")
-    save_object_pickle(model, model_name, MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.pkl")
-    save_object_pickle(history, model_name + "_history", MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}_history.pkl")
+    save_object_pickle(
+        history,
+        model_name + "_history",
+        MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}_history.pkl",
+    )
 
     if with_cloud:
         print("Exporting model to google cloud storage")
         GCSCallback(model_backup_path, "koregraph").upload_file_to_gcs(
-            MODEL_OUTPUT_DIRECTORY / f"{model_name}.keras",
+            MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.keras",
             f"generated/models/{model_name}/",
         )
 
