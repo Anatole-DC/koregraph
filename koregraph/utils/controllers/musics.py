@@ -1,8 +1,10 @@
 from pathlib import Path
-from os import environ
-import numpy as np
+
+from numpy import float16, float32, int16, ndarray
 import soundfile as sf
 from mutagen.mp3 import MP3
+from librosa import load
+
 from koregraph.config.params import AUDIO_DIRECTORY
 
 
@@ -18,5 +20,11 @@ def load_choregraphy_audio(name: str) -> MP3:
     return audio_content
 
 
-def save_audio_chunk(audio: np.ndarray, sample_rate: int, fullpath: Path) -> None:
+def save_audio_chunk(audio: ndarray, sample_rate: int, fullpath: Path) -> None:
     sf.write(fullpath, audio, samplerate=sample_rate)
+
+
+def load_music(music_path: Path) -> ndarray:
+    if not music_path.exists():
+        raise FileNotFoundError(f"File {music_path.absolute()} does not exist.")
+    return load(music_path, sr=None)

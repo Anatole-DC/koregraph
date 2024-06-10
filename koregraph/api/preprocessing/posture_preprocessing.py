@@ -3,8 +3,15 @@ from typing import Tuple
 
 from numpy import ndarray, nan_to_num, ones, zeros
 
-from koregraph.config.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT
+from koregraph.api.preprocessing.interpolation import add_transition
+from koregraph.config.params import (
+    ALL_ADVANCED_MOVE_NAMES,
+    KEYPOINTS_DIRECTORY,
+    FRAME_FORMAT,
+)
 from koregraph.models.choregraphy import Choregraphy
+from koregraph.tools.video_builder import export_choregraphy_keypoints
+from koregraph.utils.controllers.choregraphies import load_choregraphy
 
 
 def generate_posture_array(
@@ -90,7 +97,8 @@ def convert_to_train_posture(choregraphy: Choregraphy) -> ndarray:
         ndarray: The training array.
     """
 
-    interpolated = nan_to_num(choregraphy.keypoints2d, 0)
+    filled = nan_to_num(choregraphy.keypoints2d, 0)
+    interpolated = add_transition(filled)
     downscale = downscale_posture(interpolated)
     posture_array = array_from_keypoints(downscale)
     return posture_array
@@ -159,3 +167,19 @@ def generate_and_export_choreography(posture_file_2):
         ) * (i / n_rows_part3)
 
     return final_array
+
+
+if __name__ == "__main__":
+    export_choregraphy_keypoints(
+        Choregraphy(
+            "test",
+            upscale_posture_pred(
+                posture_array_to_keypoints(
+                    convert_to_train_posture(
+                        load_choregraphy(ALL_ADVANCED_MOVE_NAMES[0])
+                    )
+                )
+            ),
+        ),
+        "test",
+    )
