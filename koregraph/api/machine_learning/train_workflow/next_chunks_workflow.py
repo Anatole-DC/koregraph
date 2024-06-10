@@ -54,7 +54,7 @@ def train_workflow(model_name: str = "model"):
             EarlyStopping(
                 monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
             ),
-            ],
+        ],
     )
 
     save_object_pickle(model, model_name)

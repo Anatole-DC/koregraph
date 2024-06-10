@@ -111,7 +111,7 @@ GENERATED_FEATURES_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 if len(ALL_ADVANCED_MOVE_NAMES) == 0:
     try:
-        with open('data/all_advanced_move_names.pkl', 'rb') as f:
-            ALL_ADVANCED_MOVE_NAMES =  load_pickle(f)
+        with open("data/all_advanced_move_names.pkl", "rb") as f:
+            ALL_ADVANCED_MOVE_NAMES = load_pickle(f)
     except Exception as e:
-        print(f'Could not load all_advanced_move_names variable: {e}')
+        print(f"Could not load all_advanced_move_names variable: {e}")
