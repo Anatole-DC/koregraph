@@ -1,10 +1,13 @@
 from numpy import ones as np_ones
+from tensorflow.keras.models import load_model
 
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.utils.controllers.choregraphies import save_choregaphy_chunk
-from koregraph.utils.controllers.pickles import load_pickle_object
-from koregraph.api.preprocessing.music_to_numpy import music_to_numpy
-from koregraph.api.preprocessing.posture_proc import upscale_posture_pred
+from koregraph.api.preprocessing.audio_preprocessing import music_to_numpy
+from koregraph.api.preprocessing.posture_preprocessing import (
+    upscale_posture_pred,
+    posture_array_to_keypoints,
+)
 from koregraph.tools.video_builder import (
     keypoints_video_audio_builder_from_choreography,
 )
@@ -13,12 +16,15 @@ from koregraph.config.params import (
     MODEL_OUTPUT_DIRECTORY,
     PREDICTION_OUTPUT_DIRECTORY,
 )
-from koregraph.api.preprocessing.audio_proc import scale_audio
+from koregraph.api.preprocessing.audio_preprocessing import scale_audio
 
 
-def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str = "01"):
-    model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
-    model = load_pickle_object(model_path)
+def predict(audio_name: str = "mBR0", model_name: str = "model"):
+    # model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
+    # model = load_pickle_object(model_path)
+
+    model_path = MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.keras"
+    model = load_model(model_path)
 
     audio_filepath = AUDIO_DIRECTORY / (audio_name + ".mp3")
     input = music_to_numpy(audio_filepath)
@@ -27,22 +33,18 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chore_id: str =
     # input = scale_audio(input)
     input = input.reshape(-1, 1, input.shape[1])
     prediction = model.predict(input)
-    prediction = upscale_posture_pred(prediction)
-
-    print(prediction.shape)
+    prediction = upscale_posture_pred(posture_array_to_keypoints(prediction))
 
     prediction_name = (
-        model_name.replace("_", "") + "_sBM_cAll_d00_" + audio_name + f"_ch{chore_id}"
+        (model_name + "_" + audio_name) if audio_name not in model_name else model_name
     )
 
-    chore = Choregraphy(
-        prediction_name, prediction.reshape(-1, 17, 2), np_ones(prediction.shape[0])
-    )
+    chore = Choregraphy(prediction_name, prediction.reshape(-1, 17, 2))
     # Save prediction to pkl
     save_choregaphy_chunk(chore, PREDICTION_OUTPUT_DIRECTORY)
 
     # Create video
-    keypoints_video_audio_builder_from_choreography(chore)
+    keypoints_video_audio_builder_from_choreography(chore, audio_name)
 
     print("Happy viewing!")
 

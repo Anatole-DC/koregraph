@@ -45,6 +45,7 @@ mutagen = "^1.47.0"
 pillow = "^10.3.0"
 moviepy = "^1.0.3"
 
+
 [tool.poetry.group.chunk]
 optional = true
 
@@ -65,12 +66,13 @@ tensorflow = "^2.16.1"
 google-cloud-storage = "^2.16.0"
 
 [tool.poetry.scripts]
-generate = "koregraph.cli.generate_features:main"
+preprocess = "koregraph.cli.preprocess:main"
 viewer = "koregraph.cli.viewer:main"
 chunk = "koregraph.cli.chunk_command:main"
 train = "koregraph.cli.model:main"
 predict = "koregraph.cli.predict:main"
 evaluate = "koregraph.cli.evaluate:main"
+data = "koregraph.cli.dataset:main"
 
 
 [build-system]

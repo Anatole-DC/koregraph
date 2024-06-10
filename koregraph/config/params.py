@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 
+from koregraph.models.aist_file import AISTFile
 from koregraph.models.constants import LAST_CHUNK_TYPE
 from koregraph.utils.params import get_env_or_default
 
@@ -62,7 +63,7 @@ MODEL_OUTPUT_DIRECTORY: Path = get_env_or_default(
 MODEL_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 GENERATED_PICKLE_DIRECTORY: Path = get_env_or_default(
-    "GENERATED_PICKLE_DIRECTORY", GENERATED_OUTPUT_PATH / "inputs", Path
+    "GENERATED_PICKLE_DIRECTORY", GENERATED_OUTPUT_PATH / "data", Path
 )
 
 GENERATED_LOSS_DIRECTORY: Path = get_env_or_default(
@@ -101,7 +102,8 @@ MLFLOW_TRACKING_URI = get_env_or_default("MLFLOW_TRACKING_URI", "http://localhos
 # PREPROCESSING RELATED VARIABLES
 
 ALL_ADVANCED_MOVE_NAMES = [
-    advanced_move_path.name for advanced_move_path in KEYPOINTS_DIRECTORY.glob("*sFM*")
+    AISTFile(advanced_move_path)
+    for advanced_move_path in KEYPOINTS_DIRECTORY.glob("*sFM*")
 ]
 
 ALL_BASIC_MOVE_NAMES = [

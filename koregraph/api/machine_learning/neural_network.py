@@ -6,6 +6,7 @@ from typing import List
 
 from keras.layers import Dense, LSTM, Normalization, Dropout, Bidirectional
 from keras.models import Sequential, Model
+from keras.optimizers import RMSprop
 
 
 def prepare_model(X, y) -> Model:
@@ -25,11 +26,13 @@ def prepare_model(X, y) -> Model:
     return Sequential(
         [
             normalization_layer,
-            Bidirectional(LSTM(256, activation="relu", return_sequences=True)),
-            Bidirectional(LSTM(128, activation="relu")),
-            Dense(256, activation="relu"),
+            Bidirectional(LSTM(512, activation="relu", return_sequences=True)),
+            Bidirectional(LSTM(512, activation="relu", return_sequences=True)),
+            Bidirectional(LSTM(256, activation="relu")),
+            # Bidirectional(LSTM(128, activation="relu")),
             Dense(128, activation="relu"),
-            Dense(64, activation="relu"),
+            Dense(128, activation="relu"),
+            Dense(128, activation="relu"),
             Dropout(rate=0.2),
             Dense(64, activation="relu"),
             Dropout(rate=0.2),
@@ -48,7 +51,13 @@ def compile_model(model: Model) -> Model:
         Model: The compiled model.
     """
 
-    model.compile(loss="mse", optimizer="adam", metrics=["mae"])
+    model.compile(
+        loss="mae",
+        optimizer=RMSprop(
+            learning_rate=0.005,
+        ),
+        metrics=["mae"],
+    )
     return model
 
 
