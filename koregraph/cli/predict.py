@@ -28,17 +28,31 @@ parser.add_argument(
 )
 
 
+parser.add_argument(
+    "-b",
+    "--backup",
+    dest="backup",
+    action="store_true",
+    help="When passed, will use the backup model.",
+)
+
+
 def main():
     arguments = parser.parse_args()
 
     audio_name = arguments.audio_name
     model_name = arguments.model_name
     from_cloud = arguments.from_cloud
+    backup = arguments.backup
 
     if from_cloud:
         print("Downloading the model from google cloud storage...")
         download_model_history_from_bucket(model_name)
         print("Model downloaded !")
+
+    if backup:
+        print("Using backup model")
+        model_name = model_name + "_backup"
 
     predict_api(audio_name=audio_name, model_name=model_name)
 
