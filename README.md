@@ -154,6 +154,13 @@ poetry run chunk -c data/keypoints2d/gBR_sBM_cAll_d04_mBR0_ch02.pkl -s 5
 ```
 If the music already exists, but you want to split it again for some reason, add the following parameter `--reload-music`
 
+**Plot the loss**
+
+```bash
+poetry run evaluate -m model_name
+```
+If history is a buckup file, add -b
+
 ## Ideas
 
 Pitch en ligne
