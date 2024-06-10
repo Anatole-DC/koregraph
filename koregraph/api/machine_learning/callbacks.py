@@ -40,7 +40,9 @@ class GCSCallback(Callback, metaclass=SingletonMeta):
         self.checkpoint_path: Path = cp_path
         self.bucket_name = bucket_name
 
-        client = Client()
+        client = Client.from_service_account_json(
+            "secrests/le-wagon-420414-c20b739bfbba.json"
+        )
         self.bucket = client.get_bucket(bucket_name)
 
     def upload_file_to_gcs(self, src_path: Path, dest_path: str):

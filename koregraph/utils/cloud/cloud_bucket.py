@@ -4,7 +4,9 @@ from koregraph.config.params import MODEL_OUTPUT_DIRECTORY
 
 
 def download_model_history_from_bucket(model_name: str):
-    client = Client()
+    client = Client.from_service_account_json(
+        "secrests/le-wagon-420414-c20b739bfbba.json"
+    )
     bucket = client.bucket("koregraph")
     blobs = [
         blob.name
