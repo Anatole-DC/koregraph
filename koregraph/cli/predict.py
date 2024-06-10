@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 
 from koregraph.api.machine_learning.prediction_workflow import predict as predict_api
+from koregraph.utils.cloud.cloud_bucket import download_model_history_from_bucket
 
 parser = ArgumentParser(
     "Koregraph prediction",
@@ -20,12 +21,26 @@ parser.add_argument(
     default="model",
 )
 
+parser.add_argument(
+    "--from-cloud",
+    dest="from_cloud",
+    action="store_true",
+    help="Model name",
+    default="model",
+)
+
 
 def main():
     arguments = parser.parse_args()
 
     audio_name = arguments.audio_name
     model_name = arguments.model_name
+    from_cloud = arguments.from_cloud
+
+    if from_cloud:
+        print("Downloading the model from google cloud storage...")
+        download_model_history_from_bucket(model_name)
+        print("Model downloaded !")
 
     predict_api(audio_name=audio_name, model_name=model_name)
 

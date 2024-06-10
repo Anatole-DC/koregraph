@@ -7,7 +7,27 @@ from google.cloud.storage import Client, transfer_manager
 from koregraph.utils.controllers.pickles import load_pickle_object
 
 
-class GCSCallback(Callback):
+class SingletonMeta(type):
+    """
+    The Singleton class can be implemented in different ways in Python. Some
+    possible methods include: base class, decorator, metaclass. We will use the
+    metaclass because it is best suited for this purpose.
+    """
+
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        """
+        Possible changes to the value of the `__init__` argument do not affect
+        the returned instance.
+        """
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
+
+
+class GCSCallback(Callback, metaclass=SingletonMeta):
     """A custom callback to copy checkpoints from local file system directory to Google Cloud Storage directory"""
 
     def __init__(self, cp_path: Path, bucket_name: str):
@@ -40,7 +60,7 @@ class GCSCallback(Callback):
         for checkpoint_file in self.checkpoint_path.glob("*"):
             self.upload_file_to_gcs(
                 src_path=checkpoint_file,
-                dest_path=f"backup/{checkpoint_file.parent.name}/",
+                dest_path=f"generated/models/{checkpoint_file.parent.name}/",
             )
 
 
