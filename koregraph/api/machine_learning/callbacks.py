@@ -4,6 +4,7 @@ from pickle import dump as pickle_dump
 from tensorflow.keras.callbacks import Callback
 from google.cloud.storage import Client, transfer_manager
 
+from koregraph.config.params import GCLOUD_AUTHENTICATION
 from koregraph.utils.controllers.pickles import load_pickle_object
 
 
@@ -40,9 +41,7 @@ class GCSCallback(Callback, metaclass=SingletonMeta):
         self.checkpoint_path: Path = cp_path
         self.bucket_name = bucket_name
 
-        client = Client.from_service_account_json(
-            "secrets/le-wagon-420414-c20b739bfbba.json"
-        )
+        client = Client.from_service_account_json(GCLOUD_AUTHENTICATION)
         self.bucket = client.get_bucket(bucket_name)
 
     def upload_file_to_gcs(self, src_path: Path, dest_path: str):

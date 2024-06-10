@@ -1,12 +1,10 @@
 from google.cloud.storage import Client, transfer_manager
 
-from koregraph.config.params import MODEL_OUTPUT_DIRECTORY
+from koregraph.config.params import GCLOUD_AUTHENTICATION
 
 
 def download_model_history_from_bucket(model_name: str):
-    client = Client.from_service_account_json(
-        "secrets/le-wagon-420414-c20b739bfbba.json"
-    )
+    client = Client.from_service_account_json(GCLOUD_AUTHENTICATION)
     bucket = client.bucket("koregraph")
     blobs = [
         blob.name

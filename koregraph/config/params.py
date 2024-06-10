@@ -89,6 +89,11 @@ PREDICTION_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 MLFLOW_TRACKING_URI = get_env_or_default("MLFLOW_TRACKING_URI", "http://localhost:8000")
 
+GCLOUD_AUTHENTICATION = get_env_or_default(
+    "GCLOUD_AUTHENTICATION",
+    PROJECT_ROOT / "secrets/le-wagon-420414-c20b739bfbba.json",
+    Path,
+)
 
 # PREPROCESSING RELATED VARIABLES
 
