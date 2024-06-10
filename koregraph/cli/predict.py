@@ -16,7 +16,6 @@ parser.add_argument(
     "-m",
     "--model",
     dest="model_name",
-    required=False,
     help="Model name",
     default="model",
 )
@@ -25,8 +24,7 @@ parser.add_argument(
     "--from-cloud",
     dest="from_cloud",
     action="store_true",
-    help="Model name",
-    default="model",
+    help="When passed, will attempt to download the model from gcloud storage"
 )
 
 

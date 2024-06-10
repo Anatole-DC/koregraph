@@ -23,7 +23,7 @@ def predict(audio_name: str = "mBR0", model_name: str = "model"):
     # model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
     # model = load_pickle_object(model_path)
 
-    model_path = MODEL_OUTPUT_DIRECTORY / f"{model_name}.keras"
+    model_path = MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.keras"
     model = load_model(model_path)
 
     audio_filepath = AUDIO_DIRECTORY / (audio_name + ".mp3")
