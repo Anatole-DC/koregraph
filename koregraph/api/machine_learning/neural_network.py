@@ -32,9 +32,9 @@ def prepare_model(X, y) -> Model:
             Dense(128, activation="relu"),
             Dense(128, activation="relu"),
             Dense(128, activation="relu"),
-            # Dropout(rate=0.2),
+            Dropout(rate=0.1),
             Dense(64, activation="relu"),
-            # Dropout(rate=0.2),
+            Dropout(rate=0.1),
             Dense(y.shape[1], activation="sigmoid"),
         ]
     )
