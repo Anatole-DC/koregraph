@@ -34,6 +34,8 @@ def train_workflow(model_name: str = "model"):
 
     model = initialize_model_next_chunks(X, y)
 
+    model.summary()
+
     history = model.fit(
         x=X,
         y=y,
@@ -52,7 +54,7 @@ def train_workflow(model_name: str = "model"):
                 initial_value_threshold=None,
             ),
             EarlyStopping(
-                monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
+                monitor="val_loss", patience=50, verbose=0, restore_best_weights=True
             ),
         ],
     )

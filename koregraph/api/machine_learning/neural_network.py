@@ -13,6 +13,8 @@ from keras.layers import (
     Conv2D,
     BatchNormalization,
     Flatten,
+    Reshape,
+    TimeDistributed,
     Input,
 )
 from keras.initializers import glorot_uniform
@@ -128,19 +130,39 @@ def initialize_model_next_chunks(X, y) -> Model:
     print("x 0 shape", X[0].shape)
     new_model = Sequential(
         [
-            # Input(),
+            Input(X[0].shape),
             Conv2D(
                 258,
                 kernel_size=(3, 3),
                 activation="relu",
-                input_shape=X[0].shape,
+                # input_shape=X[0].shape,
                 padding="same",
             ),
-            # Dropout(rate=0.2),
-            # Conv2D(128, kernel_size=(3, 3), activation="relu", padding="same"),
+            Dropout(rate=0.2),
+            Conv2D(128, kernel_size=(3, 3), activation="relu", padding="same"),
             BatchNormalization(),
-            Flatten(),
+            # Flatten(),
             # lstm 512
+            # Reshape((285*17*2, )),
+
+            # Reshape((-1, 16*510)),
+            TimeDistributed(Flatten()),
+            Bidirectional(
+                LSTM(
+                    512,
+                    activation="tanh",
+                    kernel_initializer=glorot_uniform(),
+                    return_sequences=True,
+                ),
+            ),
+            Bidirectional(
+                LSTM(
+                    256,
+                    activation="tanh",
+                    kernel_initializer=glorot_uniform(),
+                    return_sequences=False,
+                ),
+            ),
             Dense(256, activation="relu"),
             Dense(128, activation="relu"),
             Dropout(rate=0.2),
