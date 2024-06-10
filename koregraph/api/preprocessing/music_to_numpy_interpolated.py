@@ -7,7 +7,14 @@ from librosa import power_to_db
 from scipy.ndimage import median_filter
 
 
-def reduce_noise(y, sr, median_filter_size=(4, 16), threshold_multiplier=2.5, n_fft=2048, hop_length=512):
+def reduce_noise(
+    y,
+    sr,
+    median_filter_size=(4, 16),
+    threshold_multiplier=2.5,
+    n_fft=2048,
+    hop_length=512,
+):
     """
     Reduce noise from an audio signal using median filtering.
 
@@ -74,7 +81,9 @@ def music_to_numpy(audio_file_path, fps=60, sr=44100, n_mels=128, n_fft=2048):
     hop_length = int(sr * duration_per_frame)
 
     # Calculer le spectrogramme Mel
-    S = melspectrogram(y=y_filtered, sr=sr, n_fft=n_fft, hop_length=hop_length, n_mels=n_mels)
+    S = melspectrogram(
+        y=y_filtered, sr=sr, n_fft=n_fft, hop_length=hop_length, n_mels=n_mels
+    )
 
     # Convertir le spectrogramme en dB
     S_db = power_to_db(S, ref=np.max)
@@ -95,6 +104,6 @@ def music_to_numpy(audio_file_path, fps=60, sr=44100, n_mels=128, n_fft=2048):
 
     # Mettre les 60 dernières lignes à -80 dB
     if len(S_db_T) > 120:  # Assurer qu'il y a au moins 120 lignes
-        S_db_T[-60:, :] = np.full((60, n_mels), -80)
+        S_db_T[-60:, :] = full((60, nb_mels), -80)
 
     return S_db_T

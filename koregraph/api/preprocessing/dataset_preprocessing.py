@@ -9,10 +9,14 @@ from koregraph.api.preprocessing.audio_preprocessing import music_to_numpy
 from koregraph.config.params import (
     ALL_ADVANCED_MOVE_NAMES,
     AUDIO_DIRECTORY,
+    GENERATED_AUDIO_SILENCE_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,
 )
 from koregraph.utils.controllers.choregraphies import load_choregraphy
-from koregraph.api.preprocessing.posture_preprocessing import convert_to_train_posture
+from koregraph.api.preprocessing.posture_preprocessing import (
+    convert_to_train_posture,
+    generate_and_export_choreography,
+)
 
 
 def generate_training_pickles(
@@ -37,13 +41,17 @@ def generate_training_pickles(
     # Pickle generation
     for move_file in ALL_ADVANCED_MOVE_NAMES:
         # Load the music and the choregraphy
-        music = music_to_numpy(AUDIO_DIRECTORY / f"{move_file.music}.mp3")
+        music = music_to_numpy(
+            GENERATED_AUDIO_SILENCE_DIRECTORY / f"silence_{move_file.music}.mp3"
+        )
         choregraphy = load_choregraphy(move_file)
 
         # Preprocess the choregraphy
         train_choregraphy = None
         if mode == "barbarie":
-            train_choregraphy = convert_to_train_posture(choregraphy)
+            train_choregraphy = generate_and_export_choreography(
+                f"{move_file.name}.pkl"
+            )
         elif mode == "chunks":
             # @TODO: implement chunk conversion for posture and music
             train_choregraphy = convert_to_train_posture(choregraphy)

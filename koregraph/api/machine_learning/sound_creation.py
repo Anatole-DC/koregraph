@@ -44,3 +44,7 @@ def add_silence_to_audio_files():
                 print(f"Exported file to: {output_audio_path}")
             except Exception as e:
                 print(f"Failed to export {output_audio_path}: {e}")
+
+
+if __name__ == "__main__":
+    add_silence_to_audio_files()

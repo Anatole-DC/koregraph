@@ -1,11 +1,60 @@
 from pathlib import Path
+from random import sample
 
-from librosa import load
+from librosa import db_to_power, load, stft, magphase, istft
 from librosa.feature import melspectrogram
 from librosa import power_to_db
-from numpy import max, ndarray
+from numpy import append, max, ndarray, where, median, full
+from scipy.ndimage import median_filter
+from pydub import AudioSegment
 
-from koregraph.config.params import X_MIN, X_MAX
+from koregraph.config.params import AUDIO_DIRECTORY, X_MIN, X_MAX
+from koregraph.utils.controllers.musics import save_audio_chunk
+
+
+def reduce_noise(
+    y,
+    sr,
+    median_filter_size=(4, 16),
+    threshold_multiplier=2.5,
+    n_fft=2048,
+    hop_length=512,
+):
+    """
+    Reduce noise from an audio signal using median filtering.
+
+    Parameters:
+    - y: np.ndarray, audio time series.
+    - sr: int, sample rate.
+    - median_filter_size: tuple, size of the median filter window.
+    - threshold_multiplier: float, multiplier for setting the threshold for noise reduction.
+    - n_fft: int, FFT window size.
+    - hop_length: int, hop length for STFT.
+
+    Returns:
+    - y_filtered: np.ndarray, noise-reduced audio time series.
+    """
+    # Compute STFT
+    D = stft(y, n_fft=n_fft, hop_length=hop_length)
+    magnitude, phase = magphase(D)
+
+    # Apply median filtering
+    filtered_magnitude = median_filter(magnitude, size=median_filter_size)
+
+    # Compute residual
+    residual = magnitude - filtered_magnitude
+
+    # Set threshold for noise reduction
+    threshold = median(residual) * threshold_multiplier
+
+    # Apply noise reduction
+    denoised_magnitude = where(residual > threshold, magnitude, 0)
+
+    # Reconstruct denoised STFT
+    denoised_stft = denoised_magnitude * phase
+    y_filtered = istft(denoised_stft, hop_length=hop_length)
+
+    return y_filtered
 
 
 def music_to_numpy(
@@ -29,7 +78,12 @@ def music_to_numpy(
     """
 
     # Charger le fichier audio
-    y, sample_rate = load(audio_file_path, sr=sample_rate)
+    y, _ = load(audio_file_path, sr=sample_rate)
+
+    # Réduire le bruit du fichier audio
+    y_filtered = reduce_noise(
+        y, sample_rate, n_fft=nb_fft, hop_length=int(sample_rate * (1 / fps))
+    )
 
     # Calculer la durée d'une frame
     duration_per_frame = 1 / fps
@@ -39,7 +93,7 @@ def music_to_numpy(
 
     # Calculer le spectrogramme Mel
     S = melspectrogram(
-        y=y,
+        y=y_filtered,
         sr=sample_rate,
         n_fft=nb_fft,
         hop_length=hop_length,
@@ -59,6 +113,15 @@ def music_to_numpy(
     if len(S_db_T) > n_frames:
         S_db_T = S_db_T[:n_frames, :]
 
+    # Mettre les 60 premières lignes à -80 dB
+    # Mettre les 60 premières lignes à -80 dB
+    if len(S_db_T) > 60:
+        S_db_T[:60, :] = full((60, nb_mels), -80)
+
+    # Mettre les 60 dernières lignes à -80 dB
+    if len(S_db_T) > 120:  # Assurer qu'il y a au moins 120 lignes
+        S_db_T[-60:, :] = full((60, nb_mels), -80)
+
     return S_db_T
 
 
@@ -76,3 +139,7 @@ def scale_audio(X: ndarray, X_min: float = X_MIN, X_max: float = X_MAX) -> ndarr
 
     X_std = (X - X_min) / (X_max - X_min)
     return X_std
+
+
+if __name__ == "__main__":
+    save_audio_chunk(music_to_numpy(AUDIO_DIRECTORY / "mBR0.mp3"), 44100, "music.mp3")

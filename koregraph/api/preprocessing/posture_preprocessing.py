@@ -1,7 +1,7 @@
 from pickle import load as load_pickle
 from typing import Tuple
 
-from numpy import ndarray, nan_to_num
+from numpy import ndarray, nan_to_num, ones, zeros
 
 from koregraph.config.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT
 from koregraph.models.choregraphy import Choregraphy
@@ -118,3 +118,44 @@ def upscale_posture_pred(
     keypoints[:, :, 1] = keypoints[:, :, 1] * frame_format[1]
 
     return keypoints
+
+
+def generate_and_export_choreography(posture_file_2):
+    """Generate and export a choreography with interpolated posture arrays.
+    Args:
+        posture_file_2 (str): The name of the posture file where you want to interpolate the posture arrays.
+        Returns:
+        np.array: The final array of postures."""
+
+    posture_file_1 = "gPO_sBM_cAll_d10_mPO1_ch01.pkl"
+
+    # Définition des arrays de posture
+    posture_array_1 = generate_posture_array(posture_file_1)
+    posture_array_2 = generate_posture_array(posture_file_2)
+
+    # Nombre de lignes pour chaque partie de l'array final
+    n_rows_part1 = 60
+    n_rows_part2 = len(posture_array_2)
+    n_rows_part3 = n_rows_part1
+
+    # Initialisation de l'array final
+    final_array = zeros(
+        (n_rows_part1 + n_rows_part2 + n_rows_part3, posture_array_1.shape[1])
+    )
+
+    # Ajout de la première partie (transition de posture_array_1 à posture_array_2)
+    for i in range(n_rows_part1):
+        final_array[i] = posture_array_1[0] + (
+            posture_array_2[0] - posture_array_1[0]
+        ) * (i / n_rows_part1)
+
+    # Ajout de la deuxième partie (toutes les lignes de posture_array_2)
+    final_array[n_rows_part1 : n_rows_part1 + n_rows_part2] = posture_array_2
+
+    # Ajout de la troisième partie (transition de la dernière posture de posture_array_2 à la première posture de posture_array_1)
+    for i in range(n_rows_part3):
+        final_array[n_rows_part1 + n_rows_part2 + i] = posture_array_2[-1] + (
+            posture_array_1[0] - posture_array_2[-1]
+        ) * (i / n_rows_part3)
+
+    return final_array

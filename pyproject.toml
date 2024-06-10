@@ -19,6 +19,7 @@ urllib3 = "^2.2.1"
 requests = "^2.32.2"
 librosa = "^0.10.2.post1"
 matplotlib = "^3.9.0"
+pydub = "^0.25.1"
 
 [tool.poetry.group.dev]
 optional = true

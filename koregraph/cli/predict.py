@@ -52,9 +52,8 @@ def main():
 
     if backup:
         print("Using backup model")
-        model_name = model_name + "_backup"
 
-    predict_api(audio_name=audio_name, model_name=model_name)
+    predict_api(audio_name=audio_name, model_name=model_name, backup=backup)
 
 
 if __name__ == "__main__":
