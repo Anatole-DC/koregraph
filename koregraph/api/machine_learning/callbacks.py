@@ -41,7 +41,7 @@ class GCSCallback(Callback, metaclass=SingletonMeta):
         self.bucket_name = bucket_name
 
         client = Client.from_service_account_json(
-            "secrests/le-wagon-420414-c20b739bfbba.json"
+            "secrets/le-wagon-420414-c20b739bfbba.json"
         )
         self.bucket = client.get_bucket(bucket_name)
 
