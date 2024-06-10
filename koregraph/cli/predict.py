@@ -1,6 +1,9 @@
 from argparse import ArgumentParser
 
-from koregraph.api.machine_learning.prediction_workflow import predict as predict_api
+from koregraph.api.machine_learning.prediction_workflow import (
+    predict as predict_api,
+    predict_next_move,
+)
 
 parser = ArgumentParser(
     "Koregraph prediction",
@@ -20,7 +23,17 @@ parser.add_argument(
     default="model",
 )
 
+parser.add_argument(
+    "-c", "--choregraphy", dest="choregraphy", required=False, help="Choregraphy name"
+)
+
+parser.add_argument(
+    "-i", "--chunk-id", dest="chunk_id", required=False, help="Choregraphy name"
+)
+
 parser.add_argument("--chunks", dest="is_chunks", action="store_true")
+
+parser.add_argument("--predict-next", dest="predict_next", action="store_true")
 
 
 def main():
@@ -29,8 +42,22 @@ def main():
     audio_name = arguments.audio_name
     model_name = arguments.model_name
     is_chunks = arguments.is_chunks
+    choregraphy = arguments.choregraphy
+    chunk_id = arguments.chunk_id
 
-    predict_api(audio_name=audio_name, model_name=model_name, chunk=is_chunks)
+    if is_chunks:
+        predict_api(audio_name=audio_name, model_name=model_name, chunk=is_chunks)
+    elif arguments.predict_next:
+        assert choregraphy is not None
+        assert chunk_id is not None
+        predict_next_move(
+            audio_name=audio_name,
+            model_name=model_name,
+            chore_chunk_name=choregraphy,
+            chunk_id=chunk_id,
+        )
+    else:
+        predict_api(audio_name=audio_name, model_name=model_name, chunk=is_chunks)
 
 
 if __name__ == "__main__":

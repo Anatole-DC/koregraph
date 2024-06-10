@@ -9,6 +9,9 @@ from koregraph.api.machine_learning.callbacks import BackupCallback, StoppingCal
 from koregraph.utils.pickle import save_object_pickle
 from sklearn.preprocessing import MinMaxScaler
 from koregraph.api.audio_proc import scale_audio
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+
+from koregraph.params import WEIGHTS_BACKUP_DIRECTORY
 
 
 def train_workflow(model_name: str = "model"):
@@ -29,7 +32,21 @@ def train_workflow(model_name: str = "model"):
         validation_split=0.2,
         epochs=20,
         batch_size=16,
-        callbacks=[BackupCallback, StoppingCallback],
+        callbacks=[
+            ModelCheckpoint(
+                WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",
+                monitor="val_loss",
+                verbose=0,
+                save_best_only=False,
+                save_weights_only=False,
+                mode="auto",
+                save_freq="epoch",
+                initial_value_threshold=None,
+            ),
+            EarlyStopping(
+                monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
+            ),
+        ],
     )
 
     save_object_pickle(model, model_name)
