@@ -170,3 +170,4 @@ mlruns/
 *.mp3
 generated/
 secrets/
+notebook/
