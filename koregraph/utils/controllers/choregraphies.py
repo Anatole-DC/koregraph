@@ -1,11 +1,12 @@
-from datetime import timedelta
 from pickle import load as load_pickle, dump as dump_pickle, HIGHEST_PROTOCOL
 from pathlib import Path
 from typing import Dict
 
+from numpy import ndarray, append
+
 from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
-from koregraph.config.params import KEYPOINTS_DIRECTORY
+from koregraph.config.params import ALL_ADVANCED_MOVE_NAMES
 
 
 def load_choregraphy(aist_file: AISTFile) -> Choregraphy:
@@ -53,10 +54,22 @@ def save_choregaphy_chunk(chore: Choregraphy, path: Path) -> None:
         )
 
 
+def compute_mean_posture() -> Choregraphy:
+    nb_postures = 0
+    keypoint_sum = ndarray((17, 2))
+    for aist_file in ALL_ADVANCED_MOVE_NAMES:
+        choregraphy = load_choregraphy(aist_file)
+        choregraphy_sum = choregraphy.keypoints2d.sum(axis=0)
+        keypoint_sum = append(keypoint_sum, choregraphy_sum, axis=0)
+        nb_postures += choregraphy.keypoints2d.shape[0]
+    print((keypoint_sum / nb_postures).shape)
+
+
 if __name__ == "__main__":
-    choregraphy = load_choregraphy("gWA_sBM_cAll_d26_mWA4_ch07")
-    print(
-        timedelta(
-            microseconds=int(choregraphy.timestamps[-5] - choregraphy.timestamps[-6])
-        )
-    )
+    # choregraphy = load_choregraphy("gWA_sBM_cAll_d26_mWA4_ch07")
+    # print(
+    #     timedelta(
+    #         microseconds=int(choregraphy.timestamps[-5] - choregraphy.timestamps[-6])
+    #     )
+    # )
+    compute_mean_posture()

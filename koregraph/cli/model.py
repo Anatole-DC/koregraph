@@ -10,6 +10,7 @@ from koregraph.utils.controllers.pickles import load_pickle_object
 from koregraph.api.training.train_workflow import train_workflow
 from koregraph.api.environment.training_cloud import run_mlflow_pipeline
 from koregraph.config.params import WEIGHTS_BACKUP_DIRECTORY
+from koregraph.utils.storage import init_file_storage
 
 
 parser = ArgumentParser(
@@ -31,7 +32,7 @@ parser.add_argument(
     "--with-cloud",
     dest="with_cloud",
     action="store_true",
-    help="When passed, run the train workflow on google cloud.",
+    help="When passed, run the train workflow on google cloud (use gcloud storage for the model files)",
 )
 
 parser.add_argument(
@@ -97,6 +98,9 @@ def main():
     model = None
     initial_epoch = 0
 
+    # Initialize file storage
+    init_file_storage("cloud") if with_cloud else init_file_storage("local")
+
     if restore_backup:
         # Check for existing model backup
         model_backup_path = WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras"
@@ -120,15 +124,15 @@ def main():
     if model is not None:
         print(f"Using backup for model {model_name} at epoch {initial_epoch}")
 
-    if with_cloud:
-        # @TODO: change for a real tensorflow cloud
-        print("Running training with google cloud")
-        run_mlflow_pipeline(model_name, dataset_size, initial_epoch)
-        return
-
-    print("Running training locally")
     train_workflow(
-        model_name, epochs, batch_size, dataset_size, model, initial_epoch, patience
+        model_name=model_name,
+        epochs=epochs,
+        batch_size=batch_size,
+        dataset_size=dataset_size,
+        backup_model=model,
+        initial_epoch=initial_epoch,
+        patience=patience,
+        with_cloud=with_cloud,
     )
 
 
