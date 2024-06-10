@@ -14,9 +14,9 @@ from koregraph.params import WEIGHTS_BACKUP_DIRECTORY
 
 def train_workflow(model_name: str = "model"):
 
-    # X, y = load_preprocess_dataset()
-    X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
-    y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
+    X, y = load_preprocess_dataset()
+    # X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
+    # y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
     y = y.astype(float32)
 
     print("y has nan", isnan(y).any())

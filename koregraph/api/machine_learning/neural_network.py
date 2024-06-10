@@ -140,6 +140,7 @@ def initialize_model_next_chunks(X, y) -> Model:
             # Conv2D(128, kernel_size=(3, 3), activation="relu", padding="same"),
             BatchNormalization(),
             Flatten(),
+            # lstm 512
             Dense(256, activation="relu"),
             Dense(128, activation="relu"),
             Dropout(rate=0.2),

@@ -99,7 +99,7 @@ def load_chunk_preprocess_dataset() -> Tuple[ndarray, ndarray]:
 
 
 def load_next_chunks_preprocess_dataset(perc_cut: float = PERCENTAGE_CUT):
-    chore_names = ALL_ADVANCED_MOVE_NAMES[:100]
+    chore_names = ALL_ADVANCED_MOVE_NAMES[:10]
     X = None
     y = None
     for chore_name in chore_names:
@@ -143,8 +143,8 @@ def load_next_chunks_preprocess_dataset(perc_cut: float = PERCENTAGE_CUT):
             else:
                 X = append(X, X_tmp, axis=0)
 
-    X = X.reshape(-1, int(CHUNK_SIZE * (1 - perc_cut)) * 60, X.shape[-1])
-    y = y.reshape(-1, int(CHUNK_SIZE * perc_cut) * 60 * 34)
+    X = X.reshape(-1, int((CHUNK_SIZE * (1 - perc_cut)) * 60), 17, 2)
+    y = y.reshape(-1, int(CHUNK_SIZE * perc_cut * 60 * 34))
 
     print("X final shape", X.shape)
     print("y final shape", y.shape)
