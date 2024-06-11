@@ -112,6 +112,8 @@ GCLOUD_AUTHENTICATION = get_env_or_default(
     Path,
 )
 
+BUCKET_NAME = get_env_or_default("BUCKET_NAME", "koregraph")
+
 # PREPROCESSING RELATED VARIABLES
 
 ALL_ADVANCED_MOVE_NAMES = [

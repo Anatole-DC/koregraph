@@ -107,21 +107,22 @@ def load_next_chunks_preprocess_dataset(
         : int(len(ALL_ADVANCED_MOVE_NAMES) * dataset_size)
     ]
     X = None
+    X_audio = None
     y = None
     for chore in chore_names:
         chore_name = chore.name
-        # music_name = chore.music
+        music_name = chore.music
 
         chore_path = GENERATED_KEYPOINTS_DIRECTORY / chore_name / str(CHUNK_SIZE)
-        # music_path = GENERATED_AUDIO_DIRECTORY / music_name / str(CHUNK_SIZE)
+        music_path = GENERATED_AUDIO_DIRECTORY / music_name / str(CHUNK_SIZE)
         print(f"Parsing {chore_name} chunks")
 
         for file in listdir(chore_path):
             chunk_id = file.replace(".pkl", "").split("_")[-1]
             chore_filepath = chore_path / file
-            # music_filepath = music_path / f"{music_name}_{chunk_id}.mp3"
+            music_filepath = music_path / f"{music_name}_{chunk_id}.mp3"
 
-            # audio_tmp = music_to_numpy(music_filepath)
+            audio_tmp = music_to_numpy(music_filepath)
             chore_tmp = load_pickle_object(chore_filepath)["keypoints2d"]
 
             chore_tmp = fill_forward(chore_tmp)
@@ -137,6 +138,7 @@ def load_next_chunks_preprocess_dataset(
             X_tmp = chore_X
 
             # print('X_tmp shape', X_tmp.shape)
+            # print('X_audio shape', audio_tmp.shape)
             # print('y_tmp shape', y_tmp.shape)
 
             if y is None:
@@ -149,17 +151,23 @@ def load_next_chunks_preprocess_dataset(
             else:
                 X = append(X, X_tmp, axis=0)
 
+            if X_audio is None:
+                X_audio = audio_tmp
+            else:
+                X_audio = append(X_audio, audio_tmp, axis=0)
+
     X = X.reshape(-1, int((CHUNK_SIZE * (1 - perc_cut)) * 60), 17, 2)
     y = y.reshape(-1, int(CHUNK_SIZE * perc_cut * 60 * 34))
 
     print("X final shape", X.shape)
+    print("X audio final shape", X_audio.shape)
     print("y final shape", y.shape)
     save_object_pickle(X, obj_path=GENERATED_FEATURES_DIRECTORY / "x")
     save_object_pickle(y, obj_path=GENERATED_FEATURES_DIRECTORY / "y")
 
-    y = delete(y, [60, 63], axis=0)
-    X = delete(X, [60, 63], axis=0)
-    return X, y
+    # X = delete(X, [60, 63], axis=0)
+    # y = delete(y, [60, 63], axis=0)
+    return X, X_audio, y
 
 
 def check_dataset_format(): ...

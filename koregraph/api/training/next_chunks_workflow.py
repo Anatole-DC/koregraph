@@ -13,6 +13,7 @@ from koregraph.config.params import (
     PERCENTAGE_CUT,
     WEIGHTS_BACKUP_DIRECTORY,
     MODEL_OUTPUT_DIRECTORY,
+    BUCKET_NAME,
 )
 from koregraph.api.machine_learning.callbacks import GCSCallback, HistorySaver
 
@@ -28,7 +29,7 @@ def train_workflow(
     with_cloud: bool = False,
 ):
 
-    X, y = load_preprocess_dataset(dataset_size=dataset_size)
+    X, X_audio, y = load_preprocess_dataset(dataset_size=dataset_size)
     # X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
     # y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
     y = y.astype(float32)
@@ -41,43 +42,48 @@ def train_workflow(
     print("Y max", y.max())
 
     X = X.reshape(-1, int((CHUNK_SIZE * (1 - PERCENTAGE_CUT)) * 60), 17, 2)
+    X_audio = X_audio.reshape(-1, int(CHUNK_SIZE * 60), 128)
     y = y.reshape(-1, int(CHUNK_SIZE * PERCENTAGE_CUT * 60 * 17 * 2))
 
     print("Model X shape:", X.shape)
+    print("Model X audio shape:", X_audio.shape)
     print("Model y shape:", y.shape)
 
-    model = initialize_model_next_chunks(X, y) if backup_model is None else backup_model
+    model = (
+        initialize_model_next_chunks(X, X_audio, y)
+        if backup_model is None
+        else backup_model
+    )
 
     model_backup_path = MODEL_OUTPUT_DIRECTORY / model_name
     model_backup_path.mkdir(parents=True, exist_ok=True)
 
-    model_callbacks = (
-        [
-            ModelCheckpoint(
-                WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",
-                monitor="val_loss",
-                verbose=0,
-                save_best_only=False,
-                save_weights_only=False,
-                mode="auto",
-                save_freq="epoch",
-                initial_value_threshold=None,
-            ),
-            EarlyStopping(
-                monitor="val_loss",
-                patience=patience,
-                verbose=0,
-                restore_best_weights=True,
-            ),
-        ],
-    )
+    model_callbacks = [
+        ModelCheckpoint(
+            WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",
+            monitor="val_loss",
+            verbose=0,
+            save_best_only=False,
+            save_weights_only=False,
+            mode="auto",
+            save_freq="epoch",
+            initial_value_threshold=None,
+        ),
+        EarlyStopping(
+            monitor="val_loss",
+            patience=patience,
+            verbose=0,
+            restore_best_weights=True,
+        ),
+    ]
+
     model.summary()
 
     if with_cloud:
-        model_callbacks.append(GCSCallback(model_backup_path, "koregraph"))
+        model_callbacks.append(GCSCallback(model_backup_path, BUCKET_NAME))
 
     history = model.fit(
-        x=X,
+        x=[X, X_audio],
         y=y,
         validation_split=0.2,
         batch_size=batch_size,
@@ -89,6 +95,12 @@ def train_workflow(
     print("Exporting model locally")
     (MODEL_OUTPUT_DIRECTORY / model_name).mkdir(exist_ok=True, parents=True)
     model.save(MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.keras")
+    model.save(MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.h5")
+    save_object_pickle(
+        model,
+        model_name,
+        MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.pkl",
+    )
     save_object_pickle(
         history,
         model_name + "_history",
@@ -97,8 +109,16 @@ def train_workflow(
 
     if with_cloud:
         print("Exporting model to google cloud storage")
-        GCSCallback(model_backup_path, "koregraph").upload_file_to_gcs(
+        GCSCallback(model_backup_path, BUCKET_NAME).upload_file_to_gcs(
             MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.keras",
+            f"generated/models/{model_name}/",
+        )
+        GCSCallback(model_backup_path, BUCKET_NAME).upload_file_to_gcs(
+            MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.pkl",
+            f"generated/models/{model_name}/",
+        )
+        GCSCallback(model_backup_path, BUCKET_NAME).upload_file_to_gcs(
+            MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.h5",
             f"generated/models/{model_name}/",
         )
 

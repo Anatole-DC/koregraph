@@ -39,7 +39,7 @@ def predict(
     model_path = (
         MODEL_OUTPUT_DIRECTORY
         / model_name
-        / f"{model_name}{'_backup' if backup else ''}.keras"
+        / f"{model_name}{'_backup.keras' if backup else '.pkl'}"
     )
     model = load_model(model_path)
 

@@ -18,6 +18,7 @@ from keras.layers import (
     Flatten,
     TimeDistributed,
     Input,
+    concatenate,
 )
 from keras.initializers import glorot_uniform
 from keras.models import Sequential, Model
@@ -127,85 +128,95 @@ def initialize_model_chunks(X, y) -> Model:
     return new_model
 
 
-def initialize_model_next_chunks(X, y) -> Model:
+def initialize_model_next_chunks(X, X_audio, y) -> Model:
     """Initialize a compiled model.
 
     Returns:
         Model: The compiled model.
     """
 
-    new_model = Sequential(
-        [
-            Input(X[0].shape),
-            Conv2D(
-                512,
-                kernel_size=(3, 3),
-                activation="relu",
-                padding="same",
-            ),
-            MaxPooling2D((2, 2), padding="same"),
-            Conv2D(
-                256,
-                kernel_size=(3, 3),
-                activation="relu",
-                padding="same",
-            ),
-            MaxPooling2D((2, 2), padding="same"),
-            Conv2D(
-                128,
-                kernel_size=(3, 3),
-                activation="relu",
-                padding="same",
-            ),
-            MaxPooling2D((2, 2), padding="same"),
-            Conv2D(
-                64,
-                kernel_size=(3, 3),
-                activation="relu",
-                padding="same",
-            ),
-            MaxPooling2D((2, 2), padding="same"),
-            Conv2D(
-                128,
-                kernel_size=(3, 3),
-                activation="relu",
-                padding="same",
-            ),
-            MaxPooling2D((2, 2), padding="same"),
-            Conv2DTranspose(
-                32, (3, 3), strides=(2, 2), padding="same", activation="relu"
-            ),
-            Conv2DTranspose(
-                16, (3, 3), strides=(2, 2), padding="same", activation="relu"
-            ),
-            Conv2DTranspose(
-                1, (3, 3), strides=(2, 2), padding="same", activation="relu"
-            ),
-            TimeDistributed(Flatten()),
-            Bidirectional(
-                LSTM(
-                    512,
-                    activation="tanh",
-                    kernel_initializer=glorot_uniform(),
-                    return_sequences=True,
-                ),
-            ),
-            Bidirectional(
-                LSTM(
-                    256,
-                    activation="tanh",
-                    kernel_initializer=glorot_uniform(),
-                    return_sequences=False,
-                ),
-            ),
-            Dense(256, activation="relu"),
-            Dense(128, activation="relu"),
-            Dropout(rate=0.2),
-            Dense(64, activation="relu"),
-            Dropout(rate=0.2),
-            Dense(y.shape[1], activation="relu"),
-        ]
+    inputs = Input(shape=X[0].shape)
+    conv2d_1 = Conv2D(512, kernel_size=(3, 3), activation="relu", padding="same")(
+        inputs
     )
+    mp1 = MaxPooling2D((2, 2), padding="same")(conv2d_1)
+    conv2d_2 = Conv2D(256, kernel_size=(3, 3), activation="relu", padding="same")(mp1)
+    mp2 = MaxPooling2D((2, 2), padding="same")(conv2d_2)
+    conv2d_3 = Conv2D(128, kernel_size=(3, 3), activation="relu", padding="same")(mp2)
+    mp3 = MaxPooling2D((2, 2), padding="same")(conv2d_3)
+    conv2d_4 = Conv2D(64, kernel_size=(3, 3), activation="relu", padding="same")(mp3)
+    mp4 = MaxPooling2D((2, 2), padding="same")(conv2d_4)
+    conv2d_5 = Conv2D(32, kernel_size=(3, 3), activation="relu", padding="same")(mp4)
+    mp5 = MaxPooling2D((2, 2), padding="same")(conv2d_5)
+
+    conv2d_transpose_1 = Conv2DTranspose(
+        64, (3, 3), strides=(2, 2), padding="same", activation="relu"
+    )(mp5)
+    conv2d_transpose_2 = Conv2DTranspose(
+        32, (3, 3), strides=(2, 2), padding="same", activation="relu"
+    )(conv2d_transpose_1)
+    conv2d_transpose_3 = Conv2DTranspose(
+        16, (3, 3), strides=(2, 2), padding="same", activation="relu"
+    )(conv2d_transpose_2)
+    conv2d_transpose_4 = Conv2DTranspose(
+        1, (3, 3), strides=(2, 2), padding="same", activation="relu"
+    )(conv2d_transpose_3)
+
+    time_dist = TimeDistributed(Flatten())(conv2d_transpose_4)
+
+    lstm1 = Bidirectional(
+        LSTM(
+            512,
+            activation="tanh",
+            kernel_initializer=glorot_uniform(),
+            return_sequences=True,
+        ),
+    )(time_dist)
+    lstm2 = Bidirectional(
+        LSTM(
+            256,
+            activation="tanh",
+            kernel_initializer=glorot_uniform(),
+            return_sequences=False,
+        ),
+    )(lstm1)
+    dense1 = Dense(256, activation="relu")(lstm2)
+    dense2 = Dense(128, activation="relu")(dense1)
+    dropout = Dropout(rate=0.2)(dense2)
+    dense3 = Dense(64, activation="relu")(dropout)
+    dropout2 = Dropout(rate=0.2)(dense3)
+    dense_ouput = Dense(32, activation="relu")(dropout2)
+
+    input_audio = Input(shape=X_audio[0].shape)
+    dense_audio_1 = Dense(256, activation="relu")(input_audio)
+    dense_audio_2 = Dense(128, activation="relu")(dense_audio_1)
+    dropout_audio = Dropout(rate=0.2)(dense_audio_2)
+    dense_audio_3 = Dense(64, activation="relu")(dropout_audio)
+    dropout_audio_2 = Dropout(rate=0.2)(dense_audio_3)
+    flatten = Flatten()(dropout_audio_2)
+    dense_audio_ouput = Dense(32, activation="relu")(flatten)
+
+    joined = concatenate([dense_ouput, dense_audio_ouput])
+    # lstm_all = Bidirectional(
+    #             LSTM(
+    #                 256,
+    #                 activation="tanh",
+    #                 kernel_initializer=glorot_uniform(),
+    #                 return_sequences=False,
+    #             ),
+    #         )(joined)
+    dense_all_1 = Dense(256, activation="relu")(joined)
+    dense_all_2 = Dense(128, activation="relu")(dense_all_1)
+    dropou_all_t = Dropout(rate=0.2)(dense_all_2)
+    dense_all_3 = Dense(64, activation="relu")(dropou_all_t)
+    dropout_all_2 = Dropout(rate=0.2)(dense_all_3)
+    chore_outputs = Dense(y.shape[1], activation="relu")(dropout_all_2)
+
+    new_model = Model(
+        inputs=[inputs, input_audio], outputs=chore_outputs, name="chore_model"
+    )
+
+    new_model.summary()
 
     new_model.compile(loss="mse", optimizer="adam", metrics=["mae"])
     return new_model
