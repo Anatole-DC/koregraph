@@ -1,9 +1,5 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from os import environ
-
-from koregraph.models.types import MusicGenre
-from koregraph.config.params import AUDIO_DIRECTORY
 
 
 @dataclass
@@ -17,15 +13,16 @@ class AISTFile:
         - ch = choregraphy_number
     """
 
-    name: str
-    choregraphy: Path = field(default=None, init=False)
-    music: Path = field(default=None, init=False)
+    choregraphy_file: Path
+    name: str = field(default=None, init=False)
+    music: str = field(default=None, init=False)
     genre: str = field(default=None, init=False)
 
     def __post_init__(self):
-        genre, _, _, _, music, _ = self.name.split("_")
-        self.music = AUDIO_DIRECTORY / f"{music}.mp3"
+        genre, _, _, _, music, _ = self.choregraphy_file.stem.split("_")
+        self.music = music
         self.genre = genre[1:]
+        self.name = self.choregraphy_file.stem
 
 
 if __name__ == "__main__":

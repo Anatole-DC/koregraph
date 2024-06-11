@@ -7,13 +7,19 @@ _<h4 align="center">An IA for music driven choregraphy generation.</h4>_
 [![Pipeline status](https://github.com/Anatole-DC/koregraph/actions/workflows/base.yml/badge.svg)](https://github.com/Anatole-DC/koregraph/actions)
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
 [![Gitmoji](https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg)](https://gitmoji.carloscuesta.me/)
-[![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
+[![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]  
+
+![mlflow](https://img.shields.io/badge/mlflow-%23d9ead3.svg?style=for-the-badge&logo=numpy&logoColor=blue)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=TensorFlow&logoColor=white)
+![Keras](https://img.shields.io/badge/Keras-%23D00000.svg?style=for-the-badge&logo=Keras&logoColor=white)
+![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white)
 
 </div>
 
 ___
 
-**Technos :** Python, Poetry
+**Technos :** Python, Poetry, Tensorflow, Keras, Google Cloud
 
 **Author :** [Anatole-DC](https://github.com/Anatole-DC)
 
@@ -153,6 +159,13 @@ poetry run viewer -c data/keypoints2d/gBR_sBM_cAll_d04_mBR0_ch01.pkl  # Path to 
 poetry run chunk -c data/keypoints2d/gBR_sBM_cAll_d04_mBR0_ch02.pkl -s 5
 ```
 If the music already exists, but you want to split it again for some reason, add the following parameter `--reload-music`
+
+**Plot the loss**
+
+```bash
+poetry run evaluate -m model_name
+```
+If history is a buckup file, add -b
 
 ## Ideas
 

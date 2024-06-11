@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 
+from koregraph.models.aist_file import AISTFile
 from koregraph.models.constants import LAST_CHUNK_TYPE
 from koregraph.utils.params import get_env_or_default
 
@@ -62,13 +63,27 @@ MODEL_OUTPUT_DIRECTORY: Path = get_env_or_default(
 MODEL_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 GENERATED_PICKLE_DIRECTORY: Path = get_env_or_default(
-    "GENERATED_PICKLE_DIRECTORY", GENERATED_OUTPUT_PATH / "inputs", Path
+    "GENERATED_PICKLE_DIRECTORY", GENERATED_OUTPUT_PATH / "data", Path
 )
 
 GENERATED_FEATURES_DIRECTORY: Path = get_env_or_default(
     "GENERATED_FEATURES_DIRECTORY", GENERATED_OUTPUT_PATH / "features", Path
 )
 GENERATED_FEATURES_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
+GENERATED_LOSS_DIRECTORY: Path = get_env_or_default(
+    "GENERATED_LOSS_DIRECTORY", GENERATED_OUTPUT_PATH / "loss/", Path
+)
+
+GENERATED_LOSS_BACKUP_DIRECTORY: Path = get_env_or_default(
+    "GENERATED_LOSS_BACKUP_DIRECTORY", GENERATED_LOSS_DIRECTORY / "backup/", Path
+)
+GENERATED_LOSS_BACKUP_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
+GENERATED_AUDIO_SILENCE_DIRECTORY: Path = get_env_or_default(
+    "GENERATED_AUDIO_SILENCE_DIRECTORY", GENERATED_OUTPUT_PATH / "chunks/silence", Path
+)
+GENERATED_AUDIO_SILENCE_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 # VARIABLES RELATED TO TEMPORARY CACHE
 
@@ -87,16 +102,21 @@ PREDICTION_OUTPUT_DIRECTORY: Path = get_env_or_default(
 )
 PREDICTION_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
-
 # MLFLOW RELATED VARIABLES
 
 MLFLOW_TRACKING_URI = get_env_or_default("MLFLOW_TRACKING_URI", "http://localhost:8000")
 
+GCLOUD_AUTHENTICATION = get_env_or_default(
+    "GCLOUD_AUTHENTICATION",
+    PROJECT_ROOT / "secrets/le-wagon-420414-c20b739bfbba.json",
+    Path,
+)
 
 # PREPROCESSING RELATED VARIABLES
 
 ALL_ADVANCED_MOVE_NAMES = [
-    advanced_move_path.name for advanced_move_path in KEYPOINTS_DIRECTORY.glob("*sFM*")
+    AISTFile(advanced_move_path)
+    for advanced_move_path in KEYPOINTS_DIRECTORY.glob("*sFM*")
 ]
 
 ALL_BASIC_MOVE_NAMES = [
