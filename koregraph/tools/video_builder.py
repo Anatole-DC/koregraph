@@ -7,11 +7,11 @@ from PIL.Image import Image, new as new_pillow_image
 from PIL.ImageDraw import Draw
 from moviepy.editor import AudioFileClip, VideoFileClip, VideoClip
 
-from koregraph.managers.choregraphy import load_choregraphy
+from koregraph.utils.controllers.choregraphies import load_choregraphy
 from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.models.posture import Posture
-from koregraph.params import KEYPOINTS_BUILDER_TEMP_DIRECTORY
+from koregraph.config.params import KEYPOINTS_BUILDER_TEMP_DIRECTORY
 
 
 COLORS = [

@@ -1,20 +1,28 @@
 from numpy import expand_dims, float32, ndarray, isnan, any, isinf
+from tensorflow.keras import Model
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 from koregraph.api.machine_learning.neural_network import initialize_model_next_chunks
 from koregraph.api.machine_learning.load_dataset import (
     load_next_chunks_preprocess_dataset as load_preprocess_dataset,
 )
-from koregraph.api.machine_learning.callbacks import BackupCallback
-from koregraph.utils.pickle import save_object_pickle, load_pickle_object
-from sklearn.preprocessing import MinMaxScaler
-from koregraph.params import GENERATED_FEATURES_DIRECTORY, CHUNK_SIZE, PERCENTAGE_CUT
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-from koregraph.params import WEIGHTS_BACKUP_DIRECTORY
+from koregraph.utils.controllers.pickles import save_object_pickle, load_pickle_object
+from koregraph.config.params import (
+    GENERATED_FEATURES_DIRECTORY,
+    CHUNK_SIZE,
+    PERCENTAGE_CUT,
+    WEIGHTS_BACKUP_DIRECTORY,
+)
 
 
-def train_workflow(model_name: str = "model"):
+def train_workflow(
+    model_name: str = "model",
+    dataset_size: float = 1.0,
+    backup_model: Model = None,
+    initial_epoch: int = 0,
+):
 
-    X, y = load_preprocess_dataset()
+    X, y = load_preprocess_dataset(dataset_size=dataset_size)
     # X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
     # y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
     y = y.astype(float32)
@@ -32,7 +40,7 @@ def train_workflow(model_name: str = "model"):
     print("Model X shape:", X.shape)
     print("Model y shape:", y.shape)
 
-    model = initialize_model_next_chunks(X, y)
+    model = initialize_model_next_chunks(X, y) if backup_model is None else backup_model
 
     model.summary()
 
@@ -41,7 +49,8 @@ def train_workflow(model_name: str = "model"):
         y=y,
         validation_split=0.2,
         batch_size=16,
-        epochs=50,
+        epochs=10,
+        initial_epoch=initial_epoch,
         callbacks=[
             ModelCheckpoint(
                 WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",

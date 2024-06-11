@@ -1,10 +1,10 @@
 from pickle import dump as dump_pickle
 from os import makedirs
 
-from koregraph.api.chunks_api import generate_chunk
-from koregraph.api.music_to_numpy import music_to_numpy
-from koregraph.api.posture_proc import generate_posture_array
-from koregraph.params import (
+from koregraph.api.preprocessing.chunks_api import generate_chunk
+from koregraph.api.preprocessing.music_to_numpy import music_to_numpy
+from koregraph.api.preprocessing.posture_proc import generate_posture_array
+from koregraph.config.params import (
     AUDIO_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,
     ALL_ADVANCED_MOVE_NAMES,

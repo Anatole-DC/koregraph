@@ -1,13 +1,17 @@
 from numpy import ones as np_ones, concatenate, append
+
 from koregraph.models.choregraphy import Choregraphy
-from koregraph.managers.choregraphy import save_choregaphy_chunk
-from koregraph.utils.pickle import load_pickle_object
-from koregraph.api.music_to_numpy import music_to_numpy
-from koregraph.api.posture_proc import upscale_posture_pred, scale_posture_pred
+from koregraph.utils.controllers.choregraphies import save_choregaphy_chunk
+from koregraph.utils.controllers.pickles import load_pickle_object
+from koregraph.api.preprocessing.music_to_numpy import music_to_numpy
+from koregraph.api.preprocessing.posture_proc import (
+    upscale_posture_pred,
+    scale_posture_pred,
+)
 from koregraph.tools.video_builder import (
     keypoints_video_audio_builder_from_choreography,
 )
-from koregraph.params import (
+from koregraph.config.params import (
     AUDIO_DIRECTORY,
     MODEL_OUTPUT_DIRECTORY,
     PREDICTION_OUTPUT_DIRECTORY,
@@ -18,7 +22,7 @@ from koregraph.params import (
     FRAME_FORMAT,
 )
 from koregraph.utils.preproc import cut_percentage
-from koregraph.api.audio_proc import scale_audio
+from koregraph.api.preprocessing.audio_proc import scale_audio
 
 
 def predict(audio_name: str = "mBR0", model_name: str = "model", chunk: bool = False):
@@ -28,17 +32,9 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", chunk: bool = F
     audio_filepath = AUDIO_DIRECTORY / (audio_name + ".mp3")
     input = music_to_numpy(audio_filepath)
 
-    if chunk:
-        print("input shape", input.shape)
-        input = input.reshape(1, input.shape[0], input.shape[1])
-    else:
-        # TODO remove this step when reshape is done in preprocessing workflow
-        # input = scale_audio(input)
-        input = input.reshape(-1, 1, input.shape[1])
-        print("input min:", input.min())
-        print("input max:", input.max())
-
-    print(input.shape)
+    # TODO remove this step when reshape is done in preprocessing workflow
+    # input = scale_audio(input)
+    input = input.reshape(-1, 1, input.shape[1])
     prediction = model.predict(input)
     # prediction = upscale_posture_pred(prediction)
 

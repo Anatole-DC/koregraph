@@ -1,8 +1,8 @@
 from argparse import ArgumentParser, BooleanOptionalAction
 from pathlib import Path
-from koregraph.params import CHUNK_SIZE
+from koregraph.config.params import CHUNK_SIZE
 
-from koregraph.api.chunks_api import generate_chunk
+from koregraph.api.preprocessing.chunks_api import generate_chunk
 
 parser = ArgumentParser(
     "Koregraph chunk",

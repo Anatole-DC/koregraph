@@ -1,18 +1,22 @@
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+from pathlib import Path
+from pickle import dump as pickle_dump
 
-from koregraph.params import WEIGHTS_BACKUP_DIRECTORY
+from tensorflow.keras.callbacks import Callback
 
-BackupCallback = ModelCheckpoint(
-    WEIGHTS_BACKUP_DIRECTORY / "backup.keras",
-    monitor="val_loss",
-    verbose=0,
-    save_best_only=False,
-    save_weights_only=False,
-    mode="auto",
-    save_freq="epoch",
-    initial_value_threshold=None,
-)
+from koregraph.utils.controllers.pickles import load_pickle_object
 
-StoppingCallback = EarlyStopping(
-    monitor="val_loss", patience=7, verbose=0, restore_best_weights=True
-)
+
+class HistorySaver(Callback):
+    def __init__(self, history_path):
+        super(HistorySaver, self).__init__()
+        self.history_path: Path = history_path
+
+    def on_epoch_end(self, epoch: int, logs=None):
+        if self.history_path.exists():
+            history = load_pickle_object(self.history_path)
+            for key, value in logs.items():
+                history[key].append(value)
+        else:
+            history = {key: [value] for key, value in logs.items()}
+        with open(self.history_path, "wb") as f:
+            pickle_dump(history, f)

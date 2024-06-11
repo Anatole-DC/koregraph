@@ -4,13 +4,14 @@
 
 from typing import Any, Tuple
 from os import listdir
+from random import sample
 
 from numpy import ndarray, append, isnan, any, nan_to_num, concatenate, split, delete
 
-from koregraph.utils.pickle import load_pickle_object, save_object_pickle
-from koregraph.api.music_to_numpy import music_to_numpy
-from koregraph.api.posture_proc import fill_forward
-from koregraph.params import (
+from koregraph.utils.controllers.pickles import load_pickle_object, save_object_pickle
+from koregraph.api.preprocessing.music_to_numpy import music_to_numpy
+from koregraph.api.preprocessing.posture_proc import fill_forward
+from koregraph.config.params import (
     GENERATED_KEYPOINTS_DIRECTORY,
     GENERATED_AUDIO_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,
@@ -21,40 +22,50 @@ from koregraph.params import (
     PERCENTAGE_CUT,
 )
 from koregraph.utils.preproc import cut_percentage
+from koregraph.utils.controllers.pickles import load_pickle_object
+from koregraph.config.params import GENERATED_PICKLE_DIRECTORY
 
 
-def load_preprocess_dataset() -> Tuple[ndarray, ndarray]:
+def load_preprocess_dataset(dataset_size: float = 1.0) -> tuple[ndarray, ndarray]:
     """
     Load and preprocess the dataset.
 
     Returns:
         Tuple[np.ndarray, np.ndarray]: The dataset.
     """
-    y, X = load_pickle_object(
+    base_shape_file = (
         GENERATED_PICKLE_DIRECTORY / "generated_gBR_sFM_cAll_d04_mBR0_ch01.pkl"
     )
+    y, X = load_pickle_object(base_shape_file)
 
-    files = [
-        "generated_gBR_sFM_cAll_d04_mBR1_ch02.pkl",
-        "generated_gBR_sFM_cAll_d04_mBR2_ch03.pkl",
-        "generated_gBR_sFM_cAll_d04_mBR3_ch04.pkl",
-        "generated_gBR_sFM_cAll_d04_mBR4_ch05.pkl",
-        "generated_gBR_sFM_cAll_d04_mBR4_ch07.pkl",
-        "generated_gBR_sFM_cAll_d04_mBR5_ch06.pkl",
-        "generated_gBR_sFM_cAll_d05_mBR2_ch09.pkl",
-        "generated_gBR_sFM_cAll_d05_mBR3_ch10.pkl",
-        "generated_gBR_sFM_cAll_d05_mBR4_ch11.pkl",
-        "generated_gBR_sFM_cAll_d05_mBR4_ch13.pkl",
-        "generated_gKR_sFM_cAll_d28_mKR0_ch01.pkl",
-    ]
+    all_files = list(GENERATED_PICKLE_DIRECTORY.glob("*.pkl"))
+    sample_rate = int(len(all_files) * dataset_size)
+
+    files = sample(all_files, sample_rate)  # Sample size based on the dataset_size
+
+    # files = [
+    #     "generated_gBR_sFM_cAll_d04_mBR0_ch01.pkl",
+    #     # "generated_gBR_sFM_cAll_d04_mBR1_ch02.pkl",
+    #     # "generated_gBR_sFM_cAll_d04_mBR2_ch03.pkl",
+    #     # "generated_gBR_sFM_cAll_d04_mBR3_ch04.pkl",
+    #     # "generated_gBR_sFM_cAll_d04_mBR4_ch05.pkl",
+    #     # "generated_gBR_sFM_cAll_d04_mBR4_ch07.pkl",
+    #     # "generated_gBR_sFM_cAll_d04_mBR5_ch06.pkl",
+    #     # "generated_gBR_sFM_cAll_d05_mBR2_ch09.pkl",
+    #     # "generated_gBR_sFM_cAll_d05_mBR3_ch10.pkl",
+    #     # "generated_gBR_sFM_cAll_d05_mBR4_ch11.pkl",
+    #     # "generated_gBR_sFM_cAll_d05_mBR4_ch13.pkl",
+    #     # "generated_gKR_sFM_cAll_d28_mKR0_ch01.pkl",
+    # ]
 
     for file in files:
-        try:
-            y_tmp, X_tmp = load_pickle_object(GENERATED_PICKLE_DIRECTORY / file)
-            X = append(X, X_tmp, axis=0)
-            y = append(y, y_tmp, axis=0)
-        except Exception as e:
-            print(f"Error {e}")
+        if file == base_shape_file:
+            continue
+        y_tmp, X_tmp = load_pickle_object(file)
+        X = append(X, X_tmp, axis=0)
+        y = append(y, y_tmp, axis=0)
+
+    print(f"Preprocess dataset used {len(files)} files")
 
     return X, y
 
@@ -83,8 +94,6 @@ def load_chunk_preprocess_dataset() -> Tuple[ndarray, ndarray]:
             if isnan(y_tmp).any():
                 print(f"Fill forward failed for chunk {chunk_id}. Filling with 0")
                 y_tmp = nan_to_num(y_tmp, 0)
-            # y_tmp[:, :, 0] = y_tmp[:, :, 0] / FRAME_FORMAT[0]
-            # y_tmp[:, :, 1] = y_tmp[:, :, 1] / FRAME_FORMAT[1]
 
             if y is None:
                 y = y_tmp
@@ -98,8 +107,12 @@ def load_chunk_preprocess_dataset() -> Tuple[ndarray, ndarray]:
     return X.reshape(-1, CHUNK_SIZE * 60, 128), y.reshape(-1, CHUNK_SIZE * 60 * 34)
 
 
-def load_next_chunks_preprocess_dataset(perc_cut: float = PERCENTAGE_CUT):
-    chore_names = ALL_ADVANCED_MOVE_NAMES[:10]
+def load_next_chunks_preprocess_dataset(
+    dataset_size: float = 1.0, perc_cut: float = PERCENTAGE_CUT
+):
+    chore_names = ALL_ADVANCED_MOVE_NAMES[
+        : int(len(ALL_ADVANCED_MOVE_NAMES) * dataset_size)
+    ]
     X = None
     y = None
     for chore_name in chore_names:
@@ -115,7 +128,7 @@ def load_next_chunks_preprocess_dataset(perc_cut: float = PERCENTAGE_CUT):
             chore_filepath = chore_path / file
             music_filepath = music_path / f"{music_name}_{chunk_id}.mp3"
 
-            audio_tmp = music_to_numpy(music_filepath)
+            # audio_tmp = music_to_numpy(music_filepath)
             chore_tmp = load_pickle_object(chore_filepath)["keypoints2d"]
 
             chore_tmp = fill_forward(chore_tmp)
@@ -126,7 +139,7 @@ def load_next_chunks_preprocess_dataset(perc_cut: float = PERCENTAGE_CUT):
             chore_tmp[:, :, 1] = chore_tmp[:, :, 1] / FRAME_FORMAT[1]
 
             chore_X, y_tmp = cut_percentage(chore_tmp.reshape(-1, 34), perc_cut)
-            audio_X, _ = cut_percentage(audio_tmp, perc_cut)
+            # audio_X, _ = cut_percentage(audio_tmp, perc_cut)
             # X_tmp = concatenate((chore_X, audio_X), axis=1)
             X_tmp = chore_X
 
@@ -148,8 +161,8 @@ def load_next_chunks_preprocess_dataset(perc_cut: float = PERCENTAGE_CUT):
 
     print("X final shape", X.shape)
     print("y final shape", y.shape)
-    save_object_pickle(X, GENERATED_FEATURES_DIRECTORY / "x")
-    save_object_pickle(y, GENERATED_FEATURES_DIRECTORY / "y")
+    save_object_pickle(X, obj_path=GENERATED_FEATURES_DIRECTORY / "x")
+    save_object_pickle(y, obj_path=GENERATED_FEATURES_DIRECTORY / "y")
 
     y = delete(y, [60, 63], axis=0)
     X = delete(X, [60, 63], axis=0)
@@ -157,3 +170,7 @@ def load_next_chunks_preprocess_dataset(perc_cut: float = PERCENTAGE_CUT):
 
 
 def check_dataset_format(): ...
+
+
+if __name__ == "__main__":
+    load_preprocess_dataset(0.5)

@@ -1,8 +1,8 @@
-from pickle import dump as pickle_dump, HIGHEST_PROTOCOL, load as pickle_load
+from pickle import dump as pickle_dump, load as pickle_load, HIGHEST_PROTOCOL
 from pathlib import Path
 from typing import Any
 
-from koregraph.params import MODEL_OUTPUT_DIRECTORY
+from koregraph.config.params import MODEL_OUTPUT_DIRECTORY
 
 
 def save_object_pickle(obj: Any, obj_name: str = None, obj_path: Path = None):
