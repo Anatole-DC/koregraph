@@ -1,6 +1,5 @@
 from numpy import ndarray, zeros, sqrt
-from tensorflow import reduce_mean, square, norm
-from sklearn.metrics import mean_squared_error
+from tensorflow import reduce_mean, square, norm, abs
 
 from koregraph.api.preprocessing.audio_preprocessing import music_to_numpy
 from koregraph.config.params import (
@@ -17,9 +16,9 @@ def mse_loss(y_true: ndarray, y_pred: ndarray) -> float:
 
 def temporal_loss(y_true: ndarray, y_pred: ndarray) -> float:
     if y_pred.shape[0] is None or y_pred.shape[0] < 2:
-        return 0
+        return 0.1
     diff = y_pred[:, 1:, :] - y_pred[:, :-1, :]
-    return reduce_mean(square(diff))
+    return 1 / reduce_mean(square(diff))
 
 
 def pose_smoothness_loss(y_true: ndarray, y_pred: ndarray) -> float:
@@ -105,21 +104,7 @@ def prediction_distances(points: ndarray):
 
 
 def danse_loss(y_true: ndarray, y_pred: ndarray) -> float:
-    # Compute mean y_pred displacement
-    # true_posture = y_true.reshape(-1, 17, 2)
-    # pred_posture = y_pred.reshape(-1, 17, 2)
-
-    print((y_true, y_pred))
-
-    distance_pred = prediction_distances(y_pred)
-    distance_true = prediction_distances(y_true)
-
-    print(distance_pred.shape)
-    print(distance_true.shape)
-
-    print(distance_true - distance_pred)
-
-    print(mean_squared_error(distance_true, distance_pred))
+    return reduce_mean(abs(y_true - y_pred)) + temporal_loss(y_true, y_pred)
 
 
 if __name__ == "__main__":

@@ -34,7 +34,7 @@ def predict(audio_name: str = "mBR0", model_name: str = "model", backup: bool = 
         / model_name
         / f"{model_name}{'_backup' if backup else ''}.keras"
     )
-    model = load_model(model_path)
+    model = load_model(model_path, compile=False)
 
     audio_filepath = AUDIO_DIRECTORY / (audio_name + ".mp3")
     input = music_to_numpy(audio_filepath)

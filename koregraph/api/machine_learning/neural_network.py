@@ -16,6 +16,8 @@ from keras.layers import (
 from keras.models import Sequential, Model
 from keras.optimizers import RMSprop
 
+from koregraph.api.machine_learning.losses import danse_loss
+
 
 def prepare_model(X, y) -> Model:
     """Initilizer a non compiled model with layers within.
@@ -60,7 +62,7 @@ def compile_model(model: Model) -> Model:
     """
 
     model.compile(
-        loss="mae",
+        loss=danse_loss,
         optimizer=RMSprop(
             learning_rate=0.005,
         ),
