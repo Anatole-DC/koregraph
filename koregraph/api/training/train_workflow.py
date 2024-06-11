@@ -53,7 +53,7 @@ def train_workflow(
             initial_value_threshold=None,
         ),
         EarlyStopping(
-            monitor="val_loss",
+            monitor="loss",
             patience=patience,
             verbose=0,
             restore_best_weights=True,
