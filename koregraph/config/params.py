@@ -66,6 +66,11 @@ GENERATED_PICKLE_DIRECTORY: Path = get_env_or_default(
     "GENERATED_PICKLE_DIRECTORY", GENERATED_OUTPUT_PATH / "data", Path
 )
 
+GENERATED_FEATURES_DIRECTORY: Path = get_env_or_default(
+    "GENERATED_FEATURES_DIRECTORY", GENERATED_OUTPUT_PATH / "features", Path
+)
+GENERATED_FEATURES_DIRECTORY.mkdir(parents=True, exist_ok=True)
+
 GENERATED_LOSS_DIRECTORY: Path = get_env_or_default(
     "GENERATED_LOSS_DIRECTORY", GENERATED_OUTPUT_PATH / "loss/", Path
 )
@@ -122,9 +127,11 @@ ALL_MUSIC_NAMES = [music_path.name for music_path in AUDIO_DIRECTORY.glob("*.mp3
 
 LAST_CHUNK_TYPE_STRATEGY = LAST_CHUNK_TYPE.ROLLING
 
-CHUNK_SIZE: int = get_env_or_default("CHUNK_SIZE", 10, int)
+CHUNK_SIZE: int = get_env_or_default("CHUNK_SIZE", 5, int)
 
 FRAME_FORMAT = get_env_or_default("FRAME_FORMAT", (1920, 1080), tuple)
 
 X_MIN = -80
 X_MAX = 0
+
+PERCENTAGE_CUT = 0.05

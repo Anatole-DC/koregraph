@@ -2,7 +2,8 @@ from argparse import ArgumentParser, BooleanOptionalAction
 from pathlib import Path
 from koregraph.config.params import CHUNK_SIZE
 
-from koregraph.api.preprocessing.chunks import generate_chunk
+from koregraph.api.preprocessing.chunks_api import generate_chunk
+from koregraph.api.preprocessing.dataset_preprocessing import generate_all_chunks
 
 parser = ArgumentParser(
     "Koregraph chunk",
@@ -10,14 +11,15 @@ parser = ArgumentParser(
 )
 
 parser.add_argument(
-    "-c", "--choregraphy", dest="choregraphy", required=True, help="Choregraphy name"
+    "-c", "--choregraphy", dest="choregraphy", required=False, help="Choregraphy name"
 )
+parser.add_argument("-a", "--all", dest="all", action="store_true")
 
 parser.add_argument(
     "-s",
     "--size",
     dest="chunk_size",
-    required=True,
+    required=False,
     help="Size of chunks in seconds",
     default=CHUNK_SIZE,
 )
@@ -34,6 +36,11 @@ parser.add_argument(
 def main():
     arguments = parser.parse_args()
 
+    if arguments.all:
+        generate_all_chunks()
+        return
+
+    assert arguments.choregraphy is not None
     choregraphy_name = Path(arguments.choregraphy).stem
     chunk_size = arguments.chunk_size
     reload_music = arguments.reload_music

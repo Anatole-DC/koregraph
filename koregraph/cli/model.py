@@ -8,8 +8,16 @@ from tensorflow.keras.models import Model, load_model
 
 from koregraph.utils.controllers.pickles import load_pickle_object
 from koregraph.api.training.train_workflow import train_workflow
+from koregraph.api.training.chunks_workflow import train_chunks_workflow
+from koregraph.api.training.next_chunks_workflow import (
+    train_workflow as train_pred_next_workflow,
+)
 from koregraph.api.environment.training_cloud import run_mlflow_pipeline
-from koregraph.config.params import WEIGHTS_BACKUP_DIRECTORY
+from koregraph.config.params import (
+    WEIGHTS_BACKUP_DIRECTORY,
+    MODEL_OUTPUT_DIRECTORY,
+    AUDIO_DIRECTORY,
+)
 from koregraph.utils.storage import init_file_storage
 
 
@@ -26,6 +34,10 @@ parser.add_argument(
     help="Model name",
     default="model",
 )
+
+parser.add_argument("--chunks", dest="chunks", action="store_true")
+
+parser.add_argument("--next-chunks", dest="predict_next", action="store_true")
 
 parser.add_argument(
     "-c",
@@ -92,6 +104,8 @@ def main():
     dataset_size = float(arguments.dataset_size)
     batch_size = int(arguments.batch_size)
     restore_backup = bool(arguments.restore_backup)
+    chunks = bool(arguments.chunks)
+    predict_next = bool(arguments.predict_next)
     epochs = int(arguments.epochs)
     patience = int(arguments.patience)
 
@@ -124,16 +138,33 @@ def main():
     if model is not None:
         print(f"Using backup for model {model_name} at epoch {initial_epoch}")
 
-    train_workflow(
-        model_name=model_name,
-        epochs=epochs,
-        batch_size=batch_size,
-        dataset_size=dataset_size,
-        backup_model=model,
-        initial_epoch=initial_epoch,
-        patience=patience,
-        with_cloud=with_cloud,
-    )
+    if chunks:
+        print("Training with chunks")
+        train_chunks_workflow(model_name=model_name)
+    elif predict_next:
+        print("Training with chunks: predicting next X seconds")
+        train_pred_next_workflow(
+            model_name=model_name,
+            epochs=epochs,
+            batch_size=batch_size,
+            dataset_size=dataset_size,
+            backup_model=model,
+            initial_epoch=initial_epoch,
+            patience=patience,
+            with_cloud=with_cloud,
+        )
+    else:
+        print("Running training locally")
+        train_workflow(
+            model_name=model_name,
+            epochs=epochs,
+            batch_size=batch_size,
+            dataset_size=dataset_size,
+            backup_model=model,
+            initial_epoch=initial_epoch,
+            patience=patience,
+            with_cloud=with_cloud,
+        )
 
 
 if __name__ == "__main__":

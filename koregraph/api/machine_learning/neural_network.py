@@ -11,10 +11,19 @@ from keras.layers import (
     Dropout,
     Bidirectional,
     Conv1D,
+    Conv2D,
+    Conv2DTranspose,
     MaxPooling1D,
+    MaxPooling2D,
+    Flatten,
+    TimeDistributed,
+    Input,
 )
+from keras.initializers import glorot_uniform
 from keras.models import Sequential, Model
-from keras.optimizers import RMSprop
+from keras.optimizers import Adam, RMSprop
+
+from koregraph.api.machine_learning.loss import my_mse
 
 
 def prepare_model(X, y) -> Model:
@@ -44,7 +53,7 @@ def prepare_model(X, y) -> Model:
             Dropout(rate=0.2),
             Dense(64, activation="relu"),
             Dropout(rate=0.2),
-            Dense(y.shape[1], activation="sigmoid"),
+            Dense(y.shape[1], activation="relu"),
         ]
     )
 
@@ -78,6 +87,128 @@ def initialize_model(X, y) -> Model:
     new_model = prepare_model(X, y)
     compiled_model = compile_model(new_model)
     return compiled_model
+
+
+def initialize_model_chunks(X, y) -> Model:
+    """Initialize a compiled model.
+
+    Returns:
+        Model: The compiled model.
+    """
+
+    # normalization_layer = Normalization()
+    # normalization_layer.adapt(X)
+    print("x 0 shape", X[0].shape)
+    new_model = Sequential(
+        [
+            # normalization_layer,
+            Bidirectional(
+                LSTM(
+                    256,
+                    activation="tanh",
+                    kernel_initializer=glorot_uniform(),
+                    return_sequences=True,
+                ),
+            ),
+            # # BatchNormalization(),
+            LSTM(128, activation="tanh", recurrent_dropout=0.2),
+            Dense(256, activation="relu"),
+            Dense(256, activation="relu", activity_regularizer="l2"),
+            Dense(128, activation="relu", activity_regularizer="l2"),
+            Dropout(rate=0.2),
+            Dense(64, activation="relu", activity_regularizer="l2"),
+            Dropout(rate=0.2),
+            Dense(y.shape[1], activation="linear"),
+        ]
+    )
+
+    adam = Adam(learning_rate=0.00001)  # , clipvalue=0.01)
+    new_model.compile(loss="mse", optimizer=adam, metrics=["mae"])
+    return new_model
+
+
+def initialize_model_next_chunks(X, y) -> Model:
+    """Initialize a compiled model.
+
+    Returns:
+        Model: The compiled model.
+    """
+
+    new_model = Sequential(
+        [
+            Input(X[0].shape),
+            Conv2D(
+                512,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2D(
+                256,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2D(
+                128,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2D(
+                64,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2D(
+                128,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2DTranspose(
+                32, (3, 3), strides=(2, 2), padding="same", activation="relu"
+            ),
+            Conv2DTranspose(
+                16, (3, 3), strides=(2, 2), padding="same", activation="relu"
+            ),
+            Conv2DTranspose(
+                1, (3, 3), strides=(2, 2), padding="same", activation="relu"
+            ),
+            TimeDistributed(Flatten()),
+            Bidirectional(
+                LSTM(
+                    512,
+                    activation="tanh",
+                    kernel_initializer=glorot_uniform(),
+                    return_sequences=True,
+                ),
+            ),
+            Bidirectional(
+                LSTM(
+                    256,
+                    activation="tanh",
+                    kernel_initializer=glorot_uniform(),
+                    return_sequences=False,
+                ),
+            ),
+            Dense(256, activation="relu"),
+            Dense(128, activation="relu"),
+            Dropout(rate=0.2),
+            Dense(64, activation="relu"),
+            Dropout(rate=0.2),
+            Dense(y.shape[1], activation="relu"),
+        ]
+    )
+
+    new_model.compile(loss="mse", optimizer="adam", metrics=["mae"])
+    return new_model
 
 
 if __name__ == "__main__":

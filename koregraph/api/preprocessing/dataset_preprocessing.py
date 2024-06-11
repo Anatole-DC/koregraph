@@ -16,6 +16,7 @@ from koregraph.config.params import (
     AUDIO_DIRECTORY,
     GENERATED_AUDIO_SILENCE_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,
+    CHUNK_SIZE,
 )
 from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
@@ -29,6 +30,7 @@ from koregraph.api.preprocessing.posture_preprocessing import (
     posture_array_to_keypoints,
     upscale_posture_pred,
 )
+from koregraph.api.preprocessing.chunks_api import generate_chunk
 from koregraph.utils.controllers.musics import load_music, save_audio_chunk
 
 
@@ -88,7 +90,10 @@ def generate_training_pickles(
 
         # Ensure X and y have the same length
         if len(train_choregraphy) != len(train_audio):
-            train_audio = train_audio[: len(train_choregraphy)]
+            if len(train_choregraphy) > len(train_audio):
+                train_choregraphy = train_choregraphy[: len(train_audio)]
+            else:
+                train_audio = train_audio[: len(train_choregraphy)]
 
         assert len(train_choregraphy) == len(
             train_audio
@@ -104,6 +109,15 @@ def generate_training_pickles(
         f"{len(list(generated_pickles_path.glob('*.pkl')))} training files were generated in {generated_pickles_path.absolute()}"
     )
     return generated_pickles_path
+
+
+def generate_all_chunks():
+    for chore in ALL_ADVANCED_MOVE_NAMES:
+        try:
+            generate_chunk(chore.name, CHUNK_SIZE, False)
+        except Exception as e:
+            print(f"Error with {chore.name}: {e}")
+            continue
 
 
 if __name__ == "__main__":

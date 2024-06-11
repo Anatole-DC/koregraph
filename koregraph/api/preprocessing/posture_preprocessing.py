@@ -1,7 +1,7 @@
 from pickle import load as load_pickle
 from typing import Tuple
 
-from numpy import ndarray, nan_to_num, ones, zeros
+from numpy import ndarray, nan_to_num, ones, zeros, asarray, isnan
 
 from koregraph.api.preprocessing.interpolation import add_transition
 from koregraph.config.params import (
@@ -172,6 +172,30 @@ def generate_and_export_choreography(posture_file_2):
         ) * (i / n_rows_part3)
 
     return final_array
+
+
+def fill_forward(arr):
+    """
+    Fill NaN values in the array with the previous row's values for each column.
+
+    Parameters:
+    arr (numpy.ndarray): Input array with possible NaN values.
+
+    Returns:
+    numpy.ndarray: Array with NaN values filled forward.
+    """
+    arr = asarray(arr, dtype=float)
+
+    for i in range(1, arr.shape[0]):
+        mask = isnan(arr[i, :])
+        arr[i, mask] = arr[i - 1, mask]
+
+    return arr
+
+
+def cut_percentage(x: ndarray, perc: float) -> Tuple[ndarray, ndarray]:
+    idx = len(x) - int(len(x) * perc)
+    return x[:idx], x[idx:]
 
 
 if __name__ == "__main__":
