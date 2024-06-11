@@ -41,7 +41,7 @@ def train_workflow(model_name: str = "model"):
         y=y,
         validation_split=0.2,
         batch_size=16,
-        epochs=1000,
+        epochs=50,
         callbacks=[
             ModelCheckpoint(
                 WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",

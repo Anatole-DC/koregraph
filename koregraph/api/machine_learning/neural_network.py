@@ -11,15 +11,17 @@ from keras.layers import (
     Dropout,
     Bidirectional,
     Conv2D,
-    BatchNormalization,
+    Conv2DTranspose,
+    MaxPooling2D,
     Flatten,
-    Reshape,
     TimeDistributed,
     Input,
 )
 from keras.initializers import glorot_uniform
 from keras.models import Sequential, Model
 from keras.optimizers import Adam
+
+from koregraph.api.machine_learning.loss import my_mse
 
 
 def prepare_model(X, y) -> Model:
@@ -125,27 +127,53 @@ def initialize_model_next_chunks(X, y) -> Model:
         Model: The compiled model.
     """
 
-    # normalization_layer = Normalization()
-    # normalization_layer.adapt(X)
-    print("x 0 shape", X[0].shape)
     new_model = Sequential(
         [
             Input(X[0].shape),
             Conv2D(
-                258,
+                512,
                 kernel_size=(3, 3),
                 activation="relu",
-                # input_shape=X[0].shape,
                 padding="same",
             ),
-            Dropout(rate=0.2),
-            Conv2D(128, kernel_size=(3, 3), activation="relu", padding="same"),
-            BatchNormalization(),
-            # Flatten(),
-            # lstm 512
-            # Reshape((285*17*2, )),
-
-            # Reshape((-1, 16*510)),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2D(
+                256,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2D(
+                128,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2D(
+                64,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2D(
+                128,
+                kernel_size=(3, 3),
+                activation="relu",
+                padding="same",
+            ),
+            MaxPooling2D((2, 2), padding="same"),
+            Conv2DTranspose(
+                32, (3, 3), strides=(2, 2), padding="same", activation="relu"
+            ),
+            Conv2DTranspose(
+                16, (3, 3), strides=(2, 2), padding="same", activation="relu"
+            ),
+            Conv2DTranspose(
+                1, (3, 3), strides=(2, 2), padding="same", activation="relu"
+            ),
             TimeDistributed(Flatten()),
             Bidirectional(
                 LSTM(
@@ -166,13 +194,13 @@ def initialize_model_next_chunks(X, y) -> Model:
             Dense(256, activation="relu"),
             Dense(128, activation="relu"),
             Dropout(rate=0.2),
-            Dense(64, activation="relu"),  # , activity_regularizer="l2"),
+            Dense(64, activation="relu"),
             Dropout(rate=0.2),
             Dense(y.shape[1], activation="relu"),
         ]
     )
 
-    new_model.compile(loss="mse", optimizer="adam", metrics=["mae"])
+    new_model.compile(loss=my_mse, optimizer="adam", metrics=["mae"])
     return new_model
 
 

@@ -3,7 +3,7 @@ from koregraph.models.choregraphy import Choregraphy
 from koregraph.managers.choregraphy import save_choregaphy_chunk
 from koregraph.utils.pickle import load_pickle_object
 from koregraph.api.music_to_numpy import music_to_numpy
-from koregraph.api.posture_proc import upscale_posture_pred
+from koregraph.api.posture_proc import upscale_posture_pred, scale_posture_pred
 from koregraph.tools.video_builder import (
     keypoints_video_audio_builder_from_choreography,
 )
@@ -68,6 +68,20 @@ def predict_next_move(
     chunk_id: int = 0,
     perc_cut: float = PERCENTAGE_CUT,
 ):
+    def build_next_input(first_frames, prediction):
+        prediction_frame_size = int((CHUNK_SIZE * perc_cut) * 60)
+        first_frames = first_frames.reshape(
+            -1, int((CHUNK_SIZE * (1 - perc_cut)) * 60), 17, 2
+        )
+        prediction = prediction.reshape(-1, prediction_frame_size, 17, 2)
+
+        print(first_frames.shape)
+        print(prediction.shape)
+        return concatenate(
+            (first_frames[0, prediction_frame_size:, :, :], prediction[0, :, :, :]),
+            axis=0,
+        )
+
     model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
     model = load_pickle_object(model_path)
 
@@ -93,30 +107,50 @@ def predict_next_move(
         / (f"{chore_chunk_name}_{chunk_id}.pkl")
     )
     input = chore["keypoints2d"]
-    input[:, :, 0] = input[:, :, 0] / FRAME_FORMAT[0]
-    input[:, :, 1] = input[:, :, 1] / FRAME_FORMAT[1]
+
+    input = scale_posture_pred(input)
     input = input.reshape(-1, 34)
     input, _ = cut_percentage(input.reshape(-1, 34), perc_cut)
-    # chore, _ = cut_percentage(chore.reshape(-1, 34), perc_cut)
 
     print("min input: ", input.min())
     print("max input: ", input.max())
-    # input = concatenate((chore, audio), axis=1)
 
-    input = input.reshape(1, 240, 17, 2)
-    # input = input.reshape(-1, 8160)
+    input = input.reshape(-1, int((CHUNK_SIZE * (1 - perc_cut)) * 60), 17, 2)
+
     print(input.shape)
-    # print(input)
+    all_output = input
+
+    # Predict first frame
+    print("Prediction 0")
     prediction = model.predict(input)
     print("prediction shape", prediction.shape)
     print("prediction min", prediction.min())
     print("prediction max", prediction.max())
+    all_output = concatenate(
+        (all_output[0].reshape(-1, 17, 2), prediction.reshape(-1, 17, 2)), axis=0
+    )
+
+    # Predict next frame
+    for i in range(4):
+        print(f"Prediction {i+1}")
+        input = build_next_input(input, prediction)
+        input = input.reshape(-1, int((CHUNK_SIZE * (1 - perc_cut)) * 60), 17, 2)
+        print(f"Next input shape {input.shape}")
+        prediction = model.predict(input)
+        all_output = concatenate((all_output, prediction.reshape(-1, 17, 2)), axis=0)
+        print("prediction shape", prediction.shape)
+        print("prediction min", prediction.min())
+        print("prediction max", prediction.max())
+
     prediction = upscale_posture_pred(prediction)
+    all_output = upscale_posture_pred(all_output)
 
     print("Prediction shape:", prediction.shape)
+    print("All shape:", all_output.shape)
     prediction_name = (
         model_name.replace("_", "-") + "_sBM_cAll_d00_" + audio_name + "_ch01"
     )
+    output_name = model_name.replace("_", "-") + "_sBM_cAll_d00_" + audio_name + "_ch02"
 
     # print('chore')
     # print(chore.shape)
@@ -126,11 +160,16 @@ def predict_next_move(
     chore = Choregraphy(
         prediction_name, output.reshape(-1, 17, 2), np_ones(output.shape[0])
     )
+    chore_all = Choregraphy(
+        output_name, all_output.reshape(-1, 17, 2), np_ones(all_output.shape[0])
+    )
     # Save prediction to pkl
     save_choregaphy_chunk(chore, PREDICTION_OUTPUT_DIRECTORY)
+    save_choregaphy_chunk(chore_all, PREDICTION_OUTPUT_DIRECTORY)
 
     # Create video
     keypoints_video_audio_builder_from_choreography(chore)
+    # keypoints_video_audio_builder_from_choreography(chore_all)
 
     print("Happy viewing!")
 
