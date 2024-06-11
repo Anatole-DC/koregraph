@@ -41,13 +41,23 @@ parser.add_argument(
 )
 
 
+parser.add_argument(
+    "-d",
+    "--downsample",
+    dest="downsample",
+    default=None,
+    help="Downsampling fps (default. no downsampling)",
+)
+
+
 def main():
     arguments = parser.parse_args()
     mode = arguments.mode
     interpolation_mode = str(arguments.interpolation_mode)
+    downsample = int(arguments.downsample) if arguments.downsample is not None else None
     output = Path(arguments.output)
 
-    generate_training_pickles(mode, output, interpolation_mode)
+    generate_training_pickles(mode, output, interpolation_mode, downsaple_fps=downsample)
 
 
 if __name__ == "__main__":

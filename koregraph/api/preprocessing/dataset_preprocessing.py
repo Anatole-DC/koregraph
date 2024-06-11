@@ -5,6 +5,7 @@
 from pathlib import Path
 from pickle import dump as dump_pickle
 
+from numpy import ndarray
 from tqdm import trange
 
 from koregraph.api.preprocessing.audio_preprocessing import (
@@ -32,11 +33,18 @@ from koregraph.api.preprocessing.posture_preprocessing import (
 from koregraph.utils.controllers.musics import load_music, save_audio_chunk
 
 
+def downsample_array(array: ndarray, target_fps: int = 30, original_fps: int = 60):
+    """Downsample an array from original_fps to target_fps."""
+    factor = original_fps // target_fps
+    return array[::factor]
+
+
 def generate_training_pickles(
     mode: str = "barbarie",
     output_path: Path = GENERATED_PICKLE_DIRECTORY,
     output_preprocessed_audio: bool = False,
     interpolation_mode: str = None,
+    downsaple_fps: int = None
 ) -> Path:
     """Generate the files for the model training.
 
@@ -89,6 +97,10 @@ def generate_training_pickles(
         # Ensure X and y have the same length
         if len(train_choregraphy) != len(train_audio):
             train_audio = train_audio[: len(train_choregraphy)]
+
+        if downsaple_fps is not None:
+            train_audio = downsample_array(train_audio, downsaple_fps)
+            train_choregraphy = downsample_array(train_choregraphy, downsaple_fps)
 
         assert len(train_choregraphy) == len(
             train_audio
