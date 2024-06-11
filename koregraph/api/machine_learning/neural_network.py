@@ -34,7 +34,7 @@ def prepare_model(X, y) -> Model:
     return Sequential(
         [
             normalization_layer,
-            Bidirectional(LSTM(512, activation="relu", return_sequences=True)),
+            Bidirectional(LSTM(256, activation="relu", return_sequences=True)),
             # Bidirectional(LSTM(512, activation="relu", return_sequences=True)),
             Bidirectional(LSTM(256, activation="relu")),
             # Bidirectional(LSTM(128, activation="relu")),
