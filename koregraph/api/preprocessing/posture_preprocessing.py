@@ -1,10 +1,17 @@
 from pickle import load as load_pickle
 from typing import Tuple
 
-from numpy import ndarray, nan_to_num
+from numpy import ndarray, nan_to_num, ones, zeros
 
-from koregraph.config.params import KEYPOINTS_DIRECTORY, FRAME_FORMAT
+from koregraph.api.preprocessing.interpolation import add_transition
+from koregraph.config.params import (
+    ALL_ADVANCED_MOVE_NAMES,
+    KEYPOINTS_DIRECTORY,
+    FRAME_FORMAT,
+)
 from koregraph.models.choregraphy import Choregraphy
+from koregraph.tools.video_builder import export_choregraphy_keypoints
+from koregraph.utils.controllers.choregraphies import load_choregraphy
 
 
 def generate_posture_array(
@@ -77,7 +84,9 @@ def posture_array_to_keypoints(posture_array: ndarray) -> ndarray:
     return posture_array.reshape(-1, 17, 2)
 
 
-def convert_to_train_posture(choregraphy: Choregraphy) -> ndarray:
+def convert_to_train_posture(
+    choregraphy: Choregraphy, interpolate: bool = False
+) -> ndarray:
     """Convert a choregraphy posture into a training array.
 
     The output is a (34,) dimension array, corresponding to the
@@ -90,8 +99,12 @@ def convert_to_train_posture(choregraphy: Choregraphy) -> ndarray:
         ndarray: The training array.
     """
 
-    interpolated = nan_to_num(choregraphy.keypoints2d, 0)
-    downscale = downscale_posture(interpolated)
+    filled = nan_to_num(choregraphy.keypoints2d, 0)
+
+    if interpolate:
+        filled = add_transition(filled)
+
+    downscale = downscale_posture(filled)
     posture_array = array_from_keypoints(downscale)
     return posture_array
 
@@ -118,3 +131,60 @@ def upscale_posture_pred(
     keypoints[:, :, 1] = keypoints[:, :, 1] * frame_format[1]
 
     return keypoints
+
+
+def generate_and_export_choreography(posture_file_2):
+    """Generate and export a choreography with interpolated posture arrays.
+    Args:
+        posture_file_2 (str): The name of the posture file where you want to interpolate the posture arrays.
+        Returns:
+        np.array: The final array of postures."""
+
+    posture_file_1 = "gPO_sBM_cAll_d10_mPO1_ch01.pkl"
+
+    # Définition des arrays de posture
+    posture_array_1 = generate_posture_array(posture_file_1)
+    posture_array_2 = generate_posture_array(posture_file_2)
+
+    # Nombre de lignes pour chaque partie de l'array final
+    n_rows_part1 = 60
+    n_rows_part2 = len(posture_array_2)
+    n_rows_part3 = n_rows_part1
+
+    # Initialisation de l'array final
+    final_array = zeros(
+        (n_rows_part1 + n_rows_part2 + n_rows_part3, posture_array_1.shape[1])
+    )
+
+    # Ajout de la première partie (transition de posture_array_1 à posture_array_2)
+    for i in range(n_rows_part1):
+        final_array[i] = posture_array_1[0] + (
+            posture_array_2[0] - posture_array_1[0]
+        ) * (i / n_rows_part1)
+
+    # Ajout de la deuxième partie (toutes les lignes de posture_array_2)
+    final_array[n_rows_part1 : n_rows_part1 + n_rows_part2] = posture_array_2
+
+    # Ajout de la troisième partie (transition de la dernière posture de posture_array_2 à la première posture de posture_array_1)
+    for i in range(n_rows_part3):
+        final_array[n_rows_part1 + n_rows_part2 + i] = posture_array_2[-1] + (
+            posture_array_1[0] - posture_array_2[-1]
+        ) * (i / n_rows_part3)
+
+    return final_array
+
+
+if __name__ == "__main__":
+    export_choregraphy_keypoints(
+        Choregraphy(
+            "test",
+            upscale_posture_pred(
+                posture_array_to_keypoints(
+                    convert_to_train_posture(
+                        load_choregraphy(ALL_ADVANCED_MOVE_NAMES[0])
+                    )
+                )
+            ),
+        ),
+        "test",
+    )

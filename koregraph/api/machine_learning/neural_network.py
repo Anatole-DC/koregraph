@@ -4,7 +4,15 @@
 
 from typing import List
 
-from keras.layers import Dense, LSTM, Normalization, Dropout, Bidirectional
+from keras.layers import (
+    Dense,
+    LSTM,
+    Normalization,
+    Dropout,
+    Bidirectional,
+    Conv1D,
+    MaxPooling1D,
+)
 from keras.models import Sequential, Model
 from keras.optimizers import RMSprop
 
@@ -27,7 +35,7 @@ def prepare_model(X, y) -> Model:
         [
             normalization_layer,
             Bidirectional(LSTM(512, activation="relu", return_sequences=True)),
-            Bidirectional(LSTM(512, activation="relu", return_sequences=True)),
+            # Bidirectional(LSTM(512, activation="relu", return_sequences=True)),
             Bidirectional(LSTM(256, activation="relu")),
             # Bidirectional(LSTM(128, activation="relu")),
             Dense(128, activation="relu"),

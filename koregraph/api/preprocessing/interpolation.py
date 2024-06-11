@@ -5,8 +5,32 @@
     between each music/choregraphies.
 """
 
-from numpy import ndarray
+from numpy import ndarray, array, concatenate
+
+from koregraph.models.constants import StandingPosture
+from koregraph.models.posture import Posture
 from koregraph.models.choregraphy import Choregraphy
+
+
+def add_transition(
+    choregraphy_keypoints: ndarray, nb_seconds: int = 1, fps: int = 60
+) -> ndarray:
+    frames = nb_seconds * fps
+    standing_posture = StandingPosture.keypoints
+
+    def interpolate(start, end, num_frames):
+        return array(
+            [start + (end - start) * t / (num_frames - 1) for t in range(num_frames)]
+        )
+
+    start_transition = interpolate(standing_posture, choregraphy_keypoints[0], frames)
+    end_transition = interpolate(choregraphy_keypoints[-1], standing_posture, frames)
+
+    new_choregraphy_keypoints = concatenate(
+        [start_transition, choregraphy_keypoints, end_transition], axis=0
+    )
+
+    return new_choregraphy_keypoints
 
 
 def interpolate_posture(choregraphy: Choregraphy, nb_frame: int = 60) -> Choregraphy:

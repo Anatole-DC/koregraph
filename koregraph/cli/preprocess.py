@@ -31,13 +31,23 @@ parser.add_argument(
     help="The path where the 'mode' directory will be created.",
 )
 
+parser.add_argument(
+    "-i",
+    "--interpolation-mode",
+    dest="interpolation_mode",
+    choices=[None, "silence", "blend"],
+    default=None,
+    help="Interpolation mode to use for preprocessing (default None).",
+)
+
 
 def main():
     arguments = parser.parse_args()
     mode = arguments.mode
+    interpolation_mode = str(arguments.interpolation_mode)
     output = Path(arguments.output)
 
-    generate_training_pickles(mode, output)
+    generate_training_pickles(mode, output, interpolation_mode)
 
 
 if __name__ == "__main__":

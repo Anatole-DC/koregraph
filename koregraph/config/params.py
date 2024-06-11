@@ -75,6 +75,10 @@ GENERATED_LOSS_BACKUP_DIRECTORY: Path = get_env_or_default(
 )
 GENERATED_LOSS_BACKUP_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
+GENERATED_AUDIO_SILENCE_DIRECTORY: Path = get_env_or_default(
+    "GENERATED_AUDIO_SILENCE_DIRECTORY", GENERATED_OUTPUT_PATH / "chunks/silence", Path
+)
+GENERATED_AUDIO_SILENCE_DIRECTORY.mkdir(parents=True, exist_ok=True)
 
 # VARIABLES RELATED TO TEMPORARY CACHE
 
@@ -92,7 +96,6 @@ PREDICTION_OUTPUT_DIRECTORY: Path = get_env_or_default(
     "PREDICTION_OUTPUT_DIRECTORY", GENERATED_OUTPUT_PATH / "predictions/", Path
 )
 PREDICTION_OUTPUT_DIRECTORY.mkdir(parents=True, exist_ok=True)
-
 
 # MLFLOW RELATED VARIABLES
 

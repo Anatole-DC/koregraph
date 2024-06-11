@@ -38,7 +38,7 @@ def train_workflow(
     print(X_scaled.shape)
     model = initialize_model(X, y) if backup_model is None else backup_model
 
-    model_backup_path = WEIGHTS_BACKUP_DIRECTORY / model_name
+    model_backup_path = MODEL_OUTPUT_DIRECTORY / model_name
     model_backup_path.mkdir(parents=True, exist_ok=True)
 
     model_callbacks = [
@@ -53,7 +53,7 @@ def train_workflow(
             initial_value_threshold=None,
         ),
         EarlyStopping(
-            monitor="val_loss",
+            monitor="loss",
             patience=patience,
             verbose=0,
             restore_best_weights=True,

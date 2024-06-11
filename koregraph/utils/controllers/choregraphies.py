@@ -2,7 +2,7 @@ from pickle import load as load_pickle, dump as dump_pickle, HIGHEST_PROTOCOL
 from pathlib import Path
 from typing import Dict
 
-from numpy import ndarray, append
+from numpy import isinf, isnan, ndarray, append
 
 from koregraph.models.aist_file import AISTFile
 from koregraph.models.choregraphy import Choregraphy
@@ -55,14 +55,23 @@ def save_choregaphy_chunk(chore: Choregraphy, path: Path) -> None:
 
 
 def compute_mean_posture() -> Choregraphy:
-    nb_postures = 0
     keypoint_sum = ndarray((17, 2))
+
     for aist_file in ALL_ADVANCED_MOVE_NAMES:
         choregraphy = load_choregraphy(aist_file)
-        choregraphy_sum = choregraphy.keypoints2d.sum(axis=0)
-        keypoint_sum = append(keypoint_sum, choregraphy_sum, axis=0)
-        nb_postures += choregraphy.keypoints2d.shape[0]
-    print((keypoint_sum / nb_postures).shape)
+        chore_keypoints = choregraphy.keypoints2d[
+            ~(
+                isinf(choregraphy.keypoints2d).any(axis=(1, 2))
+                | isnan(choregraphy.keypoints2d).any(axis=(1, 2))
+            )
+        ]
+        choregraphy_sum = (
+            chore_keypoints.reshape(-1, 17, 2).sum(axis=0) / chore_keypoints.shape[0]
+        )
+        keypoint_sum = (keypoint_sum + choregraphy_sum) / 2
+
+    # print(keypoint_sum.shape)
+    print((keypoint_sum).astype(int))
 
 
 if __name__ == "__main__":
