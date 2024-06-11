@@ -192,9 +192,11 @@ def fill_forward(arr):
 
     return arr
 
+
 def cut_percentage(x: ndarray, perc: float) -> Tuple[ndarray, ndarray]:
     idx = len(x) - int(len(x) * perc)
     return x[:idx], x[idx:]
+
 
 if __name__ == "__main__":
     export_choregraphy_keypoints(

@@ -78,6 +78,7 @@ def predict_next_move(
     chore_chunk_name: str = "gBR_sFM_cAll_d04_mBR0_ch01",
     chunk_id: int = 0,
     perc_cut: float = PERCENTAGE_CUT,
+    backup: bool = False,
 ):
     def build_next_input(first_frames, prediction):
         prediction_frame_size = int((CHUNK_SIZE * perc_cut) * 60)
@@ -93,8 +94,15 @@ def predict_next_move(
             axis=0,
         )
 
-    model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
-    model = load_pickle_object(model_path)
+    # model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
+    # model = load_pickle_object(model_path)
+
+    model_path = (
+        MODEL_OUTPUT_DIRECTORY
+        / model_name
+        / f"{model_name}{'_backup' if backup else ''}.keras"
+    )
+    model = load_model(model_path)
 
     audio_filepath = (
         GENERATED_AUDIO_DIRECTORY

@@ -82,6 +82,7 @@ def main():
             model_name=model_name,
             chore_chunk_name=choregraphy,
             chunk_id=chunk_id,
+            backup=backup,
         )
     else:
         predict_api(

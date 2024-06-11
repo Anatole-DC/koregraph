@@ -12,14 +12,20 @@ from koregraph.config.params import (
     CHUNK_SIZE,
     PERCENTAGE_CUT,
     WEIGHTS_BACKUP_DIRECTORY,
+    MODEL_OUTPUT_DIRECTORY,
 )
+from koregraph.api.machine_learning.callbacks import GCSCallback, HistorySaver
 
 
 def train_workflow(
     model_name: str = "model",
+    epochs: int = 16,
+    batch_size: int = 16,
     dataset_size: float = 1.0,
     backup_model: Model = None,
     initial_epoch: int = 0,
+    patience: int = 20,
+    with_cloud: bool = False,
 ):
 
     X, y = load_preprocess_dataset(dataset_size=dataset_size)
@@ -42,16 +48,11 @@ def train_workflow(
 
     model = initialize_model_next_chunks(X, y) if backup_model is None else backup_model
 
-    model.summary()
+    model_backup_path = MODEL_OUTPUT_DIRECTORY / model_name
+    model_backup_path.mkdir(parents=True, exist_ok=True)
 
-    history = model.fit(
-        x=X,
-        y=y,
-        validation_split=0.2,
-        batch_size=16,
-        epochs=10,
-        initial_epoch=initial_epoch,
-        callbacks=[
+    model_callbacks = (
+        [
             ModelCheckpoint(
                 WEIGHTS_BACKUP_DIRECTORY / f"{model_name}_backup.keras",
                 monitor="val_loss",
@@ -63,13 +64,43 @@ def train_workflow(
                 initial_value_threshold=None,
             ),
             EarlyStopping(
-                monitor="val_loss", patience=50, verbose=0, restore_best_weights=True
+                monitor="val_loss",
+                patience=patience,
+                verbose=0,
+                restore_best_weights=True,
             ),
         ],
     )
+    model.summary()
 
-    save_object_pickle(model, model_name)
-    save_object_pickle(history, model_name + "_history")
+    if with_cloud:
+        model_callbacks.append(GCSCallback(model_backup_path, "koregraph"))
+
+    history = model.fit(
+        x=X,
+        y=y,
+        validation_split=0.2,
+        batch_size=batch_size,
+        epochs=epochs,
+        initial_epoch=initial_epoch,
+        callbacks=model_callbacks,
+    )
+
+    print("Exporting model locally")
+    (MODEL_OUTPUT_DIRECTORY / model_name).mkdir(exist_ok=True, parents=True)
+    model.save(MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.keras")
+    save_object_pickle(
+        history,
+        model_name + "_history",
+        MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}_history.pkl",
+    )
+
+    if with_cloud:
+        print("Exporting model to google cloud storage")
+        GCSCallback(model_backup_path, "koregraph").upload_file_to_gcs(
+            MODEL_OUTPUT_DIRECTORY / model_name / f"{model_name}.keras",
+            f"generated/models/{model_name}/",
+        )
 
 
 if __name__ == "__main__":

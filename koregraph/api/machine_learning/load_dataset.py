@@ -10,7 +10,10 @@ from numpy import ndarray, append, isnan, any, nan_to_num, concatenate, split, d
 
 from koregraph.utils.controllers.pickles import load_pickle_object, save_object_pickle
 from koregraph.api.preprocessing.audio_preprocessing import music_to_numpy
-from koregraph.api.preprocessing.posture_preprocessing import fill_forward, cut_percentage
+from koregraph.api.preprocessing.posture_preprocessing import (
+    fill_forward,
+    cut_percentage,
+)
 from koregraph.config.params import (
     GENERATED_KEYPOINTS_DIRECTORY,
     GENERATED_AUDIO_DIRECTORY,
@@ -116,7 +119,7 @@ def load_next_chunks_preprocess_dataset(
         for file in listdir(chore_path):
             chunk_id = file.replace(".pkl", "").split("_")[-1]
             chore_filepath = chore_path / file
-            music_filepath = music_path / f"{music_name}_{chunk_id}.mp3"
+            # music_filepath = music_path / f"{music_name}_{chunk_id}.mp3"
 
             # audio_tmp = music_to_numpy(music_filepath)
             chore_tmp = load_pickle_object(chore_filepath)["keypoints2d"]

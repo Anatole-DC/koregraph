@@ -145,9 +145,13 @@ def main():
         print("Training with chunks: predicting next X seconds")
         train_pred_next_workflow(
             model_name=model_name,
+            epochs=epochs,
+            batch_size=batch_size,
             dataset_size=dataset_size,
             backup_model=model,
             initial_epoch=initial_epoch,
+            patience=patience,
+            with_cloud=with_cloud,
         )
     else:
         print("Running training locally")
