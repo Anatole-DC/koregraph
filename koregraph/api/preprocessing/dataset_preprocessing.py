@@ -90,7 +90,10 @@ def generate_training_pickles(
 
         # Ensure X and y have the same length
         if len(train_choregraphy) != len(train_audio):
-            train_audio = train_audio[: len(train_choregraphy)]
+            if len(train_choregraphy) > len(train_audio):
+                train_choregraphy = train_choregraphy[: len(train_audio)]
+            else:
+                train_audio = train_audio[: len(train_choregraphy)]
 
         assert len(train_choregraphy) == len(
             train_audio

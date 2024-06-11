@@ -110,10 +110,10 @@ def load_next_chunks_preprocess_dataset(
     y = None
     for chore in chore_names:
         chore_name = chore.name
-        music_name = chore.music
+        # music_name = chore.music
 
         chore_path = GENERATED_KEYPOINTS_DIRECTORY / chore_name / str(CHUNK_SIZE)
-        music_path = GENERATED_AUDIO_DIRECTORY / music_name / str(CHUNK_SIZE)
+        # music_path = GENERATED_AUDIO_DIRECTORY / music_name / str(CHUNK_SIZE)
         print(f"Parsing {chore_name} chunks")
 
         for file in listdir(chore_path):
