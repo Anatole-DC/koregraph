@@ -36,6 +36,7 @@ def generate_training_pickles(
     mode: str = "barbarie",
     output_path: Path = GENERATED_PICKLE_DIRECTORY,
     output_preprocessed_audio: bool = False,
+    interpolation_mode: str = None,
 ) -> Path:
     """Generate the files for the model training.
 
@@ -56,17 +57,21 @@ def generate_training_pickles(
     # Pickle generation
     for move_file in ALL_ADVANCED_MOVE_NAMES:
 
-        music, sr = load_music(
+        music_path = (
             GENERATED_AUDIO_SILENCE_DIRECTORY / f"silence_{move_file.music}.mp3"
+            if interpolation_mode is not None
+            else AUDIO_DIRECTORY / f"{move_file.music}.mp3"
         )
+
+        music, _ = load_music(music_path)
         choregraphy = load_choregraphy(move_file)
 
         # Preprocess the choregraphy
         train_choregraphy = None
         raw_music = None
         if mode == "barbarie":
-            train_choregraphy = generate_and_export_choreography(
-                f"{move_file.name}.pkl"
+            train_choregraphy = convert_to_train_posture(
+                choregraphy, (interpolation_mode is not None)
             )
             train_audio, raw_music = convert_music_array_to_train_audio(music)
 

@@ -84,7 +84,9 @@ def posture_array_to_keypoints(posture_array: ndarray) -> ndarray:
     return posture_array.reshape(-1, 17, 2)
 
 
-def convert_to_train_posture(choregraphy: Choregraphy) -> ndarray:
+def convert_to_train_posture(
+    choregraphy: Choregraphy, interpolate: bool = False
+) -> ndarray:
     """Convert a choregraphy posture into a training array.
 
     The output is a (34,) dimension array, corresponding to the
@@ -98,8 +100,11 @@ def convert_to_train_posture(choregraphy: Choregraphy) -> ndarray:
     """
 
     filled = nan_to_num(choregraphy.keypoints2d, 0)
-    interpolated = add_transition(filled)
-    downscale = downscale_posture(interpolated)
+
+    if interpolate:
+        filled = add_transition(filled)
+
+    downscale = downscale_posture(filled)
     posture_array = array_from_keypoints(downscale)
     return posture_array
 
