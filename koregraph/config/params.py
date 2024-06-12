@@ -119,9 +119,14 @@ ALL_ADVANCED_MOVE_NAMES = [
     for advanced_move_path in KEYPOINTS_DIRECTORY.glob("*sFM*")
 ]
 
+ALL_GBR_NAMES = [
+    AISTFile(advanced_move_path) for advanced_move_path in KEYPOINTS_DIRECTORY.glob("gBR_sFM*")
+]
+
 ALL_BASIC_MOVE_NAMES = [
     basic_move_path.name for basic_move_path in KEYPOINTS_DIRECTORY.glob("*sBM*")
 ]
+
 
 ALL_MUSIC_NAMES = [music_path.name for music_path in AUDIO_DIRECTORY.glob("*.mp3")]
 

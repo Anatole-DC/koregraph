@@ -26,9 +26,10 @@ def train_workflow(
     initial_epoch: int = 0,
     patience: int = 20,
     with_cloud: bool = False,
+    style: str = None
 ):
 
-    X, y = load_preprocess_dataset(dataset_size=dataset_size)
+    X, y = load_preprocess_dataset(dataset_size=dataset_size, style=style)
     # X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
     # y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
     y = y.astype(float32)
@@ -79,7 +80,7 @@ def train_workflow(
     history = model.fit(
         x=X,
         y=y,
-        validation_split=0.2,
+        # validation_split=0.2,
         batch_size=batch_size,
         epochs=epochs,
         initial_epoch=initial_epoch,

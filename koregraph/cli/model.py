@@ -96,6 +96,7 @@ parser.add_argument(
     help="When passed, disable the early stopping callback.",
 )
 
+parser.add_argument("-s", "--style", dest='style',required=False)
 
 def main():
     arguments = parser.parse_args()
@@ -108,6 +109,7 @@ def main():
     predict_next = bool(arguments.predict_next)
     epochs = int(arguments.epochs)
     patience = int(arguments.patience)
+    style = str(arguments.style)
 
     model = None
     initial_epoch = 0
@@ -152,6 +154,7 @@ def main():
             initial_epoch=initial_epoch,
             patience=patience,
             with_cloud=with_cloud,
+            style=style
         )
     else:
         print("Running training locally")

@@ -102,7 +102,7 @@ def predict_next_move(
         / model_name
         / f"{model_name}{'_backup' if backup else ''}.keras"
     )
-    model = load_model(model_path)
+    model = load_model(model_path, compile=False)
 
     audio_filepath = (
         GENERATED_AUDIO_DIRECTORY

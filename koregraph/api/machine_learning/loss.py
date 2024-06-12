@@ -25,6 +25,6 @@ def my_mse_maximise_movement(y_true, y_pred):
     last_frame = expand_dims(y_pred[-1, :], 0)
     distances = distance_frame_to_frame(
         y_true[::, :], y_pred[::, :]
-    ) - distance_frame_to_frame(first_frame, last_frame)
+    ) + (1/ distance_frame_to_frame(first_frame, last_frame))
 
     return reduce_mean(square(distances))

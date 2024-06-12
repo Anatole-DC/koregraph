@@ -23,7 +23,7 @@ from keras.initializers import glorot_uniform
 from keras.models import Sequential, Model
 from keras.optimizers import Adam, RMSprop
 
-from koregraph.api.machine_learning.loss import my_mse
+from koregraph.api.machine_learning.loss import my_mse_maximise_movement
 
 
 def prepare_model(X, y) -> Model:
@@ -207,7 +207,7 @@ def initialize_model_next_chunks(X, y) -> Model:
         ]
     )
 
-    new_model.compile(loss="mse", optimizer="adam", metrics=["mae"])
+    new_model.compile(loss=my_mse_maximise_movement, optimizer="adam", metrics=["mae"])
     return new_model
 
 

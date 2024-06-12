@@ -19,6 +19,7 @@ from koregraph.config.params import (
     GENERATED_AUDIO_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,
     ALL_ADVANCED_MOVE_NAMES,
+    ALL_GBR_NAMES,
     CHUNK_SIZE,
     FRAME_FORMAT,
     GENERATED_FEATURES_DIRECTORY,
@@ -101,11 +102,14 @@ def load_chunk_preprocess_dataset() -> Tuple[ndarray, ndarray]:
 
 
 def load_next_chunks_preprocess_dataset(
-    dataset_size: float = 1.0, perc_cut: float = PERCENTAGE_CUT
+    dataset_size: float = 1.0, perc_cut: float = PERCENTAGE_CUT, style: str=None
 ):
-    chore_names = ALL_ADVANCED_MOVE_NAMES[
-        : int(len(ALL_ADVANCED_MOVE_NAMES) * dataset_size)
-    ]
+    if style is None:
+        chore_names = ALL_ADVANCED_MOVE_NAMES[
+            : int(len(ALL_ADVANCED_MOVE_NAMES) * dataset_size)
+        ]
+    else:
+        chore_names = ALL_GBR_NAMES[:int(len(ALL_GBR_NAMES)*dataset_size)]
     X = None
     y = None
     for chore in chore_names:
@@ -157,8 +161,6 @@ def load_next_chunks_preprocess_dataset(
     save_object_pickle(X, obj_path=GENERATED_FEATURES_DIRECTORY / "x")
     save_object_pickle(y, obj_path=GENERATED_FEATURES_DIRECTORY / "y")
 
-    y = delete(y, [60, 63], axis=0)
-    X = delete(X, [60, 63], axis=0)
     return X, y
 
 
