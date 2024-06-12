@@ -79,6 +79,7 @@ def predict_next_move(
     chunk_id: int = 0,
     perc_cut: float = PERCENTAGE_CUT,
     backup: bool = False,
+    with_audio: bool = False,
 ):
     def build_next_input(first_frames, prediction):
         prediction_frame_size = int((CHUNK_SIZE * perc_cut) * 60)
@@ -104,20 +105,22 @@ def predict_next_move(
     )
     model = load_model(model_path)
 
-    audio_filepath = (
-        GENERATED_AUDIO_DIRECTORY
-        / audio_name
-        / str(CHUNK_SIZE)
-        / (f"{audio_name}_{chunk_id}.mp3")
-    )
-    audio = music_to_numpy(audio_filepath)
+    if with_audio:
+        audio_filepath = (
+            GENERATED_AUDIO_DIRECTORY
+            / audio_name
+            / str(CHUNK_SIZE)
+            / (f"{audio_name}_{chunk_id}.mp3")
+        )
+        audio = music_to_numpy(audio_filepath)
 
     # cut input, take 8 sec
-    print("Before cut", audio.shape)
-    audio, _ = cut_percentage(audio, perc_cut)
-    print("After cut", audio.shape)
-    print("min audio: ", audio.min())
-    print("max audio: ", audio.max())
+    # print("Before cut", audio.shape)
+    # audio, _ = cut_percentage(audio, perc_cut)
+    # print("After cut", audio.shape)
+    # print("min audio: ", audio.min())
+    # print("max audio: ", audio.max())
+
     # add beginning of chore
     chore = load_pickle_object(
         GENERATED_KEYPOINTS_DIRECTORY
@@ -135,13 +138,18 @@ def predict_next_move(
     print("max input: ", input.max())
 
     input = input.reshape(-1, int((CHUNK_SIZE * (1 - perc_cut)) * 60), 17, 2)
-
-    print(input.shape)
+    audio = audio.reshape(-1, audio.shape[0], audio.shape[1])
+    print("chore shape", input.shape)
+    print("audio shape", audio.shape)
     all_output = input
 
     # Predict first frame
     print("Prediction 0")
-    prediction = model.predict(input)
+    if with_audio:
+        prediction = model.predict([input, audio])
+    else:
+        prediction = model.predict(input)
+
     print("prediction shape", prediction.shape)
     print("prediction min", prediction.min())
     print("prediction max", prediction.max())
@@ -150,12 +158,16 @@ def predict_next_move(
     )
 
     # Predict next frame
-    for i in range(4):
+    for i in range(20):
         print(f"Prediction {i+1}")
         input = build_next_input(input, prediction)
         input = input.reshape(-1, int((CHUNK_SIZE * (1 - perc_cut)) * 60), 17, 2)
         print(f"Next input shape {input.shape}")
-        prediction = model.predict(input)
+        if with_audio:
+            prediction = model.predict([input, audio])
+        else:
+            prediction = model.predict(input)
+
         all_output = concatenate((all_output, prediction.reshape(-1, 17, 2)), axis=0)
         print("prediction shape", prediction.shape)
         print("prediction min", prediction.min())
@@ -185,8 +197,8 @@ def predict_next_move(
     save_choregaphy_chunk(chore_all, PREDICTION_OUTPUT_DIRECTORY)
 
     # Create video
-    keypoints_video_audio_builder_from_choreography(chore, audio_name)
-    # keypoints_video_audio_builder_from_choreography(chore_all)
+    # keypoints_video_audio_builder_from_choreography(chore, audio_name)
+    keypoints_video_audio_builder_from_choreography(chore_all, audio_name)
 
     print("Happy viewing!")
 

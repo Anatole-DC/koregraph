@@ -51,6 +51,8 @@ parser.add_argument("--chunks", dest="is_chunks", action="store_true")
 
 parser.add_argument("--predict-next", dest="predict_next", action="store_true")
 
+parser.add_argument("--with-audio", dest="with_audio", action="store_true")
+
 
 def main():
     arguments = parser.parse_args()
@@ -83,6 +85,7 @@ def main():
             chore_chunk_name=choregraphy,
             chunk_id=chunk_id,
             backup=backup,
+            with_audio=arguments.with_audio,
         )
     else:
         predict_api(
