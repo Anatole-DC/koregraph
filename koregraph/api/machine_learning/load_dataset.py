@@ -104,12 +104,13 @@ def load_chunk_preprocess_dataset() -> Tuple[ndarray, ndarray]:
 def load_next_chunks_preprocess_dataset(
     dataset_size: float = 1.0, perc_cut: float = PERCENTAGE_CUT, style: str=None
 ):
-    if style is None:
+    print('style', style)
+    if style == 'gBR':
+        chore_names = ALL_GBR_NAMES[:int(len(ALL_GBR_NAMES)*dataset_size)]
+    else:
         chore_names = ALL_ADVANCED_MOVE_NAMES[
             : int(len(ALL_ADVANCED_MOVE_NAMES) * dataset_size)
         ]
-    else:
-        chore_names = ALL_GBR_NAMES[:int(len(ALL_GBR_NAMES)*dataset_size)]
     X = None
     y = None
     for chore in chore_names:
