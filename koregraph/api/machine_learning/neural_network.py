@@ -197,14 +197,7 @@ def initialize_model_next_chunks(X, X_audio, y) -> Model:
     dense_audio_ouput = Dense(32, activation="relu")(flatten)
 
     joined = concatenate([dense_ouput, dense_audio_ouput])
-    # lstm_all = Bidirectional(
-    #             LSTM(
-    #                 256,
-    #                 activation="tanh",
-    #                 kernel_initializer=glorot_uniform(),
-    #                 return_sequences=False,
-    #             ),
-    #         )(joined)
+
     dense_all_1 = Dense(256, activation="relu")(joined)
     dense_all_2 = Dense(128, activation="relu")(dense_all_1)
     dropou_all_t = Dropout(rate=0.2)(dense_all_2)
@@ -214,6 +207,72 @@ def initialize_model_next_chunks(X, X_audio, y) -> Model:
 
     new_model = Model(
         inputs=[inputs, input_audio], outputs=chore_outputs, name="chore_model"
+    )
+
+    new_model.summary()
+
+    new_model.compile(loss="mse", optimizer="adam", metrics=["mae"])
+    return new_model
+
+def initialize_model_seventeen_output(Xs, y) -> Model:
+    """Initialize a compiled model.
+
+    Returns:
+        Model: The compiled model.
+    """
+
+    # inputs = Input(shape=X[0].shape)
+    models = []
+    outputs = []
+    inputs = []
+    print('len Xs', len(Xs))
+    for i in range(len(Xs)):
+        print(f'articulation {i}')
+        articulation = Input(shape=Xs[i][0].shape)
+        inputs.append(articulation)
+        lstm1 = Bidirectional(
+            LSTM(
+                512,
+                activation="tanh",
+                kernel_initializer=glorot_uniform(),
+                return_sequences=True,
+            ),
+        )(articulation)
+        lstm2 = Bidirectional(
+            LSTM(
+                256,
+                activation="tanh",
+                kernel_initializer=glorot_uniform(),
+                return_sequences=False,
+            ),
+        )(lstm1)
+        dense1 = Dense(256, activation="relu")(lstm2)
+        dense2 = Dense(128, activation="relu")(dense1)
+        dropout = Dropout(rate=0.2)(dense2)
+        dense3 = Dense(64, activation="relu")(dropout)
+        dropout2 = Dropout(rate=0.2)(dense3)
+        dense_ouput = Dense(32, activation="relu")(dropout2)
+        chore_outputs = Dense(2, activation="relu")(dense_ouput)
+
+        outputs.append(chore_outputs)
+        models.append(Model(
+            inputs=articulation, outputs=chore_outputs, name=f"{i}_model"
+        ))
+
+    print(type(outputs[0]))
+
+    # outputs = concatenate([m.outputs for m in models])
+    outputs_layer = concatenate(outputs)
+
+    dense_all_1 = Dense(256, activation="relu")(outputs_layer)
+    dense_all_2 = Dense(128, activation="relu")(dense_all_1)
+    dropout_all_t = Dropout(rate=0.2)(dense_all_2)
+    dense_all_3 = Dense(64, activation="relu")(dropout_all_t)
+    dropout_all_2 = Dropout(rate=0.2)(dense_all_3)
+
+    chore_output = Dense(y.shape[-1], activation="relu")(dropout_all_2)
+    new_model = Model(
+        inputs=inputs, outputs=chore_output, name="seventeen_model"
     )
 
     new_model.summary()

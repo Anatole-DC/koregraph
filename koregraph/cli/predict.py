@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from koregraph.api.machine_learning.prediction_workflow import (
     predict as predict_api,
     predict_next_move,
+    predict_seventeen,
 )
 from koregraph.utils.cloud.cloud_bucket import download_model_history_from_bucket
 
@@ -51,6 +52,8 @@ parser.add_argument("--chunks", dest="is_chunks", action="store_true")
 
 parser.add_argument("--predict-next", dest="predict_next", action="store_true")
 
+parser.add_argument("--seventeen", dest="seventeen", action="store_true")
+
 parser.add_argument("--with-audio", dest="with_audio", action="store_true")
 
 
@@ -86,6 +89,16 @@ def main():
             chunk_id=chunk_id,
             backup=backup,
             with_audio=arguments.with_audio,
+        )
+    elif arguments.seventeen:
+        assert choregraphy is not None
+        assert chunk_id is not None
+        predict_seventeen(
+            audio_name=audio_name,
+            model_name=model_name,
+            chore_chunk_name=choregraphy,
+            chunk_id=chunk_id,
+            backup=backup,
         )
     else:
         predict_api(

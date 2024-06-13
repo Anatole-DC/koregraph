@@ -9,6 +9,7 @@ from tensorflow.keras.models import Model, load_model
 from koregraph.utils.controllers.pickles import load_pickle_object
 from koregraph.api.training.train_workflow import train_workflow
 from koregraph.api.training.chunks_workflow import train_chunks_workflow
+from koregraph.api.training.seventeen_output_workflow import train_workflow as train_seventeen_workflow
 from koregraph.api.training.next_chunks_workflow import (
     train_workflow as train_pred_next_workflow,
 )
@@ -96,6 +97,7 @@ parser.add_argument(
     help="When passed, disable the early stopping callback.",
 )
 
+parser.add_argument('--seventeen', dest='seventeen', action='store_true')
 
 def main():
     arguments = parser.parse_args()
@@ -144,6 +146,18 @@ def main():
     elif predict_next:
         print("Training with chunks: predicting next X seconds")
         train_pred_next_workflow(
+            model_name=model_name,
+            epochs=epochs,
+            batch_size=batch_size,
+            dataset_size=dataset_size,
+            backup_model=model,
+            initial_epoch=initial_epoch,
+            patience=patience,
+            with_cloud=with_cloud,
+        )
+    elif arguments.seventeen:
+        print("Training 17sub models")
+        train_seventeen_workflow(
             model_name=model_name,
             epochs=epochs,
             batch_size=batch_size,

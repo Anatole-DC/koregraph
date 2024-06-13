@@ -8,6 +8,8 @@ from koregraph.config.params import (
     ALL_ADVANCED_MOVE_NAMES,
     KEYPOINTS_DIRECTORY,
     FRAME_FORMAT,
+    CHUNK_SIZE,
+    PERCENTAGE_CUT
 )
 from koregraph.models.choregraphy import Choregraphy
 from koregraph.tools.video_builder import export_choregraphy_keypoints
@@ -197,6 +199,10 @@ def cut_percentage(x: ndarray, perc: float) -> Tuple[ndarray, ndarray]:
     idx = len(x) - int(len(x) * perc)
     return x[:idx], x[idx:]
 
+
+def get_articulation(X: ndarray, idx: int):
+    X = X.reshape(-1, int((CHUNK_SIZE * (1 - PERCENTAGE_CUT)) * 60), 17, 2)
+    return X[:,:,idx,:]
 
 if __name__ == "__main__":
     export_choregraphy_keypoints(
