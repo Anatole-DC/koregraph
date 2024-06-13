@@ -29,9 +29,9 @@ def train_workflow(
     with_cloud: bool = False,
 ):
 
-    # X, X_audio, y = load_preprocess_dataset(dataset_size=dataset_size)
-    X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
-    y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
+    X, X_audio, y = load_preprocess_dataset(dataset_size=dataset_size)
+    # X = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "x.pkl")
+    # y = load_pickle_object(GENERATED_FEATURES_DIRECTORY / "y.pkl")
     y = y.astype(float32)
 
     print("y has nan", isnan(y).any())

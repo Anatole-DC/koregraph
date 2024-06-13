@@ -23,6 +23,7 @@ from koregraph.config.params import (
     FRAME_FORMAT,
     GENERATED_FEATURES_DIRECTORY,
     PERCENTAGE_CUT,
+    ALL_GBR_MOVES_NAMES
 )
 
 
@@ -103,9 +104,12 @@ def load_chunk_preprocess_dataset() -> Tuple[ndarray, ndarray]:
 def load_next_chunks_preprocess_dataset(
     dataset_size: float = 1.0, perc_cut: float = PERCENTAGE_CUT
 ):
-    chore_names = ALL_ADVANCED_MOVE_NAMES[
-        : int(len(ALL_ADVANCED_MOVE_NAMES) * dataset_size)
+    chore_names = ALL_GBR_MOVES_NAMES[
+        : int(len(ALL_GBR_MOVES_NAMES) * dataset_size)
     ]
+    # chore_names = ALL_ADVANCED_MOVE_NAMES[
+    #     : int(len(ALL_ADVANCED_MOVE_NAMES) * dataset_size)
+    # ]
     X = None
     X_audio = None
     y = None
