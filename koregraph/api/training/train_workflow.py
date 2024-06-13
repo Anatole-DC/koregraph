@@ -36,6 +36,7 @@ def train_workflow(
     y = y.astype(float32)
 
     print(X_scaled.shape)
+    print(y.shape)
     model = initialize_model(X, y) if backup_model is None else backup_model
 
     model_backup_path = MODEL_OUTPUT_DIRECTORY / model_name

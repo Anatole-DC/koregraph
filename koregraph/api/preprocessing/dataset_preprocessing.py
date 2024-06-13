@@ -14,6 +14,7 @@ from koregraph.api.preprocessing.audio_preprocessing import (
 )
 from koregraph.config.params import (
     ALL_ADVANCED_MOVE_NAMES,
+    ALL_ADVANCED_MOVE_NAMES_3D,
     AUDIO_DIRECTORY,
     GENERATED_AUDIO_SILENCE_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,
@@ -44,7 +45,8 @@ def generate_training_pickles(
     output_path: Path = GENERATED_PICKLE_DIRECTORY,
     output_preprocessed_audio: bool = False,
     interpolation_mode: str = None,
-    downsaple_fps: int = None
+    downsaple_fps: int = None,
+    dimension: int = 2
 ) -> Path:
     """Generate the files for the model training.
 
@@ -63,7 +65,7 @@ def generate_training_pickles(
     generated_pickles_path.mkdir(exist_ok=True, parents=True)
 
     # Pickle generation
-    for move_file in ALL_ADVANCED_MOVE_NAMES:
+    for move_file in [ALL_ADVANCED_MOVE_NAMES, ALL_ADVANCED_MOVE_NAMES_3D][dimension - 2]:
 
         music_path = (
             GENERATED_AUDIO_SILENCE_DIRECTORY / f"silence_{move_file.music}.mp3"
@@ -72,14 +74,14 @@ def generate_training_pickles(
         )
 
         music, _ = load_music(music_path)
-        choregraphy = load_choregraphy(move_file)
+        choregraphy = load_choregraphy(move_file, dimension)
 
         # Preprocess the choregraphy
         train_choregraphy = None
         raw_music = None
         if mode == "barbarie":
             train_choregraphy = convert_to_train_posture(
-                choregraphy, (interpolation_mode is not None)
+                choregraphy, (interpolation_mode is not None), dimension
             )
             train_audio, raw_music = convert_music_array_to_train_audio(music)
 
