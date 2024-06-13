@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.animation import FuncAnimation
 
+
 def visualize_posture_sequence(posture_sequence, fps=60):
     """
     Visualize a sequence of 3D postures using matplotlib.
@@ -14,7 +15,7 @@ def visualize_posture_sequence(posture_sequence, fps=60):
     n, num_keypoints, _ = posture_sequence.shape
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    ax = fig.add_subplot(111, projection="3d")
 
     # Set the limits for the axes
     ax.set_xlim(np.min(posture_sequence[:, :, 0]), np.max(posture_sequence[:, :, 0]))
@@ -26,16 +27,16 @@ def visualize_posture_sequence(posture_sequence, fps=60):
 
     def init():
         scatter._offsets3d = ([], [], [])
-        return scatter,
+        return (scatter,)
 
     def update(frame):
         x = posture_sequence[frame, :, 0]
         y = posture_sequence[frame, :, 1]
         z = posture_sequence[frame, :, 2]
         scatter._offsets3d = (x, y, z)
-        return scatter,
+        return (scatter,)
 
     # Create the animation
-    ani = FuncAnimation(fig, update, frames=n, init_func=init, blit=True, interval=100)
+    FuncAnimation(fig, update, frames=n, init_func=init, blit=True, interval=100)
 
     plt.show()

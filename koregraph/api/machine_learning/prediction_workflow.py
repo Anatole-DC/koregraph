@@ -19,13 +19,19 @@ from koregraph.config.params import (
 )
 from koregraph.api.preprocessing.audio_preprocessing import scale_audio
 
+
 def smooth_predictions(predictions, window_length=50, polyorder=2):
     """Smooth predictions using Savitzky-Golay filter."""
     smoothed_predictions = savgol_filter(predictions, window_length, polyorder, axis=0)
     return smoothed_predictions
 
 
-def predict(audio_name: str = "mBR0", model_name: str = "model", backup: bool = False, smooth = True):
+def predict(
+    audio_name: str = "mBR0",
+    model_name: str = "model",
+    backup: bool = False,
+    smooth=True,
+):
     # model_path = MODEL_OUTPUT_DIRECTORY / (model_name + ".pkl")
     # model = load_pickle_object(model_path)
 

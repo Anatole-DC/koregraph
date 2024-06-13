@@ -46,7 +46,7 @@ def generate_training_pickles(
     output_preprocessed_audio: bool = False,
     interpolation_mode: str = None,
     downsaple_fps: int = None,
-    dimension: int = 2
+    dimension: int = 2,
 ) -> Path:
     """Generate the files for the model training.
 
@@ -65,7 +65,9 @@ def generate_training_pickles(
     generated_pickles_path.mkdir(exist_ok=True, parents=True)
 
     # Pickle generation
-    for move_file in [ALL_ADVANCED_MOVE_NAMES, ALL_ADVANCED_MOVE_NAMES_3D][dimension - 2]:
+    for move_file in [ALL_ADVANCED_MOVE_NAMES, ALL_ADVANCED_MOVE_NAMES_3D][
+        dimension - 2
+    ]:
 
         music_path = (
             GENERATED_AUDIO_SILENCE_DIRECTORY / f"silence_{move_file.music}.mp3"

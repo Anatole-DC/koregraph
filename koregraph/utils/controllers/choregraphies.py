@@ -24,22 +24,17 @@ def load_choregraphy(aist_file: AISTFile, dimension: int = 2) -> Choregraphy:
 
     if dimension == 2:
         loaded_choregraphy = Choregraphy(
-            aist_file.name,
-            choregraphy_raw["keypoints2d"][
-                0, :, :, :2
-            ]
+            aist_file.name, choregraphy_raw["keypoints2d"][0, :, :, :2]
         )
         # assert len(loaded_choregraphy.keypoints) == len(
         #     loaded_choregraphy.timestamps
         # ), f"In loaded choregraphy {aist_file.name}, not the same number of postures and timestamps"
     elif dimension == 3:
         loaded_choregraphy = Choregraphy(
-            aist_file.name,
-            choregraphy_raw["keypoints3d_optim"]
+            aist_file.name, choregraphy_raw["keypoints3d_optim"]
         )
     else:
         raise ValueError(f"Unsupported dimension {dimension}")
-
 
     return loaded_choregraphy
 

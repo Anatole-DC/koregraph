@@ -20,6 +20,4 @@ class Choregraphy:
         return int(len(self.keypoints) / 60)
 
     def __str__(self):
-        return (
-            f"{self.name}: {len(self.keypoints)} postures ({self.duration} seconds)"
-        )
+        return f"{self.name}: {len(self.keypoints)} postures ({self.duration} seconds)"
