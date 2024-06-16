@@ -30,6 +30,10 @@ KEYPOINTS_DIRECTORY: Path = get_env_or_default(
     "KEYPOINTS_DIRECTORY", DATA_PATH / "keypoints2d", Path
 )
 
+KEYPOINTS_DIRECTORY_3D: Path = get_env_or_default(
+    "KEYPOINTS_DIRECTORY_3D", DATA_PATH / "keypoints3d", Path
+)
+
 if not AUDIO_DIRECTORY.exists():
     raise FileNotFoundError(
         f"Could not find audio directory at '{AUDIO_DIRECTORY.absolute()}'"
@@ -112,6 +116,11 @@ GCLOUD_AUTHENTICATION = get_env_or_default(
 ALL_ADVANCED_MOVE_NAMES = [
     AISTFile(advanced_move_path)
     for advanced_move_path in KEYPOINTS_DIRECTORY.glob("*sFM*")
+]
+
+ALL_ADVANCED_MOVE_NAMES_3D = [
+    AISTFile(advanced_move_path)
+    for advanced_move_path in KEYPOINTS_DIRECTORY_3D.glob("*sFM*")
 ]
 
 ALL_BASIC_MOVE_NAMES = [

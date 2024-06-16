@@ -9,7 +9,7 @@ from koregraph.models.choregraphy import Choregraphy
 from koregraph.config.params import ALL_ADVANCED_MOVE_NAMES
 
 
-def load_choregraphy(aist_file: AISTFile) -> Choregraphy:
+def load_choregraphy(aist_file: AISTFile, dimension: int = 2) -> Choregraphy:
     """Load and return a choregraphy from a pickle file.
 
     Args:
@@ -21,17 +21,20 @@ def load_choregraphy(aist_file: AISTFile) -> Choregraphy:
 
     with open(aist_file.choregraphy_file, "rb") as keypoints_file:
         choregraphy_raw: Dict = load_pickle(keypoints_file)
-    loaded_choregraphy = Choregraphy(
-        aist_file.name,
-        choregraphy_raw["keypoints2d"][
-            0, :, :, :2
-        ],  # Take the first view (among nine), all postures, all keypoints, only the x and y coordinates
-        choregraphy_raw["timestamps"],
-    )
 
-    assert len(loaded_choregraphy.keypoints2d) == len(
-        loaded_choregraphy.timestamps
-    ), f"In loaded choregraphy {aist_file.name}, not the same number of postures and timestamps"
+    if dimension == 2:
+        loaded_choregraphy = Choregraphy(
+            aist_file.name, choregraphy_raw["keypoints2d"][0, :, :, :2]
+        )
+        # assert len(loaded_choregraphy.keypoints) == len(
+        #     loaded_choregraphy.timestamps
+        # ), f"In loaded choregraphy {aist_file.name}, not the same number of postures and timestamps"
+    elif dimension == 3:
+        loaded_choregraphy = Choregraphy(
+            aist_file.name, choregraphy_raw["keypoints3d_optim"]
+        )
+    else:
+        raise ValueError(f"Unsupported dimension {dimension}")
 
     return loaded_choregraphy
 
@@ -48,7 +51,7 @@ def save_choregaphy_chunk(chore: Choregraphy, path: Path) -> None:
     """
     with open(path / f"{chore.name}.pkl", "wb") as handle:
         dump_pickle(
-            {"keypoints2d": chore.keypoints2d, "timestamps": chore.timestamps},
+            {"keypoints": chore.keypoints},
             handle,
             HIGHEST_PROTOCOL,
         )

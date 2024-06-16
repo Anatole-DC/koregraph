@@ -36,7 +36,7 @@ def generate_posture_array(
     return postures.reshape(-1, 34)
 
 
-def array_from_keypoints(keypoints: ndarray) -> ndarray:
+def array_from_keypoints(keypoints: ndarray, dimension: int = 2) -> ndarray:
     """Flatten keypoints (x, y pairs) into a one dimensional array.
 
     Args:
@@ -46,7 +46,7 @@ def array_from_keypoints(keypoints: ndarray) -> ndarray:
         ndarray: The 34 points array.
     """
 
-    return keypoints.reshape(-1, 34)
+    return keypoints.reshape(-1, 17 * dimension)
 
 
 def downscale_posture(
@@ -85,7 +85,7 @@ def posture_array_to_keypoints(posture_array: ndarray) -> ndarray:
 
 
 def convert_to_train_posture(
-    choregraphy: Choregraphy, interpolate: bool = False
+    choregraphy: Choregraphy, interpolate: bool = False, dimension: int = 2
 ) -> ndarray:
     """Convert a choregraphy posture into a training array.
 
@@ -99,14 +99,14 @@ def convert_to_train_posture(
         ndarray: The training array.
     """
 
-    filled = nan_to_num(choregraphy.keypoints2d, 0)
+    X = nan_to_num(choregraphy.keypoints, 0)
 
     if interpolate:
-        filled = add_transition(filled)
+        X = add_transition(X)
 
-    downscale = downscale_posture(filled)
-    posture_array = array_from_keypoints(downscale)
-    return posture_array
+    X = downscale_posture(X)
+    X = array_from_keypoints(X, dimension)
+    return X
 
 
 def upscale_posture_pred(

@@ -5,6 +5,7 @@
 from pathlib import Path
 from pickle import dump as dump_pickle
 
+from numpy import ndarray
 from tqdm import trange
 
 from koregraph.api.preprocessing.audio_preprocessing import (
@@ -13,6 +14,7 @@ from koregraph.api.preprocessing.audio_preprocessing import (
 )
 from koregraph.config.params import (
     ALL_ADVANCED_MOVE_NAMES,
+    ALL_ADVANCED_MOVE_NAMES_3D,
     AUDIO_DIRECTORY,
     GENERATED_AUDIO_SILENCE_DIRECTORY,
     GENERATED_PICKLE_DIRECTORY,
@@ -32,11 +34,19 @@ from koregraph.api.preprocessing.posture_preprocessing import (
 from koregraph.utils.controllers.musics import load_music, save_audio_chunk
 
 
+def downsample_array(array: ndarray, target_fps: int = 30, original_fps: int = 60):
+    """Downsample an array from original_fps to target_fps."""
+    factor = original_fps // target_fps
+    return array[::factor]
+
+
 def generate_training_pickles(
     mode: str = "barbarie",
     output_path: Path = GENERATED_PICKLE_DIRECTORY,
     output_preprocessed_audio: bool = False,
     interpolation_mode: str = None,
+    downsaple_fps: int = None,
+    dimension: int = 2,
 ) -> Path:
     """Generate the files for the model training.
 
@@ -55,7 +65,9 @@ def generate_training_pickles(
     generated_pickles_path.mkdir(exist_ok=True, parents=True)
 
     # Pickle generation
-    for move_file in ALL_ADVANCED_MOVE_NAMES:
+    for move_file in [ALL_ADVANCED_MOVE_NAMES, ALL_ADVANCED_MOVE_NAMES_3D][
+        dimension - 2
+    ]:
 
         music_path = (
             GENERATED_AUDIO_SILENCE_DIRECTORY / f"silence_{move_file.music}.mp3"
@@ -64,14 +76,14 @@ def generate_training_pickles(
         )
 
         music, _ = load_music(music_path)
-        choregraphy = load_choregraphy(move_file)
+        choregraphy = load_choregraphy(move_file, dimension)
 
         # Preprocess the choregraphy
         train_choregraphy = None
         raw_music = None
         if mode == "barbarie":
             train_choregraphy = convert_to_train_posture(
-                choregraphy, (interpolation_mode is not None)
+                choregraphy, (interpolation_mode is not None), dimension
             )
             train_audio, raw_music = convert_music_array_to_train_audio(music)
 
@@ -89,6 +101,10 @@ def generate_training_pickles(
         # Ensure X and y have the same length
         if len(train_choregraphy) != len(train_audio):
             train_audio = train_audio[: len(train_choregraphy)]
+
+        if downsaple_fps is not None:
+            train_audio = downsample_array(train_audio, downsaple_fps)
+            train_choregraphy = downsample_array(train_choregraphy, downsaple_fps)
 
         assert len(train_choregraphy) == len(
             train_audio

@@ -41,13 +41,23 @@ parser.add_argument(
 )
 
 
+parser.add_argument(
+    "-d",
+    "--dimension",
+    dest="dimension",
+    default=2,
+    help="Dimensions to use (2D or 3D)",
+)
+
+
 def main():
     arguments = parser.parse_args()
     mode = arguments.mode
     interpolation_mode = str(arguments.interpolation_mode)
+    dimension = int(arguments.dimension) if arguments.dimension is not None else None
     output = Path(arguments.output)
 
-    generate_training_pickles(mode, output, interpolation_mode)
+    generate_training_pickles(mode, output, interpolation_mode, dimension=dimension)
 
 
 if __name__ == "__main__":

@@ -66,6 +66,7 @@ tensorflow = "^2.16.1"
 [tool.poetry.group.cloud.dependencies]
 google-cloud-storage = "^2.16.0"
 
+
 [tool.poetry.scripts]
 preprocess = "koregraph.cli.preprocess:main"
 viewer = "koregraph.cli.viewer:main"

@@ -80,7 +80,7 @@ def export_choregraphy_keypoints(
     with get_writer(export_path, mode="I", fps=60) as video_writer:
         [
             video_writer.append_data(asarray(draw_keypoints(Posture(keypoints))))
-            for keypoints in choregraphy.keypoints2d
+            for keypoints in choregraphy.keypoints
         ]
 
     return export_path
@@ -107,7 +107,7 @@ def keypoints_video_audio_builder_from_choreography(
         choregraphy (Choregraphy): The choregraphy to build the video from.
     """
 
-    print(f"Choregraphy '{choregraphy.name}' : {len(choregraphy.keypoints2d)} postures")
+    print(f"Choregraphy '{choregraphy.name}' : {len(choregraphy.keypoints)} postures")
 
     video_path = export_choregraphy_keypoints(choregraphy)
 
